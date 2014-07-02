@@ -1533,7 +1533,14 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 		[self setAutomaticTextReplacementEnabled: NO];
 	if ([self respondsToSelector: @selector(setAutomaticDataDetectionEnabled)])
 		[self setAutomaticDataDetectionEnabled: NO];
-	
+		
+// on OS X 10.6+, disable all TextCheckingTypes, as the above code has no effect.
+#ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+	[self setEnabledTextCheckingTypes:0];
+#endif
+#endif
+
 	return self;
 }
 -(void)free{
