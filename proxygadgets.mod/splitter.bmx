@@ -239,10 +239,10 @@ Type TSplitter Extends TProxyGadget
 	
 	'Proxy Gadget Methods
 	
-	Method CleanUp()
+	Method CleanUp:Int()
 		RemoveHook EmitEventHook, eventHandler, Self
 		gadParent = Null
-		Super.CleanUp()
+		Return Super.CleanUp()
 	EndMethod
 	
 	Method SetTooltip%( pTooltip$ )
