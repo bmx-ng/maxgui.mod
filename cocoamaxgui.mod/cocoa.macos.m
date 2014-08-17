@@ -45,6 +45,7 @@ ArrayCursor arrCursors[5] =
 
 // End of Cursor Stuff
 
+void* NSActiveGadget();
 
 void brl_event_EmitEvent( BBObject *event );
 BBObject *maxgui_maxgui_HotKeyEvent( int key,int mods );
@@ -2329,19 +2330,19 @@ void NSEnd(){
 	[GlobalApp release];
 }
 
-int NSActiveGadget(){
+void* NSActiveGadget(){
 	NSWindow	*window;
 	NSResponder *responder;
 	window=[NSApp keyWindow];
 	if (!window) return 0;
 	responder=[window firstResponder];
-	if (!responder) return (int)window;
+	if (!responder) return window;
 	if ([responder isKindOfClass:[NSTextView class]] && 
    		[window fieldEditor:NO forObject:nil] != nil ) { 
 			NSTextView *view=(NSTextView*)responder;
-			return (int)[view delegate];
+			return [view delegate];
 		}
-	return (int)responder;
+	return responder;
 }
 
 void NSInitGadget(nsgadget *gadget){
@@ -3777,7 +3778,7 @@ void NSAddItem(nsgadget *gadget,int index,BBString *data,BBString *tip,NSImage *
 			[item setTag:0];
 			[GlobalApp addToolbarItem:item];
 			[toolbar addToolbarItem:item];
-			[toolbar insertItemWithItemIdentifier:text atIndex:index];								
+			[toolbar insertItemWithItemIdentifier:text atIndex:index];		
 		}
 		break;
 	}
@@ -4362,6 +4363,7 @@ struct bbpixmap{
 // pixmap
 	unsigned char *pixels;
 	int		width,height,pitch,format,capacity;
+	void *source;
 };
 
 

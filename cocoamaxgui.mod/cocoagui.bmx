@@ -23,7 +23,7 @@ Extern
 	' create
 	Function NSInitGadget(gadget:TNSGadget)
 	' generic
-	Function NSActiveGadget()
+	Function NSActiveGadget:Byte Ptr()
 	Function NSFreeGadget(gadget:TNSGadget)
 	Function NSClientWidth(gadget:TNSGadget)
 	Function NSClientHeight(gadget:TNSGadget)
