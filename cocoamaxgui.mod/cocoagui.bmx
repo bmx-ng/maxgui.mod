@@ -2,6 +2,7 @@ Strict
 
 Import MaxGUI.MaxGUI
 Import Pub.MacOs
+Import brl.systemdefault
 
 Import "-framework WebKit"
 Import "cocoa.macos.m"

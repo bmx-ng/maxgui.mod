@@ -31,10 +31,17 @@ ModuleInfo "History: 0.01 Release"
 ModuleInfo "History: Initial release required for BlitzMax 1.28 examples update."
 
 ?Win32
-Import MaxGUI.Win32MaxGUIEx
-Import "-lunicows"
+' disabled until it is working
+'Import MaxGUI.Win32MaxGUIEx
+'Import "-lunicows"
 ?MacOs
 Import Maxgui.CocoaMaxGui
-?Linux
-Import Maxgui.FLTKMaxGui
+?LinuxX86
+'Import Maxgui.FLTKMaxGui
+' default to the GTK version of MaxGUI
+Import BaH.GTKMaxGUI
+?LinuxX64
+Import BaH.GTKMaxGUI
+?raspberrypi
+Import BaH.GTKMaxGUI
 ?

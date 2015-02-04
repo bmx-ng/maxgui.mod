@@ -1,7 +1,7 @@
 #ifndef BB_BRL_MAXGUI_H
 #define BB_BRL_MAXGUI_H
 
-#include <brl.mod/system.mod/system.h>
+#include <brl.mod/systemdefault.mod/system.h>
 
 #define ACTIVATE_FOCUS 0
 #define ACTIVATE_CUT 1
