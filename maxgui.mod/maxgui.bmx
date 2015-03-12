@@ -2479,7 +2479,7 @@ about: #QueryGadget retrieves system handles for use with API specific functions
 * QUERY_FLWIDGET_CLIENT | An FL_WIDGET handle representing a gadget's client area.
 ]
 EndRem
-Function QueryGadget( gadget:TGadget,queryid )
+Function QueryGadget:Byte Ptr( gadget:TGadget,queryid )
 	Return gadget.Query(queryid)
 End Function
 
