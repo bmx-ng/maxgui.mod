@@ -4416,7 +4416,7 @@ NSImage *NSPixmapImage(bbpixmap *pix){
 
 	image=[[NSImage alloc] initWithSize:NSMakeSize(pix->width,  pix->height)];
 	[image addRepresentation:bitmap];
-	[image retain];
+	[image autorelease];
 	return image;
 }
 
