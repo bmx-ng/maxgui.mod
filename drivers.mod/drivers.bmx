@@ -32,7 +32,7 @@ ModuleInfo "History: Initial release required for BlitzMax 1.28 examples update.
 
 ?Win32
 ' disabled until it is working
-'Import MaxGUI.Win32MaxGUIEx
+Import MaxGUI.Win32MaxGUIEx
 'Import "-lunicows"
 ?MacOs
 Import Maxgui.CocoaMaxGui
