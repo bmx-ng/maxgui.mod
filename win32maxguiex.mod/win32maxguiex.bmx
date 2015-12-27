@@ -35,7 +35,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 	Global KBMessageHook:Byte Ptr,MouseMessageHook:Byte Ptr
 
 	Global windowtheme:Short Ptr
-	Global _cursor, _commoncontrolversion[]
+	Global _cursor:Byte Ptr, _commoncontrolversion[]
 	Global _explorerstyle = False
 	Global _activeWindow:TWindowsWindow = Null
 
@@ -238,11 +238,15 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 	EndMethod
 		
 	Method SetPointer(shape)
-		'Global winptrs[]=[0,32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650,32651]
-		'If shape<1 Or shape>14 Then _cursor = LoadCursorW( 0,Short Ptr( IDC_ARROW ) ) Else _cursor=LoadCursorW(0,Short Ptr(winptrs[shape]))
-		'SetCursor(_cursor)
-		'If TWindowsTextArea._oldCursor Then TWindowsTextArea._oldCursor = _cursor
-		'If shape = 0 Then _cursor = 0
+		Global winptrs[]=[0,32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650,32651]
+		If shape<1 Or shape>14 Then
+			_cursor = LoadCursorW( 0,Short Ptr( IDC_ARROW ) )
+		Else
+			_cursor=LoadCursorW(0,Short Ptr(winptrs[shape]))
+		End If
+		SetCursor(_cursor)
+		If TWindowsTextArea._oldCursor Then TWindowsTextArea._oldCursor = _cursor
+		If shape = 0 Then _cursor = 0
 	EndMethod
 
 	Method LoadIconStrip:TIconStrip(source:Object)		
@@ -700,8 +704,10 @@ Type TWindowsIconStrip Extends TIconStrip
 	EndFunction
 	
 	Function BuildImageList:Byte Ptr(pixmap:TPixmap)
+
 		Local bitmap:Byte Ptr,imagelist:Byte Ptr,sz,mask:Byte Ptr
 		sz=pixmap.height
+
 		If TWindowsGUIDriver.CheckCommonControlVersion() And (Pixmap.format=PF_RGBA8888 Or pixmap.format=PF_BGRA8888)
 			imagelist=ImageList_Create(sz,sz,ILC_COLOR32,0,1)
 			If imagelist
@@ -730,9 +736,10 @@ Type TWindowsIconStrip Extends TIconStrip
 		Local pix:TPixmap = TPixmap(source)
 		If Not pix pix = LoadPixmap(source)
 		If Not pix Return
-Print "image ok"
+
 		'Detect blank icons in the set		
 		sz=pix.height;If sz n=pix.width/sz
+
 		If n=0 Return	
 		blanks=New Int[n]
 		For i=0 Until n
@@ -1878,17 +1885,25 @@ Type TWindowsWindow Extends TWindowsGadget
 				
 			Case WM_GETMINMAXINFO
 				If hwnd = _hwnd And lp Then
-' FIXME
-					Local minmax:Int Ptr = Int Ptr(lp), tmpZero% = 0
+
+					Local minmax:MINMAXINFO = MINMAXINFO._create(lp)
+					Local tmpZero% = 0
+
+					Local mw:Int = _minwidth
+					Local mh:Int = _minheight
 					
-					minmax[6]=_minwidth
-					minmax[7]=_minheight
-					ConvertToContainerDimensions(tmpZero,tmpZero,minmax[6],minmax[7])
-					
+					ConvertToContainerDimensions(tmpZero,tmpZero,mw,mh)
+
+					minmax.SetminTrackSizeX(mw)
+					minmax.SetminTrackSizeY(mh)
+										
 					If (_maxwidth >= _minwidth) And (_maxheight >= _minheight) Then
-						minmax[8]=_maxwidth
-						minmax[9]=_maxheight
-						ConvertToContainerDimensions(tmpZero,tmpZero,minmax[8],minmax[9])
+						mw = _maxwidth
+						mh = _maxheight
+						ConvertToContainerDimensions(tmpZero,tmpZero,mw,mh)
+
+						minmax.SetmaxTrackSizeX(mw)
+						minmax.SetmaxTrackSizeY(mh)
 					EndIf
 					
 				EndIf
@@ -2120,9 +2135,12 @@ Type TWindowsButton Extends TWindowsGadget
 				If Not _mouseoverbutton Then
 					_mouseoverbutton = True
 					InvalidateRect(_hwnd,Null,False)
-' FIXME
-					Local tmpTrackMouseEvent:Int[] = [ 16, $2, hwnd, 0 ]	'TME_LEAVE: $2
-					_TrackMouseEvent( tmpTrackMouseEvent )
+
+					Local tmpTrackMouseEvent:TRACKMOUSEEVENT = New TRACKMOUSEEVENT
+					tmpTrackMouseEvent.SetdwFlags($2)
+					tmpTrackMouseEvent.SethwndTrack(hwnd)
+
+					_TrackMouseEvent( tmpTrackMouseEvent.eventPtr )
 				EndIf
 			Case WM_MOUSELEAVE
 				If _mouseoverbutton Then
@@ -2375,6 +2393,7 @@ Type TWindowsButton Extends TWindowsGadget
 	EndMethod
 	
 	Function BuildImageList:Byte Ptr(pixmap:TPixmap)
+
 		Local bitmap:Byte Ptr,imagelist:Byte Ptr,mask:Byte Ptr
 		If TWindowsGUIDriver.CheckCommonControlVersion() And (Pixmap.format=PF_RGBA8888 Or pixmap.format=PF_BGRA8888)
 			imagelist=ImageList_Create(pixmap.width,pixmap.height,ILC_COLOR32,0,1)
@@ -5027,8 +5046,8 @@ Type TWindowsGraphic Final
 		
 	EndFunction
 	
-	Function PreMultipliedBitmapFromPixmap32:Int( pix:TPixmap )
-Rem		
+	Function PreMultipliedBitmapFromPixmap32:Byte Ptr( pix:TPixmap )
+
 		Local argb, a
 		Local pix2:TPixmap = CreatePixmap( pix.width, pix.height, pix.format), x
 		
@@ -5041,11 +5060,11 @@ Rem
 		Next
 		
 		Return BitmapFromPixmap(pix2,True)
-End Rem	
+
 	EndFunction
 	
 	Function BitmapFromPixmap:Byte Ptr(pix:TPixmap, alpha:Int = True)
-Rem	
+	
 		Local bitCount:Int = 32, format:Int = PF_BGRA8888, bm:Byte Ptr
 		
 		If Not alpha Then
@@ -5058,18 +5077,17 @@ Rem
 		Local hdc:Byte Ptr = GetDC(0)
 		
 		Local bi:BITMAPINFOHEADER = New BITMAPINFOHEADER	
-		bi.biSize=SizeOf(bi)
-		bi.biWidth=pix.width
-		bi.biHeight=-pix.height
-		bi.biPlanes=1
-		bi.biBitCount=bitCount
-		bi.biCompression=BI_RGB
+		bi.SetbiWidth(pix.width)
+		bi.SetbiHeight(-pix.height)
+		bi.SetbiPlanes(1)
+		bi.SetbiBitCount(bitCount)
+		bi.SetbiCompression(BI_RGB)
 	
 		Local bits:Byte Ptr
 		Local src:Byte Ptr = pix.pixels
 		
 		If alpha
-			bm = CreateDibSection(hdc,bi,DIB_RGB_COLORS,Varptr bits,0,0)
+			bm = CreateDibSection(hdc,bi.infoPtr,DIB_RGB_COLORS,Varptr bits,0,0)
 		Else
 			bm = CreateCompatibleBitmap(hdc,pix.width,pix.height)
 		EndIf
@@ -5077,18 +5095,18 @@ Rem
 		Assert bm, "Cannot create bitmap.  The computer may be running low on resources."
 		
 		For Local y:Int = 0 Until pix.height
-			SetDIBits(hdc,bm,pix.height-y-1,1,src,bi,DIB_RGB_COLORS)
+			SetDIBits(hdc,bm,pix.height-y-1,1,src,bi.infoPtr,DIB_RGB_COLORS)
 			src:+pix.pitch
 		Next
 		
 		ReleaseDC(0,hdc)
 		
 		Return bm
-End Rem
+
 	EndFunction
 	
-	Function BitmapWithBackgroundFromPixmap32:Int( pix:TPixmap, pRed, pGreen, pBlue )
-Rem
+	Function BitmapWithBackgroundFromPixmap32:Byte Ptr( pix:TPixmap, pRed, pGreen, pBlue )
+
 		Local tmpPixel, tmpRed, tmpGreen, tmpBlue, tmpAlpha, tmpAlphaFloat#, tmpAlphaFloat2#
 		Local pix2:TPixmap = CreatePixmap( pix.width, pix.height, pix.format), x
 		
@@ -5115,7 +5133,7 @@ Rem
 		Next
 		
 		Return BitmapFromPixmap(pix2,False)
-End Rem
+
 	EndFunction
 
 	Function IconFromPixmap32:Byte Ptr(pix:TPixmap)

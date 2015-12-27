@@ -125,7 +125,7 @@ Type THotKey
 	Field succ:THotKey
 	Field key,mods
 	Field event:TEvent
-	Field owner
+	Field owner:Byte Ptr
 End Type
 
 Global hotKeys:THotKey
@@ -143,7 +143,7 @@ to @key and @mods equal to @mods will be emitted.
 
 Please refer to the #{Key Codes} module for valid key and modifier codes.
 End Rem
-Function SetHotKeyEvent:THotKey( key,mods,event:TEvent=Null,owner=0 )
+Function SetHotKeyEvent:THotKey( key,mods,event:TEvent=Null,owner:Byte Ptr=0 )
 	If Not event event=CreateEvent( EVENT_HOTKEYHIT,Null,key,mods )
 	Local t:THotKey=hotKeys
 	While t
