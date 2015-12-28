@@ -181,7 +181,7 @@ Function RemoveHotKey(hotkey:THotKey)
 	Wend
 End Function
 
-Function HotKeyEvent:TEvent( key,mods,owner )
+Function HotKeyEvent:TEvent( key,mods,owner:Byte Ptr )
 	Local t:THotKey=hotKeys
 	While t
 		If t.key=key And t.mods=mods

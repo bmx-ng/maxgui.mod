@@ -452,7 +452,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 	Function HotkeyEventFromWp:TEvent(wparam:Byte Ptr)
 		Local key = Int(wparam), mods = KeyMods()
-		Select wparam
+		Select Int(wparam)
 			Case VK_SHIFT, $A0, $A1
 				If (wparam=VK_SHIFT) Then key = KEY_LSHIFT
 				mods:&~MODIFIER_SHIFT
@@ -1004,7 +1004,7 @@ Type TWindowsGadget Extends TGadget
 	'Important gadget fields that store OS control handles etc..
 	
 	Field _class, _hwnd:Byte Ptr, _hwndclient:Byte Ptr, _tooltips:Byte Ptr
-	Field _proc(hwnd:Byte Ptr,msg:UInt,wp:Byte Ptr,lp:Byte Ptr) "win32"
+	Field _proc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:Byte Ptr,lp:Byte Ptr) "win32"
 	Field _hotkey:THotKey
 	Field _oldcursorlp:Byte Ptr	'Should track events
 	
@@ -1280,7 +1280,7 @@ Type TWindowsGadget Extends TGadget
 	EndMethod
 	
 	Method SetHotKey(key,modifier)
-		Local ev:TEvent = CreateEvent( EVENT_GADGETACTION,Self )
+		Local ev:TEvent = CreateEvent( EVENT_GADGETACTION,Self,,,,,,False )
 		If _hotKey Then
 			RemoveHotKey(_hotKey)
 			_hotKey = Null
@@ -1788,7 +1788,6 @@ Type TWindowsWindow Extends TWindowsGadget
 	EndMethod
 	
 	Method HandleMenuEvent( msg, wp:ULong )
-		
 		Local tmpMenuSource:TWindowsMenu = TWindowsMenu.GetMenuFromKey(wp), tmpMenuID
 		If tmpMenuSource Then tmpMenuID = tmpMenuSource._tag
 		
@@ -2552,7 +2551,6 @@ Type TWindowsMenu Extends TGadget
 			m="~t"+m
 		EndIf
 		_shortcut$=LocalizeString(m)
-		
 		If Not iteminfo
 			iteminfo=New MENUITEMINFOW
 			'iteminfo.cbSize=SizeOf(iteminfo)
@@ -2563,7 +2561,7 @@ Type TWindowsMenu Extends TGadget
 		
 		MemFree iteminfo.dwTypeData()
 		
-		Local ev:TEvent=CreateEvent( EVENT_MENUACTION, Self,_tag )
+		Local ev:TEvent=CreateEvent( EVENT_MENUACTION, Self,_tag,,,,,False )
 		If _hotKey Then
 			RemoveHotKey(_hotKey)
 			_hotKey = Null
