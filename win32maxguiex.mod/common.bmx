@@ -319,7 +319,7 @@ Extern "Win32"
 	'Function ImageList_Add(himl:Byte Ptr,hbmImage:Byte Ptr,crMask)
 	'Function ImageList_Destroy( hImageList:Byte Ptr )
 	'Function ImageList_GetImageCount( hImageList:Byte Ptr )
-	Function CreateDIBSection(hdc:Byte Ptr,bminfo:Byte Ptr,iUsageUInt,bits:Byte Ptr Ptr,hSection:Byte Ptr,dwOffset)
+	Function CreateDIBSection(hdc:Byte Ptr,bminfo:Byte Ptr,iUsage:UInt,bits:Byte Ptr Ptr,hSection:Byte Ptr,dwOffset)
 	Function AlphaBlend_(hdc:Byte Ptr,dx,dy,dw,dh,hdc2:Byte Ptr,src,sry,srcw,srch,rop)="AlphaBlendArgs"
 	Function SendMessageSetImageList(hwnd:Byte Ptr, _buttonImageList:Byte Ptr Ptr, _imageAlign:Int)
 	
