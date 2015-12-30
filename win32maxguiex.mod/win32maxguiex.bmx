@@ -917,7 +917,7 @@ Type TWindowsFont Extends TGuiFont
 		EndIf
 		
 		Local hwnd:Byte Ptr = GetFocus()
-		Local n = ChooseFontW_(cf)
+		Local n = ChooseFontW_(cf.fontPtr)
 		SetFocus(hwnd)
 		If Not n Return
 		
