@@ -1,10 +1,7 @@
 Strict
 
-'Import MaxGUI.Drivers
-Framework BaH.GTKMaxGUI
-Import BRL.EventQueue
+Import MaxGUI.Drivers
 Import MaxGUI.ProxyGadgets
-Import brl.random
 
 AppTitle = "Scroll Panel Example"
 SeedRnd MilliSecs()
