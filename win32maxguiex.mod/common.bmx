@@ -376,12 +376,9 @@ Extern "Win32"
 	
 	'Gadget text retrieval
 	Function GetWindowTextLengthW( hwnd:Byte Ptr )
-	Function GetWindowTextW( hwnd:Byte Ptr, lpString:Short Ptr, nMaxCount)
 	
 	'Missing misc. system functions
 	Function GetCursor:Byte Ptr()
-	Function GetClassNameW%( pHwnd:Byte Ptr, pTextOut:Short Ptr, pTextLength% )
-	Function GetLastError()
 	Function FreeLibrary( hLibrary:Byte Ptr )
 	
 	'Printing functions for text-area GadgetPrint()

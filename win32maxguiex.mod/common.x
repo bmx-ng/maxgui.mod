@@ -42,10 +42,7 @@ DWORD __stdcall GetSysColor(int )!
 int __stdcall GetSystemMetrics(int )!
 WINBOOL __stdcall GetScrollBarInfo(HWND ,LONG ,PSCROLLBARINFO )!
 int __stdcall GetWindowTextLengthW(HWND )!
-int __stdcall GetWindowTextW(HWND ,LPWSTR ,int )!
 HCURSOR __stdcall GetCursor()!
-int __stdcall GetClassNameW(HWND ,LPWSTR ,int )!
-DWORD __stdcall GetLastError ()!
 WINBOOL __stdcall FreeLibrary (HMODULE )!
 WINBOOL __stdcall PrintDlgW(LPPRINTDLGW)!
 int __stdcall StartDocW(HDC ,CONST DOCINFOW *)!
