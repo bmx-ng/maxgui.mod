@@ -295,6 +295,10 @@ void ScheduleEventDispatch(){
 -(NSMenu*)menuForEvent:(NSEvent *)theEvent;
 @end
 
+@interface VerticalCenterAlignedBrowserCell : NSBrowserCell {
+}
+
+@end
 @interface NodeItem:NSObject{
 	TreeView		*owner;
 	NodeItem		*parent;
@@ -323,9 +327,9 @@ void ScheduleEventDispatch(){
 @public
 	NSOutlineView	*outline;
 	NSTableColumn	*column,*colin;
-	NSBrowserCell	*cell;
+	VerticalCenterAlignedBrowserCell	*cell;
 	NodeItem		*rootNode;
-	NSDictionary	*textstyle;
+	NSMutableDictionary *textstyle;
 }
 -(id)initWithFrame:(NSRect)rect;
 -(void)reloadItem:(id)item;
@@ -1203,6 +1207,22 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 }
 @end
 
+@implementation VerticalCenterAlignedBrowserCell
+
+- (NSRect)titleRectForBounds:(NSRect)theRect {
+    NSRect titleFrame = [super titleRectForBounds:theRect];
+    NSSize titleSize = [[self attributedStringValue] size];
+	titleFrame.origin.x = theRect.origin.x + 2;
+    titleFrame.origin.y = theRect.origin.y - .5 + (theRect.size.height - titleSize.height) / 2.0;
+    return titleFrame;
+}
+
+- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
+    NSRect titleRect = [self titleRectForBounds:cellFrame];
+    [[self attributedStringValue] drawInRect:titleRect];
+}
+
+@end
 // TreeView
 
 @implementation TreeView
@@ -1223,7 +1243,7 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 	column=[[NSTableColumn alloc] init];
 	[outline addTableColumn:column];
 	[outline setOutlineTableColumn:column];
-	cell=[[NSBrowserCell alloc] init];
+	cell=[[VerticalCenterAlignedBrowserCell alloc] init];
 	[cell setLeaf:YES];
 	[cell setScrollable:YES];
 	[column setDataCell:cell];		
@@ -1342,7 +1362,7 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 -(void)setTextColor:(NSColor*)color{
 	if (textstyle) {[textstyle release];textstyle=nil;}
 	if (color){
-		textstyle=[NSDictionary dictionaryWithObjectsAndKeys:color,NSForegroundColorAttributeName,nil];
+		textstyle=[NSMutableDictionary dictionaryWithObjectsAndKeys:color,NSForegroundColorAttributeName,nil];
 		[textstyle retain];	
 	}
 }
@@ -1351,14 +1371,18 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 		NSLayoutManager* layoutManager = [[[NSLayoutManager alloc] init] autorelease];
 		int i;
 		NSArray *columnsArray = [outline tableColumns];
-		for (i= 0; i < [columnsArray count]; i++)
-		[[[columnsArray objectAtIndex:i] dataCell] setFont:font];
-		[outline setRowHeight: [layoutManager defaultLineHeightForFont:font]+1];
+		for (i= 0; i < [columnsArray count]; i++) {
+			[[[columnsArray objectAtIndex:i] dataCell] setFont:font];
+		}
+		[outline setRowHeight: [layoutManager defaultLineHeightForFont:font]+3];
+		
+		[cell setFont:font];
 		[rootNode queueWidthUpdate];
 	}
 }
 - (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)dcell forTableColumn:(NSTableColumn *)tableColumn item:(id)node{
 	if (textstyle){
+		[textstyle setValue:[cell font] forKey:NSFontAttributeName];
 		NSAttributedString *atext=[[[NSAttributedString alloc] initWithString:[node value] attributes:textstyle] autorelease];
 		[dcell setAttributedStringValue:atext];
 	}
