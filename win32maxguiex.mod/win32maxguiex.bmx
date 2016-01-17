@@ -440,7 +440,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 			If ev
 				'Hot-key events shouldn't be emitted if the source gadget is disabled
 				If Not(TGadget(ev.source) And GadgetDisabled(TGadget(ev.source))) Then
-					If Not (UInt(lparam) & $80000000) Then
+					If Not (UInt(lparam) & $80000000:UInt) Then
 						EmitEvent ev
 						If ev.mods Then Return 1	'Key press events never reach active panels etc. if we return 1
 					EndIf
@@ -468,7 +468,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		Return HotKeyEvent( key,mods,GetForegroundWindow() )
 	EndFunction
 
-	Global intButtonStates%[3]
+	Global intButtonStates%[4]
 	
 	Function MouseProc:Byte Ptr( code,wparam:Byte Ptr,lparam:Byte Ptr ) "win32" nodebug
 
