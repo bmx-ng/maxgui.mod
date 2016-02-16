@@ -143,7 +143,11 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 			Case GADGET_TEXTFIELD
 				gadget=New TWindowsTextField.Create(group,style,Text)
 			Case GADGET_TEXTAREA
-				gadget=New TWindowsTextArea.Create(group,style)
+				' no custom text area? use the default
+				If Not windowsmaxguiex_textarea Then
+					windowsmaxguiex_textarea = New TWindowsDefaultTextAreaDriver
+				End If
+				gadget = windowsmaxguiex_textarea.CreateTextArea(group,style,Text)
 			Case GADGET_COMBOBOX
 				gadget=New TWindowsComboBox.Create(group,style,Text)
 			Case GADGET_LISTBOX
@@ -3990,7 +3994,7 @@ Type TWindowsTextField Extends TWindowsGadget
 	
 EndType
 
-Type TWindowsTextArea Extends TWindowsGadget
+Type TWindowsDefaultTextArea Extends TWindowsTextArea
 	
 	Global _ClassName:String = Null	'See InitializeLibrary().
 	
@@ -4399,7 +4403,6 @@ End Rem
 		Return AreaText(0,charcount(),TEXTAREA_CHARS)
 	EndMethod
 	
-	Global _oldCursor:Byte Ptr = 0
 	Field _oldSelPos%, _oldSelLen% = 0
 	
 	Method LockText()
@@ -5184,6 +5187,30 @@ Function FindGadgetWindowHwnd:Byte Ptr(g:TGadget)
 		g=g.parent
 	Wend
 EndFunction
+
+Rem
+bbdoc: A base type for text area gadgets.
+about: Implementations are in seperate modules, except for the default TGTKDefaultTextArea
+End Rem
+Type TWindowsTextArea Extends TWindowsGadget
+	Global _oldCursor:Byte Ptr = 0
+
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="") Abstract
+End Type
+
+
+Type TWindowsTextAreaDriver
+	Function CreateTextArea:TWindowsGadget(group:TGadget,style,Text$="") Abstract
+End Type
+
+' default text area driver
+Type TWindowsDefaultTextAreaDriver Extends TWindowsTextAreaDriver
+	Function CreateTextArea:TWindowsGadget(group:TGadget,style,Text$="")
+		Return New TWindowsDefaultTextArea.Create(group, style, Text)
+	End Function
+End Type
+
+Global windowsmaxguiex_textarea:TWindowsTextAreaDriver
 
 ?
 
