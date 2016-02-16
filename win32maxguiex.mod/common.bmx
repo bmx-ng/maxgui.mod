@@ -320,7 +320,6 @@ Extern "Win32"
 	'Function ImageList_Destroy( hImageList:Byte Ptr )
 	'Function ImageList_GetImageCount( hImageList:Byte Ptr )
 	Function CreateDIBSection(hdc:Byte Ptr,bminfo:Byte Ptr,iUsage:UInt,bits:Byte Ptr Ptr,hSection:Byte Ptr,dwOffset)
-	Function AlphaBlend_(hdc:Byte Ptr,dx,dy,dw,dh,hdc2:Byte Ptr,src,sry,srcw,srch,rop)="AlphaBlendArgs"
 	Function SendMessageSetImageList(hwnd:Byte Ptr, _buttonImageList:Byte Ptr Ptr, _imageAlign:Int)
 	
 	'WM_CTLCOLORXXXX handling
@@ -398,6 +397,9 @@ Extern "Win32"
 
 EndExtern
 
+Extern
+	Function AlphaBlend_(hdc:Byte Ptr,dx,dy,dw,dh,hdc2:Byte Ptr,src,sry,srcw,srch,rop)="AlphaBlendArgs"
+End Extern
 
 Extern
 	Function bmx_win32_DLLVERSIONINFO2_new:Byte Ptr()
