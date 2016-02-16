@@ -5168,26 +5168,6 @@ Type TWindowsGraphic Final
 
 EndType
 
-Private
-
-Function KeyMods()
-	Local mods
-	If GetKeyState(VK_SHIFT)&$8000 mods:|MODIFIER_SHIFT
-	If GetKeyState(VK_CONTROL)&$8000 mods:|MODIFIER_CONTROL
-	If GetKeyState(VK_MENU)&$8000 mods:|MODIFIER_OPTION
-	If GetKeyState(VK_LWIN)&$8000 Or GetKeyState(VK_RWIN)&$8000 mods:|MODIFIER_SYSTEM
-	Return mods
-EndFunction
-
-Function FindGadgetWindowHwnd:Byte Ptr(g:TGadget)
-	Local wg:TWindowsWindow
-	While g
-		wg=TWindowsWindow(g)
-		If wg Return wg.Query(QUERY_HWND)	'handle
-		g=g.parent
-	Wend
-EndFunction
-
 Rem
 bbdoc: A base type for text area gadgets.
 about: Implementations are in seperate modules, except for the default TGTKDefaultTextArea
@@ -5211,6 +5191,27 @@ Type TWindowsDefaultTextAreaDriver Extends TWindowsTextAreaDriver
 End Type
 
 Global windowsmaxguiex_textarea:TWindowsTextAreaDriver
+
+
+Private
+
+Function KeyMods()
+	Local mods
+	If GetKeyState(VK_SHIFT)&$8000 mods:|MODIFIER_SHIFT
+	If GetKeyState(VK_CONTROL)&$8000 mods:|MODIFIER_CONTROL
+	If GetKeyState(VK_MENU)&$8000 mods:|MODIFIER_OPTION
+	If GetKeyState(VK_LWIN)&$8000 Or GetKeyState(VK_RWIN)&$8000 mods:|MODIFIER_SYSTEM
+	Return mods
+EndFunction
+
+Function FindGadgetWindowHwnd:Byte Ptr(g:TGadget)
+	Local wg:TWindowsWindow
+	While g
+		wg=TWindowsWindow(g)
+		If wg Return wg.Query(QUERY_HWND)	'handle
+		g=g.parent
+	Wend
+EndFunction
 
 ?
 
