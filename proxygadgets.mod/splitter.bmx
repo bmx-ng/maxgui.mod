@@ -312,11 +312,11 @@ Type TSplitter Extends TProxyGadget
 			SetGadgetShape(pnlSplitHandle, tmpDimensions[0], tmpDimensions[1], tmpDimensions[2], tmpDimensions[3])
 			Select intOrientation&SPLIT_VERTICAL
 				Case SPLIT_HORIZONTAL
-					SetGadgetShape( divSplitHandle1,0,Ceil(tmpDimensions[3]/2.0)-2,tmpDimensions[2],2 )
-					SetGadgetShape( divSplitHandle2,0,Ceil(tmpDimensions[3]/2.0),tmpDimensions[2],2 )
+					SetGadgetShape( divSplitHandle1,0,Int(Ceil(tmpDimensions[3]/2.0)-2),tmpDimensions[2],2 )
+					SetGadgetShape( divSplitHandle2,0,Int(Ceil(tmpDimensions[3]/2.0)),tmpDimensions[2],2 )
 				Case SPLIT_VERTICAL
-					SetGadgetShape( divSplitHandle1,Ceil(tmpDimensions[2]/2.0)-2,0,2,tmpDimensions[3] )
-					SetGadgetShape( divSplitHandle2,Ceil(tmpDimensions[2]/2.0),0,2,tmpDimensions[3] )
+					SetGadgetShape( divSplitHandle1,Int(Ceil(tmpDimensions[2]/2.0)-2),0,2,tmpDimensions[3] )
+					SetGadgetShape( divSplitHandle2,Int(Ceil(tmpDimensions[2]/2.0)),0,2,tmpDimensions[3] )
 			EndSelect
 			If pixHandle[0] Then
 				HideGadget(divSplitHandle1)
@@ -332,11 +332,11 @@ Type TSplitter Extends TProxyGadget
 			
 			Select intOrientation&SPLIT_VERTICAL
 				Case SPLIT_HORIZONTAL
-					divSplitHandle1 = CreateLabel("",0,Ceil(tmpDimensions[3]/2.0)-2,tmpDimensions[2],2,pnlSplitHandle,LABEL_SEPARATOR)
-					divSplitHandle2 = CreateLabel("",0,Ceil(tmpDimensions[3]/2.0),tmpDimensions[2],2,pnlSplitHandle,LABEL_SEPARATOR)
+					divSplitHandle1 = CreateLabel("",0,Int(Ceil(tmpDimensions[3]/2.0)-2),tmpDimensions[2],2,pnlSplitHandle,LABEL_SEPARATOR)
+					divSplitHandle2 = CreateLabel("",0,Int(Ceil(tmpDimensions[3]/2.0)),tmpDimensions[2],2,pnlSplitHandle,LABEL_SEPARATOR)
 				Case SPLIT_VERTICAL
-					divSplitHandle1 = CreateLabel("",Ceil(tmpDimensions[2]/2.0)-2,0,2,tmpDimensions[3],pnlSplitHandle,LABEL_SEPARATOR)
-					divSplitHandle2 = CreateLabel("",Ceil(tmpDimensions[2]/2.0),0,2,tmpDimensions[3],pnlSplitHandle,LABEL_SEPARATOR)
+					divSplitHandle1 = CreateLabel("",Int(Ceil(tmpDimensions[2]/2.0)-2),0,2,tmpDimensions[3],pnlSplitHandle,LABEL_SEPARATOR)
+					divSplitHandle2 = CreateLabel("",Int(Ceil(tmpDimensions[2]/2.0)),0,2,tmpDimensions[3],pnlSplitHandle,LABEL_SEPARATOR)
 			EndSelect
 			SetGadgetSensitivity(divSplitHandle1,SENSITIZE_MOUSE);SetGadgetSensitivity(divSplitHandle2,SENSITIZE_MOUSE)
 			
@@ -640,7 +640,7 @@ Type TSplitter Extends TProxyGadget
 		Local tmpPixmap:TPixmap = CreatePixmap(1,pWidth,PF_RGB888)
 		Local tmpPixel% = (pRed Shl 16)|(pGreen Shl 8)|pBlue
 		For Local i% = 0 To pWidth/2
-			Local tmpCalculatedPixel% = BrightenPixel(tmpPixel,1.05^i)
+			Local tmpCalculatedPixel% = BrightenPixel(tmpPixel,Float(1.05^i))
 			WritePixel(tmpPixmap,0,i,tmpCalculatedPixel)
 			WritePixel(tmpPixmap,0,pWidth-1-i,tmpCalculatedPixel)
 		Next

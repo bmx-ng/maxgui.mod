@@ -41,7 +41,7 @@ Extern
 	Function NSGetTooltip$(gadget:TNSGadget)
 	Function NSSuperview:Byte Ptr(view:Byte Ptr)
 	' window
-	Function NSSetStatus(gadget:TNSGadget,text$,pos)
+	Function NSSetStatus(gadget:TNSGadget,Text$,pos)
 	Function NSSetMinimumSize(gadget:TNSGadget,width,height)
 	Function NSSetMaximumSize(gadget:TNSGadget,width,height)
 	Function NSPopupMenu(gadget:TNSGadget,menu:TNSGadget)
@@ -55,17 +55,17 @@ Extern
 	Function NSFontSize:Double(font:Byte Ptr)
 	' items
 	Function NSClearItems(gadget:TNSGadget)
-	Function NSAddItem(gadget:TNSGadget,index,text$,tip$,image:Byte Ptr,extra:Object)
-	Function NSSetItem(gadget:TNSGadget,index,text$,tip$,image:Byte Ptr,extra:Object)
+	Function NSAddItem(gadget:TNSGadget,index,Text$,tip$,image:Byte Ptr,extra:Object)
+	Function NSSetItem(gadget:TNSGadget,index,Text$,tip$,image:Byte Ptr,extra:Object)
 	Function NSRemoveItem(gadget:TNSGadget,index)
 	Function NSSelectItem(gadget:TNSGadget,index,state)
 	Function NSSelectedItem(gadget:TNSGadget,index)
 	Function NSSelectedNode:Byte Ptr(gadget:TNSGadget)
 	' text
-	Function NSSetText(gadget:TNSGadget,text$)
+	Function NSSetText(gadget:TNSGadget,Text$)
 	Function NSGetText$(gadget:TNSGadget)
-	Function NSReplaceText(gadget:TNSGadget,pos,length,text$,units)
-	Function NSAddText(gadget:TNSGadget,text$)
+	Function NSReplaceText(gadget:TNSGadget,pos,length,Text$,units)
+	Function NSAddText(gadget:TNSGadget,Text$)
 	Function NSAreaText$(gadget:TNSGadget,pos,length,units)
 	Function NSAreaLen(gadget:TNSGadget,units)
 	Function NSLockText(gadget:TNSGadget)
@@ -285,7 +285,7 @@ Function PostCocoaGuiEvent( id,handle:Byte Ptr,data:Long,mods,x,y,extra:Object )
 			
 			Select gadget.internalclass
 				Case GADGET_TREEVIEW
-					extra=GadgetFromHandle(data)
+					extra=GadgetFromHandle(Byte Ptr(data))
 					data = 0
 			EndSelect
 			
@@ -323,14 +323,14 @@ Function PostCocoaGuiEvent( id,handle:Byte Ptr,data:Long,mods,x,y,extra:Object )
 											data = -gadget.small
 										EndIf
 								EndSelect
-								gadget.SetProp(oldValue+data)
+								gadget.SetProp(Int(oldValue+data))
 								data=gadget.GetProp()
 								If (data = oldValue) Then Return
 							Else
 								data=gadget.GetProp()
 							EndIf
 						Case GADGET_LISTBOX, GADGET_COMBOBOX, GADGET_TABBER
-							If (data > -1 And data < gadget.items.length) extra=gadget.ItemExtra(data)
+							If (data > -1 And data < gadget.items.length) extra=gadget.ItemExtra(Int(data))
 						Case GADGET_BUTTON
 							Select (gadget.style&7)
 								Case BUTTON_CHECKBOX
@@ -342,20 +342,20 @@ Function PostCocoaGuiEvent( id,handle:Byte Ptr,data:Long,mods,x,y,extra:Object )
 							data=ButtonState(gadget)
 						Case GADGET_TOOLBAR
 							If data>-1 Then
-								extra=gadget.ItemExtra(data)
-								If (gadget.ItemFlags(data)&GADGETITEM_TOGGLE) Then gadget.SelectItem(data,2)
+								extra=gadget.ItemExtra(Int(data))
+								If (gadget.ItemFlags(Int(data))&GADGETITEM_TOGGLE) Then gadget.SelectItem(Int(data),2)
 							EndIf
 					EndSelect
 					
 				Case EVENT_GADGETSELECT, EVENT_GADGETMENU
 					Select gadget.internalclass
 						Case GADGET_LISTBOX, GADGET_COMBOBOX, GADGET_TABBER
-							If data>-1 Then extra=gadget.ItemExtra(data)
+							If data>-1 Then extra=gadget.ItemExtra(Int(data))
 					EndSelect
 					
 				Case EVENT_GADGETLOSTFOCUS
 				
-					QueueGuiEvent id,gadget,data,mods,x,y,extra
+					QueueGuiEvent id,gadget,Int(data),mods,x,y,extra
 					ScheduleEventDispatch()
 					Return
 					
@@ -364,7 +364,7 @@ Function PostCocoaGuiEvent( id,handle:Byte Ptr,data:Long,mods,x,y,extra:Object )
 	
 	EndIf
 	
-	PostGuiEvent id,gadget,data,mods,x,y,extra
+	PostGuiEvent id,gadget,Int(data),mods,x,y,extra
 	
 EndFunction
 
@@ -412,7 +412,7 @@ Type TNSGadget Extends TGadget
 
 ' main factory command
 
-	Function Create:TNSGadget(internalclass,text$,x,y,w,h,group:TGadget,style)
+	Function Create:TNSGadget(internalclass,Text$,x,y,w,h,group:TGadget,style)
 		
 		Local gadget:TNSGadget = New TNSGadget
 		gadget.origclass = internalclass
@@ -421,7 +421,7 @@ Type TNSGadget Extends TGadget
 		If Not group And internalclass<>GADGET_DESKTOP Then group = Desktop()
 		gadget.parent = group
 		
-		gadget.name = text
+		gadget.name = Text
 		gadget.SetRect x,y,w,h	'setarea
 		gadget.style = style
 		gadget.font = TCocoaMaxGUIDriver.CocoaGUIFont
@@ -452,7 +452,7 @@ Type TNSGadget Extends TGadget
 			EndIf
 		EndIf
 		
-		If LocalizationMode() & LOCALIZATION_OVERRIDE Then LocalizeGadget(gadget,text,"")
+		If LocalizationMode() & LOCALIZATION_OVERRIDE Then LocalizeGadget(gadget,Text,"")
 		
 		gadget.SetEnabled(gadget.enabled)
 		
@@ -790,15 +790,15 @@ Type TNSGadget Extends TGadget
 		EndIf				
 	End Method
 	
-	Method InsertNode:TGadget(index,text$,icon)
-		Local	node:TNSGadget = Create(GADGET_NODE,text,0,0,0,0,Self,index)
+	Method InsertNode:TGadget(index,Text$,icon)
+		Local	node:TNSGadget = Create(GADGET_NODE,Text,0,0,0,0,Self,index)
 		node.SetIcon icon
 		node._SetParent Self
 		Return node
 	End Method
 	
-	Method ModifyNode(text$,icon)
-		NSSetText Self,text
+	Method ModifyNode(Text$,icon)
+		NSSetText Self,Text
 		SetIcon icon
 	End Method
 
@@ -813,15 +813,15 @@ Type TNSGadget Extends TGadget
 
 ' textarea commands
 
-	Method ReplaceText(pos,length,text$,units)
+	Method ReplaceText(pos,length,Text$,units)
 ?debug
 		If pos<0 Or pos+length>AreaLen(units) Throw "Illegal Range"
 ?	
-		NSReplaceText Self,pos,length,text$,units
+		NSReplaceText Self,pos,length,Text$,units
 	End Method
 
-	Method AddText(text$)
-		NSAddText Self,text
+	Method AddText(Text$)
+		NSAddText Self,Text
 	End Method
 
 	Method AreaText$(pos,length,units)
