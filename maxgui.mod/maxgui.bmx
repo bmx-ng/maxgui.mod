@@ -1685,6 +1685,22 @@ Function TextAreaCharY( textarea:TGadget, char )
 	Return textarea.CharY(char)
 End Function
 
+Rem
+bbdoc: Sets the caret width in a TextArea gadget.
+about:
+EndRem
+Function SetTextAreaCaretWidth( textarea:TGadget, width:Int )
+	textarea.SetCaretWidth(width)
+End Function
+
+Rem
+bbdoc: Sets the caret color in a TextArea gadget.
+about:
+EndRem
+Function SetTextAreaCaretColor( textarea:TGadget, r:Int, g:Int, b:Int )
+	textarea.SetCaretColor(r, g, b)
+End Function
+
 ' gadget lists
 
 Rem

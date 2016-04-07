@@ -197,7 +197,7 @@ Type TGadget
 
 	Global dragGadget:TGadget[3]
 	
-	Global LocalizeString$( text$ ) 'set at the bottom of maxgui.mod/driver.bmx
+	Global LocalizeString$( Text$ ) 'set at the bottom of maxgui.mod/driver.bmx
 	'Global LocalizeGadget( gadget:TGadget, text$ )
 	Global DelocalizeGadget( gadget:TGadget )
 	
@@ -486,7 +486,7 @@ Type TGadget
 		items=Null
 	End Method
 
-	Method InsertItem(index,text$,tip$,icon,extra:Object,flags)
+	Method InsertItem(index,Text$,tip$,icon,extra:Object,flags)
 ?debug
 		If index<0 Or index>items.length Throw "Gadget item index out of range."
 ?
@@ -495,26 +495,26 @@ Type TGadget
 			items[i+1]=items[i]
 		Next
 		items[index]=New TGadgetItem
-		items[index].Set(text,tip,icon,extra,flags)
+		items[index].Set(Text,tip,icon,extra,flags)
 		If flags&GADGETITEM_LOCALIZED Then
-			InsertListItem(index,LocalizeString(text),LocalizeString(tip),icon,extra)
+			InsertListItem(index,LocalizeString(Text),LocalizeString(tip),icon,extra)
 		Else
-			InsertListItem(index,text,tip,icon,extra)
+			InsertListItem(index,Text,tip,icon,extra)
 		EndIf
 		If flags&GADGETITEM_DEFAULT SelectItem(index)
 'DebugLog "InsertItem length = " + items.length
 	End Method
 	
 	
-	Method SetItem(index,text$,tip$,icon,extra:Object,flags)
+	Method SetItem(index,Text$,tip$,icon,extra:Object,flags)
 ?debug
 		If index<0 Or index>=items.length Throw "Gadget item index out of range."
 ?
-		items[index].Set(text,tip,icon,extra,flags)
+		items[index].Set(Text,tip,icon,extra,flags)
 		If flags&GADGETITEM_LOCALIZED Then
-			SetListItem(index,LocalizeString(text),LocalizeString(tip),icon,extra)
+			SetListItem(index,LocalizeString(Text),LocalizeString(tip),icon,extra)
 		Else
-			SetListItem(index,text,tip,icon,extra)
+			SetListItem(index,Text,tip,icon,extra)
 		EndIf
 		If flags&GADGETITEM_DEFAULT SelectItem(index)
 	End Method
@@ -538,7 +538,7 @@ Type TGadget
 ?debug
 		If index<0 Or index>=items.length Throw "Gadget item index out of range."
 ?
-		Return items[index].text		
+		Return items[index].Text		
 	End Method
 
 	Method ItemTip$(index)
@@ -610,7 +610,7 @@ Type TGadget
 		icon=item.icon
 		If icon>-1 And item.flags&GADGETITEM_TOGGLE
 			If state&STATE_SELECTED	icon:+1
-			SetListItem index,item.text,item.tip,icon,item.extra	'toggle icon
+			SetListItem index,item.Text,item.tip,icon,item.extra	'toggle icon
 		EndIf
 		SetItemState index,state
 	End Method
@@ -664,7 +664,7 @@ Type TGadget
 	End Method
 	Method State()
 	End Method
-	Method SetText(text$)
+	Method SetText(Text$)
 	End Method
 	Method GetText$()
 	End Method
@@ -705,7 +705,7 @@ Type TGadget
 ' window commands
 	Method GetStatusText$()
 	End Method
-	Method SetStatusText(text$)
+	Method SetStatusText(Text$)
 	End Method
 	Method GetMenu:TGadget()
 	End Method
@@ -720,9 +720,9 @@ Type TGadget
 ' list commands
 	Method ClearListItems()
 	End Method
-	Method InsertListItem(index,text$,tip$,icon,tag:Object)
+	Method InsertListItem(index,Text$,tip$,icon,tag:Object)
 	End Method
-	Method SetListItem(index,text$,tip$,icon,tag:Object)
+	Method SetListItem(index,Text$,tip$,icon,tag:Object)
 	End Method
 	Method RemoveListItem(index)
 	End Method
@@ -733,18 +733,18 @@ Type TGadget
 ' treeview commands
 	Method RootNode:TGadget()
 	End Method
-	Method InsertNode:TGadget(index,text$,icon)
+	Method InsertNode:TGadget(index,Text$,icon)
 	End Method
-	Method ModifyNode(text$,icon)
+	Method ModifyNode(Text$,icon)
 	End Method
 	Method SelectedNode:TGadget()
 	End Method
 	Method CountKids()
 	End Method
 ' textarea commands
-	Method ReplaceText(pos,length,text$,units)
+	Method ReplaceText(pos,length,Text$,units)
 	End Method
-	Method AddText(text$)
+	Method AddText(Text$)
 	End Method
 	Method AreaText$(pos,length,units)
 	End Method
@@ -773,6 +773,10 @@ Type TGadget
 	Method CharAt(line)
 	End Method
 	Method LineAt(index)
+	End Method
+	Method SetCaretWidth(width:Int)
+	End Method
+	Method SetCaretColor(r:Int, g:Int, b:Int)
 	End Method
 ' progbar
 	Method SetValue(value#)
@@ -855,8 +859,8 @@ Type TProxyGadget Extends TGadget
 	Method State()
 		Return proxy.State()
 	End Method
-	Method SetText(text$)
-		Return proxy.SetText(text)
+	Method SetText(Text$)
+		Return proxy.SetText(Text)
 	End Method
 	Method GetText$()
 		Return proxy.GetText()
@@ -912,11 +916,11 @@ Type TProxyGadget Extends TGadget
 ' window commands
 	Method GetStatusText$()
 	End Method
-	Method SetStatusText(text$)
-		Return proxy.SetStatusText(text)
+	Method SetStatusText(Text$)
+		Return proxy.SetStatusText(Text)
 	End Method
-	Method SetStatus(text$)
-		Return Self.SetStatusText(text)
+	Method SetStatus(Text$)
+		Return Self.SetStatusText(Text)
 	EndMethod
 	Method GetMenu:TGadget()
 		Return proxy.GetMenu()
@@ -937,11 +941,11 @@ Type TProxyGadget Extends TGadget
 	Method ClearListItems()
 		Return proxy.ClearListItems()
 	End Method
-	Method InsertListItem(index,text$,tip$,icon,extra:Object)
-		Return proxy.InsertListItem(index,text,tip,icon,extra)
+	Method InsertListItem(index,Text$,tip$,icon,extra:Object)
+		Return proxy.InsertListItem(index,Text,tip,icon,extra)
 	End Method
-	Method SetListItem(index,text$,tip$,icon,extra:Object)
-		Return proxy.SetListItem(index,text,tip,icon,extra)
+	Method SetListItem(index,Text$,tip$,icon,extra:Object)
+		Return proxy.SetListItem(index,Text,tip,icon,extra)
 	End Method
 	Method RemoveListItem(index)
 		Return proxy.RemoveListItem(index)
@@ -956,11 +960,11 @@ Type TProxyGadget Extends TGadget
 	Method RootNode:TGadget()
 		Return proxy.RootNode()
 	End Method
-	Method InsertNode:TGadget(index,text$,icon)
-		Return proxy.InsertNode(index,text,icon)
+	Method InsertNode:TGadget(index,Text$,icon)
+		Return proxy.InsertNode(index,Text,icon)
 	End Method
-	Method ModifyNode(text$,icon)
-		Return proxy.ModifyNode(text,icon)
+	Method ModifyNode(Text$,icon)
+		Return proxy.ModifyNode(Text,icon)
 	End Method
 	Method SelectedNode:TGadget()
 		Return proxy.SelectedNode()
@@ -969,11 +973,11 @@ Type TProxyGadget Extends TGadget
 		Return proxy.CountKids()
 	End Method
 ' textarea commands
-	Method ReplaceText(pos,length,text$,units)
-		Return proxy.ReplaceText(pos,length,text,units)
+	Method ReplaceText(pos,length,Text$,units)
+		Return proxy.ReplaceText(pos,length,Text,units)
 	End Method
-	Method AddText(text$)
-		Return proxy.AddText(text)
+	Method AddText(Text$)
+		Return proxy.AddText(Text)
 	End Method
 	Method AreaText$(pos,length,units)
 		Return proxy.AreaText(pos,length,units)
@@ -1017,6 +1021,12 @@ Type TProxyGadget Extends TGadget
 	Method LineAt(index)
 		Return proxy.LineAt(index)
 	End Method
+	Method SetCaretWidth(width:Int)
+		proxy.SetCaretWidth(width)
+	End Method
+	Method SetCaretColor(r:Int, g:Int, b:Int)
+		proxy.SetCaretColor(r, g, b)
+	End Method
 ' progbar
 	Method SetValue(value#)
 		Return proxy.SetValue(value)
@@ -1050,11 +1060,11 @@ Type TProxyGadget Extends TGadget
 	Method Clear()
 		Return proxy.Clear()
 	End Method
-	Method InsertItem(index,text$,tip$,icon,extra:Object,flags)
-		Return proxy.InsertItem(index,text,tip,icon,extra,flags)
+	Method InsertItem(index,Text$,tip$,icon,extra:Object,flags)
+		Return proxy.InsertItem(index,Text,tip,icon,extra,flags)
 	End Method
-	Method SetItem(index,text$,tip$,icon,extra:Object,flags)
-		Return proxy.SetItem(index,text,tip,icon,extra,flags)
+	Method SetItem(index,Text$,tip$,icon,extra:Object,flags)
+		Return proxy.SetItem(index,Text,tip,icon,extra,flags)
 	End Method
 	Method RemoveItem(index)
 		Return proxy.RemoveItem(index)
