@@ -44,7 +44,7 @@ Extern
 	Function msHtmlActivate(handle:Byte Ptr,cmd)
 	Function msHtmlStatus(handle:Byte Ptr)
 	Function msHtmlHwnd:Byte Ptr(handle:Byte Ptr)
-	Function msHtmlBrowser:Byte Ptr(handle:Byte Ptr)
+	Function msHtmlBrowser(handle:Byte Ptr, browser:IWebBrowser2_ Var)
 	Function mstmlDocument:Byte Ptr(handle:Byte Ptr)
 
 End Extern

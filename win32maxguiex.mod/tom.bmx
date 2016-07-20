@@ -14,57 +14,43 @@ Const TOMWORDS = 2
 Const TOMDOUBLE = 3
 Const TOMDOTTED = 4
 
-Type IRichEditOLE Extends IUnknown
+Extern "win32"
+Interface IRichEditOLE_ Extends IUnknown_
 	
 	Method GetClientSite()
-	End Method
-
+	
 	Method GetObjectCount()
-	End Method
-
+	
 	Method GetLinkCount()
-	End Method
-
+	
 	Method GetObject()
-	End Method
-
+	
 	Method InsertObject()
-	End Method
 
 	Method ConvertObject()
-	End Method
 
 	Method ActivateAs()
-	End Method
 
 	Method SetHostNames()
-	End Method
 
 	Method SetLinkAvailable()
-	End Method
 
 	Method SetDvaspect()
-	End Method
 
 	Method HandsOffStorage()
-	End Method
-
+	
 	Method SaveCompleted()
-	End Method
 
 	Method InPlaceDeactivate()
-	End Method
-
+	
 	Method ContextSensitiveHelp()
-	End Method
-
+	
 	Method GetClipboardData()
-	End Method
-
+	
 	Method ImportDataObject()
-	End Method
 
-End Type
+End Interface
+End Extern
 
 Extern
 	Function bmx_tom_ITextDocument_Range:Int(handle:Byte Ptr, p0:Int, p1:Int, irangePtr:Byte Ptr Ptr)
@@ -72,239 +58,245 @@ Extern
 	Function bmx_tom_ITextDocument_Freeze:Int(handle:Byte Ptr, count:Int Ptr)
 	Function bmx_tom_ITextDocument_Unfreeze:Int(handle:Byte Ptr, count:Int Ptr)
 End Extern
-Type ITextDocument Extends IDispatch
+
+Extern "win32"
+Interface ITextDocument_ Extends IDispatch_
 	Method GetName()
-	End Method
+	'End Method
 
 	Method GetSlection()
-	End Method
+	'End Method
 
 	Method GetStoryCount( storycount:Int Var)
-	End Method
+	'End Method
 
 	Method GetStoryRanges()
-	End Method
+	'End Method
 
 	Method GetSaved()
-	End Method
+	'End Method
 
 	Method SetSaved()
-	End Method
+	'End Method
 
 	Method GetDefaultTabStop(Value# Var)
-	End Method
+	'End Method
 
 	Method SetDefaultTabStop(Value:Float)
-		Return bmx_tom_ITextDocument_SetDefaultTabStop(unknownPtr, Value)
-	End Method
+	'	Return bmx_tom_ITextDocument_SetDefaultTabStop(unknownPtr, Value)
+	'End Method
 
 	Method NewDocument()
-	End Method
+	'End Method
 
 	Method Open()
-	End Method
+	'End Method
 
 	Method Save()
-	End Method
+	'End Method
 
 	Method Freeze(count Var)
-		Return bmx_tom_ITextDocument_Freeze(unknownPtr, Varptr count)
-	End Method
+	'	Return bmx_tom_ITextDocument_Freeze(unknownPtr, Varptr count)
+	'End Method
 
 	Method Unfreeze(count Var)
-		Return bmx_tom_ITextDocument_Unfreeze(unknownPtr, Varptr count)
-	End Method
+	'	Return bmx_tom_ITextDocument_Unfreeze(unknownPtr, Varptr count)
+	'End Method
 
 	Method BeginEditCollection()
-	End Method
+	'End Method
 
 	Method EndEditCollection()
-	End Method
+	'End Method
 
 	Method Undo()
-	End Method
+	'End Method
 
 	Method Redo()
-	End Method
+	'End Method
 
-	Method Range(p0,p1,irange:ITextRange Var)
-		If Not irange Then
-			irange = New ITextRange
-		End If
-		Return bmx_tom_ITextDocument_Range(unknownPtr, p0, p1, Varptr irange.unknownPtr)
-	End Method
+	Method Range(p0,p1,irange:ITextRange_ Var)
+	'	If Not irange Then
+	'		irange = New ITextRange
+	'	End If
+	'	Return bmx_tom_ITextDocument_Range(unknownPtr, p0, p1, Varptr irange.unknownPtr)
+	'End Method
 
-	Method RangeFromPoint(x,y,irange:ITextRange Var)
-	End Method
+	Method RangeFromPoint(x,y,irange:ITextRange_ Var)
+	'End Method
 
-End Type
+End Interface 
+End Extern
 
 Extern
 	Function bmx_tom_ITextRange_GetFont:Int(handle:Byte Ptr, ifontPtr:Byte Ptr Ptr)
 	Function bmx_tom_ITextRange_SetText:Int(handle:Byte Ptr, bstr:Short Ptr)
 	Function bmx_tom_ITextRange_GetText:Int(handle:Byte Ptr, bstr:Short Ptr Ptr)
 End Extern
-Type ITextRange Extends IDispatch
+
+Extern "win32"
+Interface  ITextRange_ Extends IDispatch_
 	Method GetText(bstr:Short Ptr Ptr)
-		Return bmx_tom_ITextRange_GetText(unknownPtr, bstr)
-	End Method
+	'	Return bmx_tom_ITextRange_GetText(unknownPtr, bstr)
+	'End Method
 	
 	Method SetText(bstr:Short Ptr)
-		Return bmx_tom_ITextRange_SetText(unknownPtr, bstr)
-	End Method
+	'	Return bmx_tom_ITextRange_SetText(unknownPtr, bstr)
+	'End Method
 	
 	Method GetChar()
-	End Method
+	'End Method
 	
 	Method SetChar()
-	End Method
+	'End Method
 	
-	Method GetDuplicate(irange:ITextRange Var)
-	End Method
+	Method GetDuplicate(irange:ITextRange_ Var)
+	'End Method
 	
 	Method GetFormattedText()
-	End Method
+	'End Method
 	
 	Method SetFormattedText()
-	End Method
+	'End Method
 	
 	Method GetStart()
-	End Method
+	'End Method
 	
 	Method SetStart()
-	End Method
+	'End Method
 	
 	Method GetEnd()
-	End Method
+	'End Method
 	
 	Method SetEnd()
-	End Method
+	'End Method
 	
-	Method GetFont(ifont:ITextFont Var)
-		If Not ifont Then
-			ifont = New ITextFont
-		End If
-		Return bmx_tom_ITextRange_GetFont(unknownPtr, Varptr ifont.unknownPtr)
-	End Method
+	Method GetFont(ifont:ITextFont_ Var)
+	'	If Not ifont Then
+	'		ifont = New ITextFont
+	'	End If
+	'	Return bmx_tom_ITextRange_GetFont(unknownPtr, Varptr ifont.unknownPtr)
+	'End Method
 	
-	Method SetFont(ifont:ITextFont)
-	End Method
+	Method SetFont(ifont:ITextFont_)
+	'End Method
 	
 '	Method GetPara(para:ITextPara Var)
-'	End Method
+'	'End Method
 	
 '	Method SetPara(para:ITextPara)
-'	End Method
+'	'End Method
 	
 	Method GetStoryLength( length:Int Var )
-	End Method
+	'End Method
 	
 	Method GetStoryType( storytype:Int Var)
-	End Method
+	'End Method
 	
 	Method Collapse()
-	End Method
+	'End Method
 	
 	Method Expand()
-	End Method
+	'End Method
 	
 	Method GetIndex()
-	End Method
+	'End Method
 	
 	Method SetIndex()
-	End Method
+	'End Method
 	
 	Method SetRange(cp1,cp2)
-	End Method
+	'End Method
 	
 	Method InRange()
-	End Method
+	'End Method
 	
 	Method InStory()
-	End Method
+	'End Method
 	
 	Method IsEqual()
-	End Method
+	'End Method
 	
 	Method Select_()
-	End Method
+	'End Method
 	
 	Method StartOf()
-	End Method
+	'End Method
 	
 	Method EndOf()
-	End Method
+	'End Method
 	
 	Method Move()
-	End Method
+	'End Method
 	
 	Method MoveStart()
-	End Method
+	'End Method
 	
 	Method MoveEnd()
-	End Method
+	'End Method
 	
 	Method MoveWhile()
-	End Method
+	'End Method
 	
 	Method MoveStartWhile()
-	End Method
+	'End Method
 	
 	Method MoveEndWhile()
-	End Method
+	'End Method
 	
 	Method MoveUntil()
-	End Method
+	'End Method
 	
 	Method MoveStartUntil()
-	End Method
+	'End Method
 	
 	Method MoveEndUntil()
-	End Method
+	'End Method
 	
 	Method FindText()
-	End Method
+	'End Method
 	
 	Method FindTextStart()
-	End Method
+	'End Method
 	
 	Method FindTextEnd()
-	End Method
+	'End Method
 	
 	Method Delete_()
-	End Method
+	'End Method
 	
 	Method Cut()
-	End Method
+	'End Method
 	
 	Method Copy()
-	End Method
+	'End Method
 	
 	Method Paste()
-	End Method
+	'End Method
 	
 	Method CanPaste()
-	End Method
+	'End Method
 	
 	Method CanEdit(bool Var)
-	End Method
+	'End Method
 	
 	Method ChangeCase()
-	End Method
+	'End Method
 	
 	Method GetPoint()
-	End Method
+	'End Method
 	
 	Method SetPoint()
-	End Method
+	'End Method
 	
 	Method ScrollIntoView()
-	End Method
+	'End Method
 	
 	Method GetEmbeddedObject()
-	End Method
+	'End Method
 	
-EndType
+End Interface 
+End Extern
 
 Extern
 	Function bmx_tom_ITextFont_SetForeColor:Int(handle:Byte Ptr, Value:Int)
@@ -313,178 +305,181 @@ Extern
 	Function bmx_tom_ITextFont_SetStrikeThrough:Int(handle:Byte Ptr, Value:Int)
 	Function bmx_tom_ITextFont_SetUnderline:Int(handle:Byte Ptr, Value:Int)
 End Extern
-Type ITextFont Extends IDispatch
-	Method GetDuplicate(ifont:ITextFont Var)
-	End Method
+
+Extern "win32"
+Interface ITextFont_ Extends IDispatch_
+	Method GetDuplicate(ifont:ITextFont_ Var)
+	'End Method
 	
 	Method SetDuplicate()
-	End Method
+	'End Method
 	
 	Method CanChange()
-	End Method
+	'End Method
 	
 	Method IsEqual() 
-	End Method
+	'End Method
 	
 	Method Reset()
-	End Method
+	'End Method
 	
 	Method GetStyle(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetStyle(Value)
-	End Method
+	'End Method
 	
 	Method GetAllCaps(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetAllCaps(Value)
-	End Method
+	'End Method
 	
 	Method GetAnimation(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetAnimation(Value)
-	End Method
+	'End Method
 	
 	Method GetBackColor(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetBackColor(Value)
-	End Method
+	'End Method
 	
 	Method GetBold(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetBold(Value)
-		Return bmx_tom_ITextFont_SetBold(unknownPtr, Value)
-	End Method
+	'	Return bmx_tom_ITextFont_SetBold(unknownPtr, Value)
+	'End Method
 	
 	Method GetEmboss(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetEmboss(Value)
-	End Method
+	'End Method
 	
 	Method GetForeColor(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetForeColor(Value)
-		Return bmx_tom_ITextFont_SetForeColor(unknownPtr, Value)
-	End Method
+	'	Return bmx_tom_ITextFont_SetForeColor(unknownPtr, Value)
+	'End Method
 	
 	Method GetHidden(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetHidden(Value)
-	End Method
+	'End Method
 	
 	Method GetEngrave(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetEngrave(Value)
-	End Method
+	'End Method
 	
 	Method GetItalic(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetItalic(Value)
-		Return bmx_tom_ITextFont_SetItalic(unknownPtr, Value)
-	End Method
+	'	Return bmx_tom_ITextFont_SetItalic(unknownPtr, Value)
+	'End Method
 	
 	Method GetKerning(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetKerning(Value)
-	End Method
+	'End Method
 	
 	Method GetLanguageID()
-	End Method
+	'End Method
 	
 	Method SetLanguageID() 
-	End Method
+	'End Method
 	
 	Method GetName()
-	End Method
+	'End Method
 	
 	Method SetName()
-	End Method
+	'End Method
 	
 	Method GetOutline(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetOutline(Value)
-	End Method
+	'End Method
 	
 	Method GetPosition(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetPosition(Value)
-	End Method
+	'End Method
 	
 	Method GetProtected(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetProtected(Value)
-	End Method
+	'End Method
 	
 	Method GetShadow(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetShadow(Value)
-	End Method
+	'End Method
 	
 	Method GetSize(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetSize(Value)
-	End Method
+	'End Method
 	
 	Method GetSmallCaps(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetSmallCaps(Value)
-	End Method
+	'End Method
 	
 	Method GetSpacing(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetSpacing(Value)
-	End Method
+	'End Method
 	
 	Method GetStrikeThrough(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetStrikeThrough(Value)
-		Return bmx_tom_ITextFont_SetStrikeThrough(unknownPtr, Value)
-	End Method
+	'	Return bmx_tom_ITextFont_SetStrikeThrough(unknownPtr, Value)
+	'End Method
 	
 	Method GetSubscript(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetSubscript(Value)
-	End Method
+	'End Method
 	
 	Method GetSuperscript(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetSuperscript(Value) 
-	End Method
+	'End Method
 	
 	Method GetUnderline(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetUnderline(Value)
-		Return bmx_tom_ITextFont_SetUnderline(unknownPtr, Value)
-	End Method
+	'	Return bmx_tom_ITextFont_SetUnderline(unknownPtr, Value)
+	'End Method
 	
 	Method GetWeight(Value:Int Ptr)
-	End Method
+	'End Method
 	
 	Method SetWeight(Value)
-	End Method
+	'End Method
 	
-End Type
+End Interface 
+End Extern
 
 Const ITextDocument_UUID$="{8CC497C0-A1DF-11ce-8098-00AA0047BE5D}"
 Rem

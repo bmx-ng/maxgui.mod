@@ -1095,7 +1095,8 @@ HWND msHtmlHwnd( HTMLView * view){
 	return view->hwnd;
 }
 	
-void *msHtmlBrowser( HTMLView * view){
-	return view->iBrowser;
+void msHtmlBrowser( HTMLView * view, IWebBrowser2 ** browser){
+*browser = view->iBrowser;
+	//return view->iBrowser;
 }
 

@@ -20,7 +20,7 @@ void msHtmlSetEnabled( HTMLView * view,int enabled );
 int msHtmlActivate(HTMLView * view,int cmd);
 int msHtmlStatus(HTMLView * view);
 HWND msHtmlHwnd( HTMLView * view);
-void *msHtmlBrowser( HTMLView * view);
+void msHtmlBrowser( HTMLView * view, IWebBrowser2 ** browser);
 
 };
 
