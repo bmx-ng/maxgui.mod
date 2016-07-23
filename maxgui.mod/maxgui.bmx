@@ -891,8 +891,16 @@ Rem
 bbdoc: Set a gadget's font.
 about: See #LoadGuiFont and #RequestFont for creating a @TGuiFont.
 EndRem
-Function SetGadgetFont( gadget:TGadget,font:TGuiFont )
+Function SetGadgetFont( gadget:TGadget,font:TGuiFont, applyToChildren:Int = False )
 	gadget.SetFont( font )
+	
+	If applyToChildren Then
+		If GadgetClass(gadget) = GADGET_WINDOW Or GadgetClass(gadget) = GADGET_PANEL Then
+			For Local child:TGadget = EachIn gadget.kids
+				SetGadgetFont(child, font, applyToChildren)
+			Next
+		End If
+	End If
 End Function
 
 Rem
