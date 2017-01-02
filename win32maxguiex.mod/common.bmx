@@ -25,8 +25,8 @@ Extern
 	Function bmx_win32maxgui_choosecolor_free(handle:Byte Ptr)
 	Function bmx_win32maxgui_choosecolor_rgbResult:Int(handle:Byte Ptr)
 	
-	Function SystemParametersInfoW:Int(uiAction:UInt, uiParam:UInt, pvParam:Byte Ptr, fWinIni:Uint) "win32"
-	Function SetLayeredWindowAttributes:Int(hwnd:Byte Ptr,crKey:Int,bAlpha:Byte,dwFlags:Int) "win32"
+	Function SystemParametersInfoW:Int(uiAction:UInt, uiParam:UInt, pvParam:Byte Ptr, fWinIni:UInt) "win32"="WINBOOL __stdcall  SystemParametersInfoW(UINT ,UINT ,PVOID ,UINT )!"
+	Function SetLayeredWindowAttributes:Int(hwnd:Byte Ptr,crKey:Int,bAlpha:Byte,dwFlags:Int) "win32"="WINBOOL __stdcall SetLayeredWindowAttributes(HWND ,COLORREF ,BYTE ,DWORD )!"
 	Function OpenThemeData:Byte Ptr( hwnd:Byte Ptr, lpszClassString:Short Ptr ) "win32"
 	Function CloseThemeData( hTheme:Byte Ptr ) "win32"
 	Function SetWindowTheme:Byte Ptr( pHwnd:Byte Ptr, pThemeStr:Short Ptr, pList:Short Ptr ) "win32"
@@ -308,9 +308,9 @@ Const SM_CMETRICS = 83
 Extern "Win32"
 	
 '		Function GetCharABCWidthsW(dc,firstcharcode,lastcharcode,widths:Int Ptr Ptr)
-	Function GetCharABCWidthsW(dc:Byte Ptr,firstcharcode:UInt,lastcharcode:UInt,widths:Int Ptr)
+	Function GetCharABCWidthsW(dc:Byte Ptr,firstcharcode:UInt,lastcharcode:UInt,widths:Int Ptr)="WINBOOL __stdcall GetCharABCWidthsW(HDC ,UINT ,UINT ,LPABC )!"
 
-	Function GetCharWidth32W(hdc:Byte Ptr,first:Uint,last:UInt,widths:Int Ptr)
+	Function GetCharWidth32W(hdc:Byte Ptr,First:UInt,last:UInt,widths:Int Ptr)="WINBOOL __stdcall GetCharWidth32W(HDC ,UINT ,UINT ,LPINT )!"
 	
 	'BRL.System
 	'Function _TrackMouseEvent( trackmouseeventstrunct:Byte Ptr )
@@ -319,81 +319,81 @@ Extern "Win32"
 	'Function ImageList_Add(himl:Byte Ptr,hbmImage:Byte Ptr,crMask)
 	'Function ImageList_Destroy( hImageList:Byte Ptr )
 	'Function ImageList_GetImageCount( hImageList:Byte Ptr )
-	Function CreateDIBSection(hdc:Byte Ptr,bminfo:Byte Ptr,iUsage:UInt,bits:Byte Ptr Ptr,hSection:Byte Ptr,dwOffset)
+	Function CreateDIBSection(hdc:Byte Ptr,bminfo:Byte Ptr,iUsage:UInt,bits:Byte Ptr Ptr,hSection:Byte Ptr,dwOffset)="HBITMAP __stdcall CreateDIBSection(HDC ,CONST BITMAPINFO *,UINT ,VOID **,HANDLE ,DWORD )!"
 	Function SendMessageSetImageList(hwnd:Byte Ptr, _buttonImageList:Byte Ptr Ptr, _imageAlign:Int)
 	
 	'WM_CTLCOLORXXXX handling
-	Function SetBkMode( hdc:Byte Ptr, mode)
-	Function SetBkColor( hdc:Byte Ptr, crColor )
-	Function GetAncestor_:Byte Ptr( hwnd:Byte Ptr, gaFlags ) = "GetAncestor"
-	Function SetTextColor_( hdc:Byte Ptr, crColor ) = "SetTextColor"
+	Function SetBkMode( hdc:Byte Ptr, Mode)="int __stdcall SetBkMode(HDC ,int )!"
+	Function SetBkColor( hdc:Byte Ptr, crColor )="COLORREF __stdcall SetBkColor(HDC ,COLORREF )!"
+	Function GetAncestor_:Byte Ptr( hwnd:Byte Ptr, gaFlags ) = "HWND __stdcall GetAncestor(HWND ,UINT )!"
+	Function SetTextColor_( hdc:Byte Ptr, crColor ) = "COLORREF __stdcall SetTextColor(HDC ,COLORREF )!"
 	
 	'Drawing Contexts
-	Function GetObjectW( hgdiobj:Byte Ptr, cbBuffer, lpvObject:Byte Ptr )
-	Function SaveDC( hdc:Byte Ptr )
-	Function RestoreDC( hdc:Byte Ptr, savestate )
-	Function CreatePatternBrush:Byte Ptr( bitmap:Byte Ptr )
-	Function GetDCEx:Byte Ptr( hwnd:Byte Ptr, hRgn:Byte Ptr, flags )
-	Function ReleaseDC( hwnd:Byte Ptr, hdc:Byte Ptr )
-	Function GetDCOrgEx( hdc:Byte Ptr, point:Int Ptr )
-	Function GetWindowOrgEx( hdc:Byte Ptr, point:Int Ptr )
-	Function GetWindowExtEx( hdc:Byte Ptr, size:Int Ptr )
+	Function GetObjectW( hgdiobj:Byte Ptr, cbBuffer, lpvObject:Byte Ptr )="int __stdcall GetObjectW(HANDLE ,int ,LPVOID )!"
+	Function SaveDC( hdc:Byte Ptr )="int __stdcall SaveDC(HDC )!"
+	Function RestoreDC( hdc:Byte Ptr, savestate )="WINBOOL __stdcall RestoreDC(HDC ,int )!"
+	Function CreatePatternBrush:Byte Ptr( bitmap:Byte Ptr )="HBRUSH __stdcall CreatePatternBrush(HBITMAP )!"
+	Function GetDCEx:Byte Ptr( hwnd:Byte Ptr, hRgn:Byte Ptr, flags )="HDC __stdcall GetDCEx(HWND ,HRGN ,DWORD )!"
+	Function ReleaseDC( hwnd:Byte Ptr, hdc:Byte Ptr )="int __stdcall ReleaseDC(HWND ,HDC )!"
+	Function GetDCOrgEx( hdc:Byte Ptr, point:Int Ptr )="WINBOOL __stdcall GetDCOrgEx(HDC ,LPPOINT )!"
+	Function GetWindowOrgEx( hdc:Byte Ptr, point:Int Ptr )="WINBOOL __stdcall GetWindowOrgEx(HDC ,LPPOINT )!"
+	Function GetWindowExtEx( hdc:Byte Ptr, size:Int Ptr )="WINBOOL __stdcall GetWindowExtEx(HDC ,LPSIZE )!"
 
 	'Drawing
-	Function DrawTextW( hdc:Byte Ptr, lpString$w, nCount, lpRect:Int Ptr, uFormat )
-	Function DrawFocusRect( hdc:Byte Ptr, lprc:Int Ptr )
-	Function DrawFrameControl( hdc:Byte Ptr, lprc:Int Ptr, uType%, uState% )
-	Function ExtTextOutW( hdc:Byte Ptr, x, y, fuOptions, lpRc:Int Ptr, lpString$w, cbCount, lpDx:Int Ptr )
+	Function DrawTextW( hdc:Byte Ptr, lpString$w, nCount, lpRect:Int Ptr, uFormat )="int __stdcall DrawTextW(HDC ,LPCWSTR ,int ,LPRECT ,UINT )!"
+	Function DrawFocusRect( hdc:Byte Ptr, lprc:Int Ptr )="WINBOOL __stdcall DrawFocusRect(HDC ,CONST RECT *)!"
+	Function DrawFrameControl( hdc:Byte Ptr, lprc:Int Ptr, uType%, uState% )="WINBOOL __stdcall DrawFrameControl(HDC,LPRECT,UINT,UINT)!"
+	Function ExtTextOutW( hdc:Byte Ptr, x, y, fuOptions, lpRc:Int Ptr, lpString$w, cbCount, lpDx:Int Ptr )="WINBOOL __stdcall ExtTextOutW(HDC ,int ,int ,UINT ,CONST RECT *,LPCWSTR ,UINT ,CONST INT *)!"
 	
 	'Resizing
-	Function BeginDeferWindowPos:Byte Ptr( nCount )
-	Function EndDeferWindowPos( hdwpStruct:Byte Ptr )
-	Function DeferWindowPos:Byte Ptr( hWinPosInfo:Byte Ptr, hWnd:Byte Ptr, hWndInsertAfter:Byte Ptr, x, y, cx, cy, uFlags)
+	Function BeginDeferWindowPos:Byte Ptr( nCount )="HDWP __stdcall BeginDeferWindowPos(int )!"
+	Function EndDeferWindowPos( hdwpStruct:Byte Ptr )="WINBOOL __stdcall EndDeferWindowPos(HDWP )!"
+	Function DeferWindowPos:Byte Ptr( hWinPosInfo:Byte Ptr, hWnd:Byte Ptr, hWndInsertAfter:Byte Ptr, x, y, cx, cy, uFlags)="HDWP __stdcall DeferWindowPos(HDWP ,HWND ,HWND ,int ,int ,int ,int ,UINT )!"
 	
 	'Position and regions
-	Function IsRectEmpty( rect:Int Ptr )
-	Function GetClipBox( hdc:Byte Ptr, rect:Int Ptr)
-	Function GetUpdateRect( hwnd:Byte Ptr, rect:Int Ptr, pErase )
-	Function ScreenToClient( hwnd:Byte Ptr, rect:Int Ptr )
-	Function RedrawWindow(hwnd:Byte Ptr, lprcUpdate:Int Ptr, hrgnUpdate:Int Ptr, flags )
-	Function FrameRect( hdc:Byte Ptr, rect:Int Ptr, hBrush:Byte Ptr )
-	Function InflateRect( rect:Int Ptr, dx, dy )
-	Function OffsetRect( rect:Int Ptr, dx, dy )
-	Function IntersectRect( lprcDest:Int Ptr, lprcSrc1:Int Ptr, lprcSrc2:Int Ptr )
-	Function CopyRect( dest:Int Ptr, src:Int Ptr )
-	Function GDISetRect( rect:Int Ptr, xLeft, yTop, xRight, yBottom ) = "SetRect"
+	Function IsRectEmpty( rect:Int Ptr )="WINBOOL __stdcall IsRectEmpty(CONST RECT *)!"
+	Function GetClipBox( hdc:Byte Ptr, rect:Int Ptr)="int __stdcall GetClipBox(HDC ,LPRECT )!"
+	Function GetUpdateRect( hwnd:Byte Ptr, rect:Int Ptr, pErase )="WINBOOL __stdcall GetUpdateRect(HWND ,LPRECT ,WINBOOL )!"
+	Function ScreenToClient( hwnd:Byte Ptr, rect:Int Ptr )="WINBOOL __stdcall ScreenToClient(HWND ,LPPOINT )!"
+	Function RedrawWindow(hwnd:Byte Ptr, lprcUpdate:Int Ptr, hrgnUpdate:Int Ptr, flags )="WINBOOL __stdcall RedrawWindow(HWND ,CONST RECT *,HRGN ,UINT )!"
+	Function FrameRect( hdc:Byte Ptr, rect:Int Ptr, hBrush:Byte Ptr )="int __stdcall FrameRect(HDC ,CONST RECT *,HBRUSH )!"
+	Function InflateRect( rect:Int Ptr, dx, dy )="WINBOOL __stdcall InflateRect(LPRECT ,int ,int )!"
+	Function OffsetRect( rect:Int Ptr, dx, dy )="WINBOOL __stdcall OffsetRect(LPRECT ,int ,int )!"
+	Function IntersectRect( lprcDest:Int Ptr, lprcSrc1:Int Ptr, lprcSrc2:Int Ptr )="WINBOOL __stdcall IntersectRect(LPRECT ,CONST RECT *,CONST RECT *)!"
+	Function CopyRect( dest:Int Ptr, src:Int Ptr )="WINBOOL __stdcall CopyRect(LPRECT ,CONST RECT *)!"
+	Function GDISetRect( rect:Int Ptr, xLeft, yTop, xRight, yBottom ) = "WINBOOL __stdcall SetRect(LPRECT ,int ,int ,int ,int )!"
 	
 	'Menu Stuff
-	Function GetMenu_:Byte Ptr( hwnd:Byte Ptr ) = "GetMenu"
-	Function SetMenuItemBitmaps( hMenu:Byte Ptr, uPosition, uFlags, hBitmapUnchecked:Byte Ptr, hBitmapChecked:Byte Ptr )
-	Function SetMenuInfo( hMenu:Byte Ptr, lpcMenuInfo:Byte Ptr )
-	Function GetSysColor( hColor )
+	Function GetMenu_:Byte Ptr( hwnd:Byte Ptr ) = "HMENU __stdcall GetMenu(HWND )!"
+	Function SetMenuItemBitmaps( hMenu:Byte Ptr, uPosition, uFlags, hBitmapUnchecked:Byte Ptr, hBitmapChecked:Byte Ptr )="WINBOOL __stdcall SetMenuItemBitmaps(HMENU ,UINT ,UINT ,HBITMAP ,HBITMAP )!"
+	Function SetMenuInfo( hMenu:Byte Ptr, lpcMenuInfo:Byte Ptr )="WINBOOL __stdcall SetMenuInfo(HMENU,LPCMENUINFO)!"
+	Function GetSysColor( hColor )="DWORD __stdcall GetSysColor(int )!"
 	
 	'Scroll-bar fixes
-	Function GetSystemMetrics( metric )
-	Function GetScrollBarInfo( hwnd:Byte Ptr, idObject, pScrollBarInfo:Int Ptr )
+	Function GetSystemMetrics( metric )="int __stdcall GetSystemMetrics(int )!"
+	Function GetScrollBarInfo( hwnd:Byte Ptr, idObject, pScrollBarInfo:Int Ptr )="WINBOOL __stdcall GetScrollBarInfo(HWND ,LONG ,PSCROLLBARINFO )!"
 	
 	'Gadget text retrieval
-	Function GetWindowTextLengthW( hwnd:Byte Ptr )
+	Function GetWindowTextLengthW( hwnd:Byte Ptr )="int __stdcall GetWindowTextLengthW(HWND )!"
 	
 	'Missing misc. system functions
-	Function GetCursor:Byte Ptr()
-	Function FreeLibrary( hLibrary:Byte Ptr )
+	Function GetCursor:Byte Ptr()="HCURSOR __stdcall GetCursor()!"
+	Function FreeLibrary( hLibrary:Byte Ptr )="WINBOOL __stdcall FreeLibrary (HMODULE )!"
 	
 	'Printing functions for text-area GadgetPrint()
-	Function PrintDlg( printDialogStruct:Byte Ptr ) = "PrintDlgW"
-	Function StartDocW( hdc:Byte Ptr, pDocStruct:Byte Ptr )
-	Function EndDoc( hdc:Byte Ptr )
-	Function AbortDoc( hdc:Byte Ptr )
-	Function StartPage( hdc:Byte Ptr )
-	Function EndPage( hdc:Byte Ptr )
-	Function SetMapMode( hdc:Byte Ptr, pMode )
-	Function PrintWindow( hwnd:Byte Ptr, hdc:Byte Ptr, flags )
+	Function PrintDlg( printDialogStruct:Byte Ptr ) = "WINBOOL __stdcall PrintDlgW(LPPRINTDLGW)!"
+	Function StartDocW( hdc:Byte Ptr, pDocStruct:Byte Ptr )="int __stdcall StartDocW(HDC ,CONST DOCINFOW *)!"
+	Function EndDoc( hdc:Byte Ptr )="int __stdcall EndDoc(HDC )!"
+	Function AbortDoc( hdc:Byte Ptr )="int __stdcall AbortDoc(HDC )!"
+	Function StartPage( hdc:Byte Ptr )="int __stdcall StartPage(HDC )!"
+	Function EndPage( hdc:Byte Ptr )="int __stdcall EndPage(HDC )!"
+	Function SetMapMode( hdc:Byte Ptr, pMode )="int __stdcall SetMapMode(HDC ,int )!"
+	Function PrintWindow( hwnd:Byte Ptr, hdc:Byte Ptr, flags )="WINBOOL __stdcall PrintWindow(HWND ,HDC ,UINT )!"
 
 	'Icons
-	Function CreateIconIndirect:Byte Ptr(IconInf:Byte Ptr)
-	Function CopyImage:Byte Ptr(hImage:Byte Ptr , uType , xDesired , yDesired , flags)
-	Function DestroyIcon(hIcon:Byte Ptr)
+	Function CreateIconIndirect:Byte Ptr(IconInf:Byte Ptr)="HICON __stdcall CreateIconIndirect(PICONINFO )!"
+	Function CopyImage:Byte Ptr(hImage:Byte Ptr , uType , xDesired , yDesired , flags)="HANDLE __stdcall CopyImage(HANDLE ,UINT ,int ,int ,UINT )!"
+	Function DestroyIcon(hIcon:Byte Ptr)="WINBOOL __stdcall DestroyIcon(HICON )!"
 
 EndExtern
 
@@ -446,10 +446,10 @@ EndType
 Extern
 	Function bmx_win32_DRAWITEMSTRUCT_new:Byte Ptr()
 	Function bmx_win32_DRAWITEMSTRUCT_free(handle:Byte Ptr)
-	Function bmx_win32_DRAWITEMSTRUCT_CtlType:Uint(handle:Byte Ptr)
-	Function bmx_win32_DRAWITEMSTRUCT_CtlID:Uint(handle:Byte Ptr)
-	Function bmx_win32_DRAWITEMSTRUCT_itemID:Uint(handle:Byte Ptr)
-	Function bmx_win32_DRAWITEMSTRUCT_itemAction:Uint(handle:Byte Ptr)
+	Function bmx_win32_DRAWITEMSTRUCT_CtlType:UInt(handle:Byte Ptr)
+	Function bmx_win32_DRAWITEMSTRUCT_CtlID:UInt(handle:Byte Ptr)
+	Function bmx_win32_DRAWITEMSTRUCT_itemID:UInt(handle:Byte Ptr)
+	Function bmx_win32_DRAWITEMSTRUCT_itemAction:UInt(handle:Byte Ptr)
 	Function bmx_win32_DRAWITEMSTRUCT_hwndItem:Byte Ptr(handle:Byte Ptr)
 	Function bmx_win32_DRAWITEMSTRUCT_hDC:Byte Ptr(handle:Byte Ptr)
 	Function bmx_win32_DRAWITEMSTRUCT_rcItem:Int Ptr(handle:Byte Ptr)
