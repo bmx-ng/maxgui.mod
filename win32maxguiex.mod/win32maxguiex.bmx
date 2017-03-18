@@ -4110,7 +4110,7 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 				w=Short Ptr GlobalLock(handle)
 				h=GlobalAlloc(GMEM_MOVEABLE,n)
 				cp=Short Ptr GlobalLock(h)
-				memcpy_(cp,w,Int(n))
+				memcpy_(cp,w,n)
 				If cp[n/2-2]=10 Then cp[n/2-2]=13
 				GlobalUnlock h	
 				GlobalUnlock handle
@@ -4124,7 +4124,7 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 				tp=Byte Ptr GlobalLock(handle)				
 				h=GlobalAlloc(GMEM_MOVEABLE,n)
 				bp=Byte Ptr GlobalLock(h)
-				memcpy_(bp,tp,Int(n))
+				memcpy_(bp,tp,n)
 				If bp[n-2]=10 Then bp[n-2]=13
 				GlobalUnlock h
 				GlobalUnlock handle
