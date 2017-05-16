@@ -27,13 +27,6 @@ Extern
 	
 	Function SystemParametersInfoW:Int(uiAction:UInt, uiParam:UInt, pvParam:Byte Ptr, fWinIni:UInt) "win32"="WINBOOL __stdcall  SystemParametersInfoW(UINT ,UINT ,PVOID ,UINT )!"
 	Function SetLayeredWindowAttributes:Int(hwnd:Byte Ptr,crKey:Int,bAlpha:Byte,dwFlags:Int) "win32"="WINBOOL __stdcall SetLayeredWindowAttributes(HWND ,COLORREF ,BYTE ,DWORD )!"
-	Function OpenThemeData:Byte Ptr( hwnd:Byte Ptr, lpszClassString:Short Ptr ) "win32"
-	Function CloseThemeData( hTheme:Byte Ptr ) "win32"
-	Function SetWindowTheme:Byte Ptr( pHwnd:Byte Ptr, pThemeStr:Short Ptr, pList:Short Ptr ) "win32"
-	Function IsThemeBackgroundPartiallyTransparent( hTheme:Byte Ptr, iPartId%, iStateId% ) "win32"
-	Function DrawThemeParentBackground:Byte Ptr(hwnd:Byte Ptr,hDC:Byte Ptr,pRect:Int Ptr) "win32"
-	Function DrawThemeBackground:Byte Ptr( hTheme:Byte Ptr, hdc:Byte Ptr, iPartID%, iStateID%, pRect:Int Ptr, pClipRect:Int Ptr) "win32"
-	Function GetThemeBackgroundContentRect:Byte Ptr( hTheme:Byte Ptr, hdc:Byte Ptr, iPartId%, iStateId%, pBoundingRect:Int Ptr, pContentRect:Int Ptr ) "win32"
 
 	Function msHtmlCreate:Byte Ptr( owner:Object,wndclass$w,hwnd:Byte Ptr,flags )
 	Function msHtmlGo( handle:Byte Ptr,url$w )
@@ -47,6 +40,16 @@ Extern
 	Function msHtmlBrowser(handle:Byte Ptr, browser:IWebBrowser2_ Var)
 	Function mstmlDocument:Byte Ptr(handle:Byte Ptr)
 
+End Extern
+
+Extern "win32"
+	Function OpenThemeData:Byte Ptr( hwnd:Byte Ptr, lpszClassString:Short Ptr )
+	Function CloseThemeData( hTheme:Byte Ptr )
+	Function SetWindowTheme:Byte Ptr( pHwnd:Byte Ptr, pThemeStr:Short Ptr, pList:Short Ptr ) 
+	Function IsThemeBackgroundPartiallyTransparent( hTheme:Byte Ptr, iPartId%, iStateId% ) 
+	Function DrawThemeParentBackground:Byte Ptr(hwnd:Byte Ptr,hDC:Byte Ptr,pRect:Int Ptr) 
+	Function DrawThemeBackground:Byte Ptr( hTheme:Byte Ptr, hdc:Byte Ptr, iPartID%, iStateID%, pRect:Int Ptr, pClipRect:Int Ptr) 
+	Function GetThemeBackgroundContentRect:Byte Ptr( hTheme:Byte Ptr, hdc:Byte Ptr, iPartId%, iStateId%, pBoundingRect:Int Ptr, pContentRect:Int Ptr )
 End Extern
 
 ' Custom Window Messages
