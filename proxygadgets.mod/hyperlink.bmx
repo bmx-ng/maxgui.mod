@@ -26,7 +26,7 @@ Type THyperlinkGadget Extends TProxyGadget
 	
 	Global lstHyperlinkGadgets:TList
 	
-	Global fntDefault:TGuiFont, fntHoverDefault:TGuiFont
+	Field fnt:TGuiFont, fntHover:TGuiFont
 	
 	Field hyperlinkstyle%
 	Field colors[][] = [[0,0,255],[255,0,0]]
@@ -48,7 +48,10 @@ Type THyperlinkGadget Extends TProxyGadget
 		Local tmpLabel:TGadget = CreateLabel( customtext, x, y, w, h, group, style&31 )
 		If Not tmpLabel Then Return Null Else SetGadgetSensitivity(tmpLabel, SENSITIZE_MOUSE)
 		
-		SetGadgetFont(tmpLabel,fntDefault)	
+		fnt = LookupGuiFont( GUIFONT_SYSTEM, 0, 0 )
+		fntHover = LookupGuiFont( GUIFONT_SYSTEM, 0, FONT_UNDERLINE )
+
+		SetGadgetFont(tmpLabel,fnt)	
 		
 		If customtext <> pUrl Then SetGadgetToolTip( tmpLabel, pUrl )
 		
@@ -67,10 +70,10 @@ Type THyperlinkGadget Extends TProxyGadget
 		
 			Case EVENT_MOUSEENTER
 				Super.SetTextColor(colors[1][0], colors[1][1], colors[1][2]);SetPointer(POINTER_HAND)
-				Super.SetFont( fntHoverDefault )
+				Super.SetFont( fntHover )
 			Case EVENT_MOUSELEAVE
 				Super.SetTextColor(colors[0][0], colors[0][1], colors[0][2]);SetPointer(POINTER_DEFAULT)
-				Super.SetFont( fntDefault )
+				Super.SetFont( fnt )
 			Case EVENT_MOUSEDOWN;If lastclick[0] <> pEvent.x Or lastclick[1] <> pEvent.y Then lastclick = [pEvent.x,pEvent.y];OpenURL(String(extra))
 		
 		EndSelect
@@ -80,8 +83,9 @@ Type THyperlinkGadget Extends TProxyGadget
 	EndMethod
 	
 	Method SetFont( font:TGuiFont )
-		fntDefault = font;fntHoverDefault = font
 		Super.SetFont(font)
+		fnt = font
+		fntHover = font
 	EndMethod
 	
 	Method SetColor(r,g,b)
@@ -101,8 +105,6 @@ Type THyperlinkGadget Extends TProxyGadget
 	Function Initialize()
 		lstHyperlinkGadgets = New TList
 		AddHook EmitEventHook, eventHandler, Null, -1
-		fntDefault = LookupGuiFont( GUIFONT_SYSTEM, 0, 0 )
-		fntHoverDefault = LookupGuiFont( GUIFONT_SYSTEM, 0, FONT_UNDERLINE )
 	EndFunction
 	
 	Function eventHandler:Object( pID%, pData:Object, pContext:Object )
