@@ -558,9 +558,9 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				owner = owner.source
 			Wend
 		EndIf
-		Local tmpResult% = bbSystemEmitOSEvent( hwnd, msg, wp, lp, owner )
+		bbSystemEmitOSEvent( hwnd, msg, wp, lp, owner )
 		intEmitOSEvent:-1
-		Return tmpResult
+		Return 0
 	EndFunction
 
 	Function CheckCommonControlVersion()	'Returns True if supports alpha/themes etc. or False if not.
@@ -855,7 +855,7 @@ Type TWindowsFont Extends TGuiFont
 		name = String.FromWString( pLogFont.lfFaceName() )
 		
 		If handle Then DeleteObject handle
-		handle = CreateFontIndirectW( pLogFont )
+		handle = CreateFontIndirectW( pLogFont.fontPtr )
 		
 		Return Self
 		
@@ -864,7 +864,7 @@ Type TWindowsFont Extends TGuiFont
 	Method LoadFromHandle:TWindowsFont(hfont:Byte Ptr)
 		
 		Local tmpLogFont:LOGFONTW = New LOGFONTW
-		GetObjectW( hfont, LOGFONTW.Size(), tmpLogFont )
+		GetObjectW( hfont, LOGFONTW.Size(), tmpLogFont.fontPtr )
 		Return LoadFromLogFont( tmpLogFont )
 		
 	EndMethod
@@ -1471,7 +1471,7 @@ Type TWindowsGadget Extends TGadget
 		If parent And GetParent_(hwnd) = parent.Query(QUERY_HWND_CLIENT) And TWindowsGadget(parent).hdwpStruct Then
 			Local tmpFlags = SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOACTIVATE' | SWP_NOCOPYBITS
 			If Not _resizeRedraw Then tmpFlags:| SWP_NOREDRAW
-			TWindowsGadget(parent).hdwpStruct = DeferWindowPos( TWindowsGadget(parent).hdwpStruct, hwnd, Null, xpos, ypos, width, height, tmpFlags )
+			TWindowsGadget(parent).hdwpStruct = DeferWindowPos( TWindowsGadget(parent).hdwpStruct, hwnd, Null, xpos, ypos, width, height, UInt(tmpFlags) )
 		Else
 			MoveWindow( hwnd, xpos, ypos, width, height, _resizeRedraw )
 			HasResized()
@@ -2440,7 +2440,7 @@ Type TWindowsMenu Extends TGadget
 	Field	_modifier
 	Field	_shortcut$
 	Field	_hotkey:THotKey
-	Field	_key = SetNewKey()
+	Field	_key:UInt = SetNewKey()
 	Field _iconBitmap:Byte Ptr
 	
 	Global iteminfo:MENUITEMINFOW
@@ -2864,7 +2864,7 @@ Type TWindowsListBox Extends TWindowsGadget
 					tmpTipString = tmpTipString[..Min(tmpTipString.length,tmpMaxCharCount)]
 					
 					Local tmpBufferMem:Short Ptr = tmpTipString.ToWString()
-					MemCopy tmpTipOutput, tmpBufferMem, (tmpTipString.length+1) * 2
+					MemCopy tmpTipOutput, tmpBufferMem, Size_T((tmpTipString.length+1) * 2)
 					MemFree tmpBufferMem
 					
 				EndIf
@@ -3668,6 +3668,7 @@ Type TWindowsPanel Extends TWindowsGadget
 	Field _bitmapwidth,_bitmapheight,_bitmapflags
 	Field _canvas:TGraphics
 	Field _hasalpha
+	Field _generatesPaintEvents:Int
 	
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
 		Local	xstyle,wstyle,hotkey
@@ -3751,6 +3752,7 @@ Type TWindowsPanel Extends TWindowsGadget
 			Case WM_ERASEBKGND
 				
 				If _type = PANELCANVAS Then Return 1
+				If _generatesPaintEvents Then Return 1
 				
 				Local hdc:Byte Ptr=wp,hdcCanvas:Byte Ptr,hdcBitmap:Byte Ptr
 				Local srcw,srch,x,y,xoffset,yoffset
@@ -3870,6 +3872,12 @@ Type TWindowsPanel Extends TWindowsGadget
 						PostGuiEvent EVENT_GADGETPAINT
 						ValidateRect _hwnd, Null
 						Return 1
+					Default
+						If _generatesPaintEvents Then
+							PostGuiEvent EVENT_GADGETPAINT
+							ValidateRect _hwnd, Null
+							Return 1
+						End If
 				EndSelect
 			
 			Case WM_LBUTTONDOWN
@@ -4264,7 +4272,7 @@ End Rem
 		Local res, bool
 		busy:+1
 		res=idoc.Range(pos,pos+count,iirange)		
-		bstr=SysAllocStringLen(tmpWString,Text.length);MemFree tmpWString
+		bstr=SysAllocStringLen(tmpWString,UInt(Text.length));MemFree tmpWString
 		LockText()
 		res=iirange.SetText(bstr)
 		UnlockText()
