@@ -9,17 +9,19 @@ Your MaxGUI applications should import this module if they want BlitzMax to sele
 [ @Platform | @{Default Driver}
 * Windows 2000/XP/Vista | #MaxGUI.Win32MaxGUIEx
 * Windows 9X | #MaxGUI.Win32MaxGUIEx (requires unicows.dll or MSLU to run)
-* Linux | #MaxGUI.FLTKMaxGUI
+* Linux | #Gtk.Gtk3MaxGUI
 * Mac OS X | #MaxGUI.CocoaMaxGUI
 ]
 End Rem
 Module MaxGUI.Drivers
 
-ModuleInfo "Version: 0.04"
+ModuleInfo "Version: 0.05"
 ModuleInfo "Author: Simon Armstrong"
 ModuleInfo "License: zlib/libpng"
 ModuleInfo "Copyright: Blitz Research Ltd"
 
+ModuleInfo "History: 0.05"
+ModuleInfo "History: gtk.GTK3MaxGUI has now become the standard Linux MaxGUI driver."
 ModuleInfo "History: 0.04 Release"
 ModuleInfo "History: MaxGUI.Win32MaxGUIEx has now become the standard Windows MaxGUI driver."
 ModuleInfo "History: 0.03 Release"
@@ -38,10 +40,10 @@ Import MaxGUI.Win32MaxGUIEx
 Import Maxgui.CocoaMaxGui
 ?LinuxX86
 'Import Maxgui.FLTKMaxGui
-' default to the GTK version of MaxGUI
-Import BaH.GTKMaxGUI
+' default to the GTK3 version of MaxGUI
+Import gtk.GTK3MaxGUI
 ?LinuxX64
-Import BaH.GTKMaxGUI
+Import gtk.GTK3MaxGUI
 ?raspberrypi
-Import BaH.GTKMaxGUI
+Import gtk.GTK3MaxGUI
 ?
