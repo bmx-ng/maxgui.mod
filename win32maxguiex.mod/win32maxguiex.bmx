@@ -1284,7 +1284,7 @@ Type TWindowsGadget Extends TGadget
 	EndMethod
 	
 	Method SetHotKey(key,modifier)
-		Local ev:TEvent = CreateEvent( EVENT_GADGETACTION,Self,,,,,,False )
+		Local ev:TEvent = CreateEvent( EVENT_GADGETACTION,Self)
 		If _hotKey Then
 			RemoveHotKey(_hotKey)
 			_hotKey = Null
@@ -2573,7 +2573,7 @@ Type TWindowsMenu Extends TGadget
 		
 		MemFree iteminfo.dwTypeData()
 		
-		Local ev:TEvent=CreateEvent( EVENT_MENUACTION, Self,_tag,,,,,False )
+		Local ev:TEvent=CreateEvent( EVENT_MENUACTION, Self,_tag)
 		If _hotKey Then
 			RemoveHotKey(_hotKey)
 			_hotKey = Null
