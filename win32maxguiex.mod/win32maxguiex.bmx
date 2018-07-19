@@ -4025,7 +4025,7 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 
 	Field ole:IRichEditOLE_
 	Field idoc:ITextDocument_
-	Field busy,readonly
+	Field busy,_readonly
 	
 	Field IID_ITextDocument:GUID = New GUID
 	
@@ -4058,7 +4058,7 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 		wstyle:|ES_MULTILINE|ES_NOOLEDRAGDROP|ES_NOHIDESEL|ES_LEFT
 		If Not (style&TEXTAREA_WORDWRAP) wstyle:|WS_HSCROLL|ES_AUTOHSCROLL
 '		If (style&TEXTAREA_READONLY) wstyle:|ES_READONLY						
-		If (style&TEXTAREA_READONLY) readonly=True
+		If (style&TEXTAREA_READONLY) _readonly=True
 		
 		Self.style = style
 		
@@ -4493,7 +4493,7 @@ End Rem
 						EndIf
 						
 						'Read-only
-						If readonly
+						If _readonly
 							If k>=33 And k<=40 Return 0 'selection keys
 							If (keymods()&MODIFIER_CONTROL) Then
 								Select k
@@ -4510,7 +4510,7 @@ End Rem
 						EndIf
 						
 					Case WM_CHAR
-						If readonly Return 1
+						If _readonly Return 1
 						If eventfilter<>Null
 							event=CreateEvent(EVENT_KEYCHAR,Self,Int(bmx_win32_MSGFILTER_wParam(nmhdrPtr)),keymods())
 							Return Not eventfilter(event,context)
