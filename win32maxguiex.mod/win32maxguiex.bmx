@@ -1530,7 +1530,7 @@ Type TWindowsDesktop Extends TWindowsGadget
 	
 	Method ClientHeight()
 		Local Rect[4]
-		If Super.ClientHeight() = height And SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 ) 
+		If SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 ) 
 			Return Rect[3]-Rect[1]
 		Else
 			Return Super.ClientHeight()
@@ -1539,13 +1539,29 @@ Type TWindowsDesktop Extends TWindowsGadget
 	
 	Method ClientWidth()
 		Local Rect[4]
-		If Super.ClientWidth() = width And SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 ) 
+		If SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 ) 
 			Return Rect[2]-Rect[0]
 		Else
 			Return Super.ClientWidth()
 		EndIf
 	EndMethod
-	
+
+	Method ScaleFactor:Int()
+		If GetDpiForMonitor Then
+			Local hwnd:Byte Ptr = GetDesktopWindow()
+			Local monitor:Byte Ptr = MonitorFromWindow(hwnd, 0)
+			If monitor Then
+				Local xdpi:UInt
+				Local ydpi:UInt
+				Local res:Byte Ptr = GetDpiForMonitor(monitor, 0, xdpi, ydpi)
+				If xdpi > 96 Then
+					Return 2
+				End If
+			End If
+		End If
+		Return 1
+	End Method
+
 EndType
 
 Type TWindowsWindow Extends TWindowsGadget
