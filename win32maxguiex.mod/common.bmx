@@ -593,6 +593,7 @@ Extern
 	Function bmx_win32_NONCLIENTMETRICSW_new:Byte Ptr()
 	Function bmx_win32_NONCLIENTMETRICSW_free(handle:Byte Ptr)
 	Function bmx_win32_NONCLIENTMETRICSW_lfMessageFont:Byte Ptr(handle:Byte Ptr)
+	Function bmx_win32_NONCLIENTMETRICSW_size:UInt()
 End Extern
 Type NONCLIENTMETRICSW
 	Field metricsPtr:Byte Ptr
@@ -616,6 +617,9 @@ Type NONCLIENTMETRICSW
 		Return LOGFONTW._create(bmx_win32_NONCLIENTMETRICSW_lfMessageFont(metricsPtr))
 	End Method
 	
+	Method Size:UInt()
+		Return bmx_win32_NONCLIENTMETRICSW_size()
+	End Method
 End Type
 
 Extern

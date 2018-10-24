@@ -937,7 +937,7 @@ Type TWindowsFont Extends TGuiFont
 		'Attempts to get hold of the Windows themed font (typically Tahoma on XP, Segeo UI on Vista)
 		Local tmpNonClientMetrics:NONCLIENTMETRICSW = New NONCLIENTMETRICSW
 		
-		If SystemParametersInfoW( SPI_GETNONCLIENTMETRICS, 0, tmpNonClientMetrics.metricsPtr, 0 ) Then
+		If SystemParametersInfoW( SPI_GETNONCLIENTMETRICS, tmpNonClientMetrics.Size(), tmpNonClientMetrics.metricsPtr, 0 ) Then
 			Return New TWindowsFont.LoadFromLogFont( tmpNonClientMetrics.lfMessageFont(), pFontStyle, pFontSize )
 		EndIf
 		

@@ -33,6 +33,7 @@ extern "C" {
 	NONCLIENTMETRICSW * bmx_win32_NONCLIENTMETRICSW_new();
 	void bmx_win32_NONCLIENTMETRICSW_free(NONCLIENTMETRICSW * metrics);
 	LOGFONTW * bmx_win32_NONCLIENTMETRICSW_lfMessageFont(NONCLIENTMETRICSW * metrics);
+	UINT bmx_win32_NONCLIENTMETRICSW_size();
 
 	int bmx_win32_MOUSEHOOKSTRUCT_x(MOUSEHOOKSTRUCT * hook);
 	int bmx_win32_MOUSEHOOKSTRUCT_y(MOUSEHOOKSTRUCT * hook);
@@ -148,7 +149,9 @@ ULONG_PTR bmx_win32_DRAWITEMSTRUCT_itemData(DRAWITEMSTRUCT * item) {
 // ********************************************************
 
 NONCLIENTMETRICSW * bmx_win32_NONCLIENTMETRICSW_new() {
-	return (NONCLIENTMETRICSW *)calloc(1, sizeof(NONCLIENTMETRICSW));
+	NONCLIENTMETRICSW * metrics = (NONCLIENTMETRICSW *)calloc(1, sizeof(NONCLIENTMETRICSW));
+	metrics->cbSize = sizeof(NONCLIENTMETRICSW);
+	return metrics;
 }
 
 void bmx_win32_NONCLIENTMETRICSW_free(NONCLIENTMETRICSW * metrics) {
@@ -157,6 +160,10 @@ void bmx_win32_NONCLIENTMETRICSW_free(NONCLIENTMETRICSW * metrics) {
 
 LOGFONTW * bmx_win32_NONCLIENTMETRICSW_lfMessageFont(NONCLIENTMETRICSW * metrics) {
 	return &metrics->lfMessageFont;
+}
+
+UINT bmx_win32_NONCLIENTMETRICSW_size() {
+	return sizeof(NONCLIENTMETRICSW);
 }
 
 // ********************************************************
