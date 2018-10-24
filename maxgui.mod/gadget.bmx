@@ -638,6 +638,9 @@ Type TGadget
 	End Method
 	Method Query:Byte Ptr(queryid)
 	End Method
+	Method ScaleFactor:Int()
+		Return 1
+	End Method
 	Method CleanUp()
 		For Local tmpChild:TGadget = EachIn kids.Copy()
 			tmpChild.CleanUp()

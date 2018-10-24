@@ -2507,6 +2507,14 @@ Function QueryGadget:Byte Ptr( gadget:TGadget,queryid )
 	Return gadget.Query(queryid)
 End Function
 
+Rem
+bbdoc: Returns the gadget scale factor that maps from window coordiantes to the actual device pixels.
+about: On traditional systems this is 1, but on very high density outputs this can be a higher value (often 2).
+End Rem
+Function GadgetScaleFactor:Int( gadget:TGadget )
+	Return gadget.ScaleFactor()
+End Function
+
 Private
 
 Function GetGroup:TGadget( gadget:TGadget )
