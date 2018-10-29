@@ -3271,6 +3271,7 @@ Type TWindowsToolbar Extends TWindowsGadget
 		If state&STATE_SELECTED pressed=$1
 		SendMessageW _hwnd,TB_ENABLEBUTTON,WParam(index+1),enable
 		SendMessageW _hwnd,TB_CHECKBUTTON,WParam(index+1),pressed
+		InvalidateRect _hwnd, Null, False
 	EndMethod
 	
 	Method ListItemState(index)
