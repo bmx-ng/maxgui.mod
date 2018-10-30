@@ -794,7 +794,7 @@ Type TWindowsFont Extends TGuiFont
 			DEFAULT_CHARSET,..
 			OUT_DEFAULT_PRECIS,..
 			CLIP_DEFAULT_PRECIS,..
-			ANTIALIASED_QUALITY,..
+			CLEARTYPE_QUALITY|ANTIALIASED_QUALITY,..
 			DEFAULT_PITCH|FF_DONTCARE,..
 			_name.toWString())
 		
@@ -812,7 +812,7 @@ Type TWindowsFont Extends TGuiFont
 							SYMBOL_CHARSET,..
 							OUT_DEFAULT_PRECIS,..
 							CLIP_DEFAULT_PRECIS,..
-							ANTIALIASED_QUALITY,..
+							CLEARTYPE_QUALITY|ANTIALIASED_QUALITY,..
 							DEFAULT_PITCH|FF_DONTCARE,..
 							_name.toWString())
 			
