@@ -3151,6 +3151,7 @@ EndType
 
 Type TWindowsToolbar Extends TWindowsGadget
 	Field _icons:TWindowsIconStrip
+	Field _disabledIcons:TWindowsIconStrip
 
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
@@ -3172,6 +3173,45 @@ Type TWindowsToolbar Extends TWindowsGadget
 		_icons=TWindowsIconStrip(iconstrip)
 		SendMessageW _hwnd,TB_SETIMAGELIST,0,LParam(_icons._imagelist)
 		SendMessageW _hwnd,TB_AUTOSIZE,0,0
+		Rethink
+	EndMethod
+
+	'Windows adds a gray border around the icons when they are disabled which can look pretty odd.
+	'Use this method to grayscale/fade-out a given pixmap and assign the contained icons
+	'as disabled icons.
+	Method CreateDisabledIconStrip:TIconStrip(pixmap:TPixmap, saturation:Float = 0.1, alpha:Float = 0.4)
+		if not pixmap then return
+		'work on a copy to avoid manipulating the original pixmap data
+		local disabledPixmap:TPixmap = pixmap.copy()
+		'grayscale and fadeout each pixel
+		For Local x:Int = 0 Until pixmap.width
+			For Local y:Int = 0 Until pixmap.height
+				Local c:Int = pixmap.ReadPixel(x,y)
+				Local a:Int = (c Shr 24) & $ff
+				Local r:Int = (c Shr 16) & $ff
+				Local g:Int = (c Shr 8) & $ff
+				Local b:Int = c & $ff
+				'convert to grayscale
+				Local luminance:Float = Sqr(0.299 * r*r + 0.587 * g*g + 0.114 * b*b)
+				r = Min(255, Max(0, luminance + (r - luminance) * saturation))
+				g = Min(255, Max(0, luminance + (g - luminance) * saturation))
+				b = Min(255, Max(0, luminance + (b - luminance) * saturation))
+				disabledPixmap.WritePixel(x,y, Int(a * alpha) * $1000000 + r * $10000 + g * $100 + b)
+			Next
+		Next
+		Return LoadIconStrip(disabledPixmap)
+	EndMethod
+
+	Method CreateAndSetDisabledIconStrip:TIconStrip(pixmap:TPixmap, saturation:Float = 0.1, alpha:Float = 0.4)
+		SetDisabledIconStrip( CreateDisabledIconStrip(pixmap, saturation, alpha) )
+	EndMethod
+
+	Method SetDisabledIconStrip(iconstrip:TIconStrip)
+		_disabledIcons = TWindowsIconStrip(iconstrip)
+		If _disabledIcons
+			SendMessageW _hwnd,TB_SETDISABLEDIMAGELIST,0,LParam(_disabledIcons._imagelist)
+			SendMessageW _hwnd,TB_AUTOSIZE,0,0
+		EndIf
 		Rethink
 	EndMethod
 
