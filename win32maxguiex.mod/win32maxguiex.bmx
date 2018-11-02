@@ -26,7 +26,7 @@ Import "common.bmx"
 maxgui_driver = New TWindowsGUIDriver
 
 Type TWindowsGUIDriver Extends TMaxGUIDriver
-	
+
 	Global GadgetMap:TPtrMap
 	Global GDIDesktop:TWindowsDesktop
 	Global GDIFont:TWindowsFont
@@ -54,60 +54,60 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		'icc.dwSize = SizeOf(icc)
 		icc.SetdwICC(ICC_WIN95_CLASSES|ICC_USEREX_CLASSES)'|ICC_COOL_CLASSES'|ICC_DATE_CLASSES
 		InitCommonControlsEx icc.controlPtr
-		
+
 		'Initialize Global Variables
 		GDIFont=TWindowsFont.DefaultFont()
 		GadgetMap=New TPtrMap
 		GDIDesktop=New TWindowsDesktop
-		
+
 		'Set-up Message Hooks
 		KBMessageHook=SetWindowsHookExW(WH_KEYBOARD,KeyboardProc,GetModuleHandleW(Null),GetCurrentThreadId())
 		MouseMessageHook=SetWindowsHookExW(WH_MOUSE,MouseProc,GetModuleHandleW(Null),GetCurrentThreadId())
-		
+
 		'Gadget Tooltips
 		_hwndTooltips = CreateWindowExW( 0,"tooltips_class32","",WS_POPUP|TTS_ALWAYSTIP,0,0,0,0,GDIDesktop._hwnd,Null,GetModuleHandleW(Null),Null )
 		SendMessageW( _hwndTooltips, TTM_SETMAXTIPWIDTH, 0, 300)
 		SetWindowPos( _hwndTooltips, Byte Ptr(HWND_TOPMOST), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE )
-		
+
 	EndMethod
-	
+
 	Method Delete()
 		DestroyWindow( _hwndTooltips );_hwndTooltips = 0
 		UnhookWindowsHookEx MouseMessageHook
 		UnhookWindowsHookEx KBMessageHook
 	EndMethod
-	
+
 	Method UserName$()
 		Return getenv_("username")
 	End Method
-	
+
 	Method ComputerName$()
 		Return getenv_("userdomain")
 	End Method
-	
+
 	Method CreateGadget:TGadget(class,Text$,x,y,w,h,group:TGadget,style)
-		
+
 		Select class
 			Case GADGET_WINDOW
 				If Not group group=GDIDesktop
 		End Select
-		
+
 		Local gadget:TGadget = GadgetInstanceFromClass(class,group,style,Text)
-		
+
 		Select class
 			Case GADGET_DESKTOP, GADGET_MENUITEM, GADGET_NODE
 				Return gadget
 		End Select
-		
+
 		If LocalizationMode() & LOCALIZATION_OVERRIDE Then
 			LocalizeGadget(gadget,Text,"")
 		Else
 			gadget.SetText(Text)
 		EndIf
-		
+
 		If group Then gadget._SetParent group
 		If class <> GADGET_TOOLBAR Then gadget.SetShape(x,y,w,h)
-		
+
 		'v0.51: Gadgets are now only shown when they have been sized, and the text set.
 		If TWindowsGadget(gadget) Then
 			If Not TWindowsWindow(gadget)
@@ -121,16 +121,16 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				gadget.SetShow(True)
 			EndIf
 		EndIf
-		
+
 		If TWindowsGadget(gadget) Then TWindowsGadget(gadget).Sensitize()
-		
+
 		Return gadget
 	EndMethod
 
 	Method GadgetInstanceFromClass:TGadget(class, group:TGadget, style = 0, Text$ = "")
-		
+
 		Local gadget:TGadget
-		
+
 		Select class
 			Case GADGET_DESKTOP
 				gadget=GDIDesktop
@@ -156,7 +156,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				gadget=New TWindowsToolBar.Create(group,style,Text)
 			Case GADGET_TABBER
 				gadget=New TWindowsTabber.Create(group,style)
-			Case GADGET_NODE	
+			Case GADGET_NODE
 				gadget=New TWindowsTreeNode.Create(group,style,Text)
 			Case GADGET_TREEVIEW
 				gadget=New TWindowsTreeView.Create(group,style)
@@ -173,9 +173,9 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 			Case GADGET_HTMLVIEW
 				gadget=New TWindowsHTMLView.Create(group,style)
 		End Select
-		
+
 		Return gadget
-		
+
 	EndMethod
 
 	Method ActiveGadget:TGadget()
@@ -193,14 +193,14 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		Local hwnd:Byte Ptr = GetFocus()
 		Local n:Int = cc.ChooseColor()
 		SetFocus(hwnd)
-		If Not n Return 0	
+		If Not n Return 0
 		Local rgbResult:Int = cc.rgbResult()
 		n = ((rgbResult Shr 16)&$ff) | (rgbResult&$ff00) | ((rgbResult Shl 16)&$ff0000)
 		Return n|$ff000000
 	EndMethod
 
 	Method LookupColor( colorindex:Int, red:Byte Var, green:Byte Var, blue:Byte Var )
-		
+
 		Select colorindex
 			Case GUICOLOR_WINDOWBG
 				colorindex = COLOR_BTNFACE
@@ -215,32 +215,32 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 			Default
 				Return Super.LookupColor( colorindex, red, green, blue )
 		EndSelect
-		
+
 		Local tmpColor:Int = GetSysColor( colorindex )
 		red = tmpColor & $FF
 		green = (tmpColor Shr 8) & $FF
 		blue = (tmpColor Shr 16) & $FF
-		
+
 		Return True
-		
+
 	EndMethod
 
 	Method LoadFont:TGuiFont(name$,size,flags)
 		Return New TWindowsFont.Load(name,Double(size),flags)
 	EndMethod
-	
+
 	Method LoadFontWithDouble:TGuiFont(name$,size:Double,flags)
 		Return New TWindowsFont.Load(name,size,flags)
 	EndMethod
-	
+
 	Method LibraryFont:TGuiFont( pFontType% = GUIFONT_SYSTEM, pFontSize:Double = 0, pFontStyle% = FONT_NORMAL )
 		If pFontType = GUIFONT_SYSTEM Then Return TWindowsFont.DefaultFont( pFontSize, pFontStyle ) Else Return Super.LibraryFont( pFontType, pFontSize, pFontStyle )
 	EndMethod
-	
+
 	Method RequestFont:TGuiFont(font:TGuiFont)
 		Return TWindowsFont.Request(font)
 	EndMethod
-		
+
 	Method SetPointer(shape)
 		Global winptrs[]=[0,32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650,32651]
 		If shape<1 Or shape>14 Then
@@ -253,89 +253,89 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		If shape = 0 Then _cursor = 0
 	EndMethod
 
-	Method LoadIconStrip:TIconStrip(source:Object)		
+	Method LoadIconStrip:TIconStrip(source:Object)
 		Return TWindowsIconStrip.Create(source)
 	EndMethod
-	
-	
+
+
 	'Low-level Win32 interface
 
 	Function RegisterHwnd(hwnd:Byte Ptr,gadget:TWindowsGadget)
-		GadgetMap.Insert hwnd,gadget		
+		GadgetMap.Insert hwnd,gadget
 	EndFunction
-	
+
 	Function RemoveHwnd(hwnd:Byte Ptr)
 		GadgetMap.Remove hwnd
 	EndFunction
-	
+
 	Function GadgetFromHwnd:TWindowsGadget(hwnd:Byte Ptr) nodebug
 		Return TWindowsGadget(GadgetMap.ValueForKey(hwnd))
 	EndFunction
-	
+
 	Function ClassWndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam) "win32"
 		Local owner:TWindowsGadget
 		Local res
 		Local nmhdrPtr:Byte Ptr
-		
+
 		'?Debug And Win32
 		'Print TWindowsDebug.ReverseLookupMsg(msg) + ", hwnd: " + hwnd + ", wp: " + wp + ", lp: " + lp
 		'?Win32
-		
+
 		Select msg
-			
+
 			Case WM_MENUCHAR
-				
+
 				If HotKeyEventFromWp(wp & $FF) Then
 					Return (MNC_CLOSE Shl 16)
 				Else
 					Return (MNC_IGNORE Shl 16)
 				EndIf
-			
+
 			Case WM_SIZE
-				
+
 				owner = GadgetFromHwnd(hwnd)
 				If owner And Not TWindowsWindow(owner) Then
 					If hwnd = owner.Query(QUERY_HWND) Then owner.RethinkClient()
 					If hwnd = owner.Query(QUERY_HWND_CLIENT) Then owner.LayoutKids()
 				EndIf
-			
+
 			Case WM_CTLCOLORSTATIC, WM_CTLCOLOREDIT, WM_CTLCOLORBTN
-				
+
 				owner=GadgetFromHwnd(Byte Ptr lp)
-				
+
 				Select True
-					
+
 					Case TWindowsLabel(owner) <> Null
-					
+
 						SetBkMode(Byte Ptr wp, TRANSPARENT)
 						If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
 						Return owner.CreateControlBrush( owner._hwnd, Byte Ptr wp )
-				
+
 					Case TWindowsPanel(owner) <> Null
-						
+
 						If TWindowsPanel(owner)._type = TWindowsPanel.PANELGROUP Then
-							
+
 							SetBkMode(Byte Ptr wp, TRANSPARENT)
 							If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
 							Return owner.CreateControlBrush( Byte Ptr lp, Byte Ptr wp )
-							
+
 						EndIf
-						
+
 					Case TWindowsTextField(owner) <> Null, TWindowsComboBox(owner) <> Null
-						
+
 						If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
 						If owner.BgBrush() Then SetBkColor(Byte Ptr wp, owner.BgColor());Return owner.BgBrush()
-						
+
 					Case TWindowsButton(owner) <> Null, TWindowsSlider(owner) <> Null
-						
+
 						SetBkMode(Byte Ptr wp, TRANSPARENT)
 						If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
 						Return owner.CreateControlBrush( owner._hwnd, Byte Ptr wp )
-					
+
 				EndSelect
-				
+
 				owner = Null
-				
+
 			Case WM_COMMAND,WM_HSCROLL,WM_VSCROLL
 				If lp Then
 					owner=GadgetFromHwnd(Byte Ptr lp)
@@ -354,11 +354,11 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				Else
 					Return DefWindowProcW( hwnd,msg,wp,lp )
 				EndIf
-				
+
 			Case WM_NOTIFY
 				'Gadget tooltips
 				nmhdrPtr=lp
-				owner=GadgetFromHwnd(bmx_win32_NMHDR_hwndFrom(nmhdrPtr))		
+				owner=GadgetFromHwnd(bmx_win32_NMHDR_hwndFrom(nmhdrPtr))
 				If owner Then
 					Select bmx_win32_NMHDR_code(nmhdrPtr)
 						Case TTN_GETDISPINFOW
@@ -366,32 +366,32 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 					EndSelect
 					Return owner.OnNotify(wp,lp)
 				EndIf
-				
+
 			Case WM_SETCURSOR
-			
+
 				If _cursor Then
 					SetCursor(_cursor)
 					Return 1
 				EndIf
-				
+
 			Case WM_ACTIVATEAPP, WM_ACTIVATE
-			
+
 				SystemEmitOSEvent(hwnd,msg,wp,lp,Null)
-			
+
 			Case WM_DRAWITEM
-				
+
 				Local tmpDrawItemStruct:DRAWITEMSTRUCT = DRAWITEMSTRUCT._create(Byte Ptr lp)
 				'MemCopy tmpDrawItemStruct, Byte Ptr lp, SizeOf(tmpDrawItemStruct)
-				
+
 				owner = GadgetFromHwnd(tmpDrawItemStruct.hwndItem())
 				If owner And owner.OnDrawItem( tmpDrawItemStruct ) Then Return True
-				
+
 				owner = Null
-			
+
 			'Allow BRL.System to handle mouse/key events on sensitive gadgets.
-				
+
 			Case WM_CAPTURECHANGED
-				
+
 				'For preventing problem where controls which called SetCapture() internally
 				'had their capture prematurely released by the ReleaseCapture() call in BRL.System.
 				intDontReleaseCapture = False
@@ -399,9 +399,9 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				'capture hwnd [lp] = old hwnd [hwnd]) then we dont want to call ReleaseCapture() in BRL.System
 				'when WM_MOUSEBUTTONUP is received by the system hook TWindowsGUIDriver.MouseProc().
 				If (Byte Ptr lp = hwnd) And (Not intEmitOSEvent) Then intDontReleaseCapture = True
-			
+
 			Default
-				
+
 				'Added preliminary check to avoid searching for a gadget in GadgetMap un-necessarily.
 				If (msg = WM_MOUSEWHEEL) Or (msg = WM_MOUSELEAVE) Or (msg>=WM_KEYFIRST And msg<=WM_KEYLAST) Then
 					owner=GadgetFromHwnd(hwnd)
@@ -417,12 +417,12 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 						EndSelect
 					EndIf
 				EndIf
-			
+
 		EndSelect
-		
+
 		If Not owner Then owner=GadgetFromHwnd(hwnd)
 		If owner Return owner.WndProc(hwnd,msg,wp,lp)
-		
+
 		Return DefWindowProcW( hwnd,msg,wp,lp )
 
 	EndFunction
@@ -449,7 +449,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 						If ev.mods Then Return 1	'Key press events never reach active panels etc. if we return 1
 					EndIf
 				EndIf
-			EndIf		
+			EndIf
 		EndIf
 		Return CallNextHookEx( KBMessageHook,code,wp,lp )
 	EndFunction
@@ -473,7 +473,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 	EndFunction
 
 	Global intButtonStates%[4]
-	
+
 	Function MouseProc:Byte Ptr( code,wp:WParam,lp:LParam) "win32" nodebug
 
 		If code>=0 And wp >= WM_MOUSEFIRST And wp <= WM_MOUSELAST Then 'Not needed as MouseProc only receives mouse messages!!!
@@ -483,7 +483,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 			Local w:WParam, l:LParam, data
 			Local hwnd:Byte Ptr = mh.hwnd(), msg:UInt = wp, owner:TWindowsGadget
 			Local point:Int[] = [mh.x(), mh.y()]
-			
+
 			Select msg
 				Case WM_LBUTTONDOWN, WM_LBUTTONDBLCLK
 					data = MOUSE_LEFT
@@ -507,24 +507,24 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 					data = MOUSE_MIDDLE
 					intButtonStates[MOUSE_MIDDLE] = False
 			EndSelect
-			
+
 			owner = GadgetFromHwnd(hwnd)
 			If owner And ScreenToClient( hwnd, point ) Then
-				
+
 				If data And (Not intButtonStates[data]) And TGadget.dragGadget[data-1] Then
 					PostGuiEvent EVENT_GADGETDROP, owner, data, KeyMods(), point[0], point[1], TGadget.dragGadget[data-1]
 					TGadget.dragGadget[data-1] = Null
 				EndIf
-				
+
 				If (owner.sensitivity&SENSITIZE_MOUSE) Then
-					
+
 					'Fake wp parameter to pass onto bbSystemEmitOSEvent
 					If intButtonStates[MOUSE_LEFT] Then w:|MK_LBUTTON
 					If intButtonStates[MOUSE_MIDDLE] Then w:|MK_MBUTTON
 					If intButtonStates[MOUSE_RIGHT] Then w:|MK_RBUTTON
 					If GetKeyState(VK_SHIFT)&$8000 Then w:|MK_SHIFT
 					If GetKeyState(VK_CONTROL)&$8000 Then w:|MK_CONTROL
-					
+
 					l = (Short(point[1]) Shl 16) | Short(point[0])
 					'Sort and determine whether to emit the event
 					Select msg
@@ -542,15 +542,15 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 						Case WM_LBUTTONDOWN, WM_RBUTTONDOWN, WM_MBUTTONDOWN
 							SystemEmitOSEvent hwnd,msg,w,l,owner
 					EndSelect
-					
+
 				EndIf
 			EndIf
 		EndIf
 		Return CallNextHookEx( MouseMessageHook,code,wp,lp )
 	EndFunction
-	
+
 	Global intEmitOSEvent
-	
+
 	Function SystemEmitOSEvent( hwnd:Byte Ptr, msg:UInt, wp:WParam, lp:LParam, owner:TGadget )
 		intEmitOSEvent:+1
 		If owner Then
@@ -579,7 +579,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 			If (_commoncontrolversion[0] > 6) Or (_commoncontrolversion[1] > 0) Then Return 2 Else Return 1
 		EndIf
 	EndFunction
-	
+
 	Function GetThemeHandle:Byte Ptr(hwnd:Byte Ptr, pClass$ = "WINDOW")
 		If CheckCommonControlVersion() Then Return OpenThemeData(hwnd, pClass)
 	EndFunction
@@ -587,11 +587,11 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 	Function CloseThemeHandle(hTheme:Byte Ptr)
 		Return CloseThemeData(hTheme)
 	EndFunction
-	
+
 	Function CreateExplorerStyleGadgets( pDisable = False )
 		_explorerstyle = (pDisable <> True)
 	EndFunction
-	
+
 
 	Function GetActiveHwnd:Byte Ptr()
 		If _activeWindow Then Return _activeWindow._hwnd Else Return GetActiveWindow()
@@ -602,7 +602,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		Global _name$
 		Global _wc:WNDCLASSW
 		Global _icon:Byte Ptr
-		
+
 		If Not _name
 			_name="BLITZMAX_WINDOW_CLASS"
 			_icon=LoadIconW(GetModuleHandleW(Null),Short Ptr(101))
@@ -626,7 +626,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 	Function DialogClassName$()
 		Global _dname$
 		Global _dc:WNDCLASSW
-		
+
 		If Not _dname
 			_dname="BLITZMAX_DIALOG_CLASS"
 			_dc=New WNDCLASSW
@@ -657,29 +657,29 @@ Type TChooseColor
 		colorPtr = bmx_win32maxgui_choosecolor_new(parent, rgb, customColors, flags)
 		Return Self
 	End Method
-	
+
 	Method ChooseColor:Int()
 		Return bmx_win32maxgui_choosecolor_ChooseColor(colorPtr)
 	End Method
-	
+
 	Method rgbResult:Int()
 		Return bmx_win32maxgui_choosecolor_rgbResult(colorPtr)
 	End Method
-	
+
 	Method Delete()
 		If colorPtr Then
 			bmx_win32maxgui_choosecolor_free(colorPtr)
 			colorPtr = Null
 		End If
 	End Method
-	
+
 End Type
 
 
 
 
 Type TWindowsIconStrip Extends TIconStrip
-	
+
 	Field	_blanks[]
 	Field	_imagelist:Byte Ptr
 
@@ -691,22 +691,22 @@ Type TWindowsIconStrip Extends TIconStrip
 			Next
 		Next
 	EndFunction
-	
+
 	Method IsBlankIcon(n)
 		Return _blanks[n]
 	EndMethod
-	
+
 	Function RemoveMask(pixmap:TPixmap)
 		If pixmap.format<>( PF_RGBA8888 ) And pixmap.format<>( PF_BGRA8888 ) Return
 		Local w = pixmap.width, h = pixmap.height, y, c
 		For Local x=0 Until w
 			For y=0 Until h
-				c=pixmap.ReadPixel(x,y) 			
+				c=pixmap.ReadPixel(x,y)
 				If c>=0 pixmap.WritePixel x,y,-1
 			Next
 		Next
 	EndFunction
-	
+
 	Function BuildImageList:Byte Ptr(pixmap:TPixmap)
 
 		Local bitmap:Byte Ptr,imagelist:Byte Ptr,sz,mask:Byte Ptr
@@ -735,57 +735,57 @@ Type TWindowsIconStrip Extends TIconStrip
 		Local	imagelist:Byte Ptr
 		Local	n,i,sz
 		Local	blanks[]
-		
-		'Get a 24-bit pixmap from source				
+
+		'Get a 24-bit pixmap from source
 		Local pix:TPixmap = TPixmap(source)
 		If Not pix pix = LoadPixmap(source)
 		If Not pix Return
 
-		'Detect blank icons in the set		
+		'Detect blank icons in the set
 		sz=pix.height;If sz n=pix.width/sz
 
-		If n=0 Return	
+		If n=0 Return
 		blanks=New Int[n]
 		For i=0 Until n
 			blanks[i]=Not DetectNotBlank(pix,i*sz,sz)
 		Next
-		
+
 		'Build a Win32 Image-List
-		imagelist=BuildImageList(pix)		
+		imagelist=BuildImageList(pix)
 		icons = New TWindowsIconStrip
 		icons.pixmap = pix
 		icons.count=n
 		icons._blanks=blanks
 		icons._imagelist=imagelist
-				
+
 		Return icons
-	EndFunction	
-	
+	EndFunction
+
 	Function CreateBlank:TWindowsIconStrip()
 		Return Create(CreatePixmap(1,1,PF_BGR888))
 	EndFunction
-	
+
 	Method Delete()
 		If _imagelist Then
 			ImageList_Destroy(_imagelist)
 			_imagelist = 0
 		EndIf
 	EndMethod
-	
+
 EndType
 
 Type TWindowsFont Extends TGuiFont
-	
+
 	Method Load:TWindowsFont(_name$,_size:Double,_style)
-		
+
 		If handle Then
 			DeleteObject handle
 			handle = 0
 		End If
-		
+
 		Local cfweight = FW_NORMAL
 		Local cfsize = -LogicalUnitsFromSize( _size )
-		
+
 		If _style & FONT_BOLD cfweight=FW_BOLD
 		handle = CreateFontW( cfsize, 0,0,0,cfweight,..
 			(_style & FONT_ITALIC) ,..
@@ -797,13 +797,13 @@ Type TWindowsFont Extends TGuiFont
 			ANTIALIASED_QUALITY,..
 			DEFAULT_PITCH|FF_DONTCARE,..
 			_name.toWString())
-		
+
 		'Now lets test to see whether the right font was found
-		
+
 		name = NameFromHandle(handle)
-		
+
 		'If the font returned has a different name to that requested, let's try the symbol character set
-		
+
 		If name.ToLower() <> _name.ToLower() Then
 			Local tmpSymbolHandle:Byte Ptr = CreateFontW( cfsize, 0,0,0,cfweight,..
 							(_style & FONT_ITALIC) ,..
@@ -815,11 +815,11 @@ Type TWindowsFont Extends TGuiFont
 							ANTIALIASED_QUALITY,..
 							DEFAULT_PITCH|FF_DONTCARE,..
 							_name.toWString())
-			
+
 			Local strSymbolName:String = NameFromHandle(tmpSymbolHandle)
-			
+
 			'If we now have a match, delete the first font returned and use the new symbol one.
-			
+
 			If strSymbolName.ToLower() = _name.ToLower() Then
 				DeleteObject handle
 				handle = tmpSymbolHandle
@@ -827,120 +827,120 @@ Type TWindowsFont Extends TGuiFont
 			Else
 				DeleteObject tmpSymbolHandle
 			EndIf
-			
+
 		EndIf
-			
+
 		size=_size
 		style=_style
-		
+
 		Return Self
-		
+
 	EndMethod
-	
+
 	Method LoadFromLogFont:TWindowsFont( pLogFont:LOGFONTW, pStyle% = 0, pSize:Double = 0:Double )
-		
+
 		If pLogFont.lfWeight()>=FW_BOLD Then pStyle:| FONT_BOLD
 		If pLogFont.lfItalic() Then pStyle:| FONT_ITALIC
 		If pLogFont.lfUnderline() Then pStyle:| FONT_UNDERLINE
 		If pLogFont.lfStrikeOut() Then pStyle:| FONT_STRIKETHROUGH
-		
+
 		style = pStyle
-		
+
 		If Not pSize Then pSize = SizeFromLogFont( pLogFont )
-		
+
 		size = pSize
-		
+
 		SetLogFontProperties( pLogFont, pStyle, pSize )
-		
+
 		name = String.FromWString( pLogFont.lfFaceName() )
-		
+
 		If handle Then DeleteObject handle
 		handle = CreateFontIndirectW( pLogFont.fontPtr )
-		
+
 		Return Self
-		
+
 	EndMethod
-	
+
 	Method LoadFromHandle:TWindowsFont(hfont:Byte Ptr)
-		
+
 		Local tmpLogFont:LOGFONTW = New LOGFONTW
 		GetObjectW( hfont, LOGFONTW.Size(), tmpLogFont.fontPtr )
 		Return LoadFromLogFont( tmpLogFont )
-		
+
 	EndMethod
-	
+
 	Method CharWidth( charcode )
-		Local hdc:Byte Ptr=GetDC(0)	
+		Local hdc:Byte Ptr=GetDC(0)
 		Local TFont:Byte Ptr=SelectObject( hdc,handle )
-		
+
 		Local width=8,widths[3]
-		
+
 		If GetCharABCWidthsW( hdc,UInt(charcode),UInt(charcode),widths )
 			width=widths[0]+widths[1]+widths[2]
 		Else If GetCharWidth32W( hdc,UInt(charcode),UInt(charcode),widths )
 			width=widths[0]
 		EndIf
-		
+
 		SelectObject hdc,TFont
 		ReleaseDC Null,hdc
-		
+
 		Return width
 	EndMethod
-	
-	Method GetMaxCharWidth()	
+
+	Method GetMaxCharWidth()
 		Local hdc:Byte Ptr=GetDC(0)
 		Local TFont:Byte Ptr=SelectObject(hdc,handle)
 		Local tm:TEXTMETRICW=New TEXTMETRICW
 		GetTextMetricsW hdc,tm.metricPtr
 		SelectObject(hdc,TFont)
-		ReleaseDC(Null,hdc)		
+		ReleaseDC(Null,hdc)
 		Return tm.tmAveCharWidth()
 	EndMethod
-	
+
 	Method Delete()
 		If handle Then DeleteObject handle
 	EndMethod
-	
+
 	Function Request:TWindowsFont(font:TGuiFont)
-		
+
 		Local lf:LOGFONTW = New LOGFONTW
 		Local cf:CHOOSEFONTW = New CHOOSEFONTW
-		
+
 		'cf.lStructSize=SizeOf(cf)
 		cf.SethwndOwner(TWindowsGUIDriver.GetActiveHwnd())
 		cf.SetlpLogFont(lf.fontPtr)
 		cf.SetFlags(CF_BOTH)
-		
+
 		If font
 			Local p:Short Ptr = lf.lfFaceName()
 			For Local i = 0 Until Min(font.name.length, 31)
 				p[i]=font.name[i]
 			Next
-			SetLogFontProperties( lf, font.style, font.size )			
+			SetLogFontProperties( lf, font.style, font.size )
 			cf.SetFlags(cf.Flags()|CF_INITTOLOGFONTSTRUCT)
 		EndIf
-		
+
 		Local hwnd:Byte Ptr = GetFocus()
 		Local n = ChooseFontW_(cf.fontPtr)
 		SetFocus(hwnd)
 		If Not n Return
-		
+
 		Local style
 		If cf.nFontType()&BOLD_FONTTYPE style:|FONT_BOLD
 		If cf.nFontType()&ITALIC_FONTTYPE style:|FONT_ITALIC
 		Return New TWindowsFont.LoadFromLogFont( lf, style, cf.iPointSize()/Double(10) )
-		
+
 	EndFunction
 
 	Function DefaultFont:TWindowsFont( pFontSize:Double = 0, pFontStyle% = FONT_NORMAL )
 
 		'Attempts to get hold of the Windows themed font (typically Tahoma on XP, Segeo UI on Vista)
 		Local tmpNonClientMetrics:NONCLIENTMETRICSW = New NONCLIENTMETRICSW
-		
+
 		If SystemParametersInfoW( SPI_GETNONCLIENTMETRICS, tmpNonClientMetrics.Size(), tmpNonClientMetrics.metricsPtr, 0 ) Then
 			Return New TWindowsFont.LoadFromLogFont( tmpNonClientMetrics.lfMessageFont(), pFontStyle, pFontSize )
 		EndIf
-		
+
 		'If these functions, for whatever reason, fail, then the default GUI font is used (typically MS Sans Serif).
 		'Note: A font size of '8' has has been hard-coded in as no reliable substitute can be found, however this may cause
 		'text to appear too small in some languages/lacalizations.
@@ -950,48 +950,48 @@ Type TWindowsFont Extends TGuiFont
 	EndFunction
 
 	Function NameFromHandle:String( pFntHandle:Byte Ptr )
-		
+
 		Local hdc:Byte Ptr = GetDC(0), buffer:Short[512]
 		Local TFont:Byte Ptr = SelectObject(hdc,pFntHandle)
-		
+
 		If Not GetTextFaceW(hdc,buffer.length,buffer) buffer[0] = 0
-		
+
 		SelectObject(hdc, TFont)
 		ReleaseDC(Null,hdc)
-		
+
 		Return String.FromWString(buffer)
-		
+
 	EndFunction
-	
+
 	Function LogicalUnitsFromSize( pSize:Double )
-		
+
 		Local tmpDC:Byte Ptr = GetDC(0)
 		Local tmpSize:Int = (pSize * GetDeviceCaps(tmpDC,LOGPIXELSY))/72 + 0.5
 		ReleaseDC( Null, tmpDC )
 		Return tmpSize
-		
+
 	EndFunction
-	
+
 	Function SizeFromLogFont:Double( pLogFont:LOGFONTW )
-		
+
 		Local tmpDC:Byte Ptr = GetDC(0)
 		Local tmpSize:Double = (Abs(pLogFont.lfHeight()) * Double(72.0) )/GetDeviceCaps(tmpDC,LOGPIXELSY)
 		ReleaseDC( Null, tmpDC )
 		Return tmpSize
-		
+
 	EndFunction
-	
+
 	Function SetLogFontProperties( pLogFont:LOGFONTW, pFlags%, pSize:Double = 0:Double )
-		
+
 		If pFlags&FONT_BOLD Then pLogFont.SetlfWeight(FW_BOLD) Else pLogFont.SetlfWeight(FW_NORMAL)
 		If pFlags&FONT_ITALIC Then pLogFont.SetlfItalic(True) Else pLogFont.SetlfItalic(False)
 		If pFlags&FONT_UNDERLINE Then pLogFont.SetlfUnderline(True) Else pLogFont.SetlfUnderline(False)
 		If pFlags&FONT_STRIKETHROUGH Then pLogFont.SetlfStrikeOut(True) Else pLogFont.SetlfStrikeOut(False)
-		
+
 		If pSize > 0 Then pLogFont.SetlfHeight(-LogicalUnitsFromSize( pSize ))
-		
+
 	EndFunction
-	
+
 EndType
 
 
@@ -999,19 +999,19 @@ Type TWindowsGadget Extends TGadget
 
 	'Flag that determines whether gadgets should redraw when they are resized (see Rethink()).
 	Global _resizeRedraw = True
-	
+
 	'Generic Unicode Strings to prevent memory-leak
 	Global _wstrEmpty:Short Ptr = "".ToWString()
 	Global _wstrSpace:Short Ptr = " ".ToWString()
 	Global _wstrExplorer:Short Ptr = "Explorer".ToWString()
 
 	'Important gadget fields that store OS control handles etc..
-	
+
 	Field _class, _hwnd:Byte Ptr, _hwndclient:Byte Ptr, _tooltips:Byte Ptr
 	Field _proc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:Byte Ptr,lp:Byte Ptr) "win32"
 	Field _hotkey:THotKey
 	Field _oldcursorlp:Byte Ptr	'Should track events
-	
+
 	Field _sensitive% = False	'Determines whether gadgets should generate events.
 						'Not to be confused with the sensitivity field of TGadget
 						'which specifies which type of events are fired.
@@ -1028,7 +1028,7 @@ Type TWindowsGadget Extends TGadget
 
 
 	Method Create:TWindowsGadget(group:TGadget, style, Text$="")	 Abstract
-	
+
 	Method SetColor(red,green,blue)
 		If _bgbrush Then DeleteObject _bgbrush
 		_bgcolor = (blue Shl 16) | (green Shl 8) | red
@@ -1041,15 +1041,15 @@ Type TWindowsGadget Extends TGadget
 		_bgbrush=0
 		RedrawGadget(Self)
 	EndMethod
-	
+
 	Method FgColor()
 		Return _fgcolor
 	EndMethod
-	
+
 	Method BgColor()
 		Return _bgcolor
 	EndMethod
-	
+
 	Method BgBrush:Byte Ptr()
 		Return _bgbrush
 	EndMethod
@@ -1066,21 +1066,21 @@ Type TWindowsGadget Extends TGadget
 			Case QUERY_HWND_CLIENT
 				If _hwndclient Return _hwndclient
 				Return _hwnd
-		End Select				
+		End Select
 	EndMethod
 
 	Method Register(class,hwnd:Byte Ptr,hwndclient:Byte Ptr=0,tips=False)
 		_class=class
 		_hwnd=hwnd
 		_hwndclient=hwndclient
-		TWindowsGUIDriver.RegisterHwnd(_hwnd,Self)		
-		If _hwndclient TWindowsGUIDriver.RegisterHwnd(_hwndclient,Self)		
+		TWindowsGUIDriver.RegisterHwnd(_hwnd,Self)
+		If _hwndclient TWindowsGUIDriver.RegisterHwnd(_hwndclient,Self)
 		Local atom=GetClassLongW(hwnd,GCW_ATOM)
 		If atom<>TWindowsGUIDriver.ClassAtom And atom<>TWindowsGUIDriver.ClassAtom2 And Not _proc
 			_proc=Byte Ptr(SetWindowLongPtrW(hwnd,GWL_WNDPROC,TWindowsGUIDriver.ClassWndProc))
 		EndIf
-		If tips Then SetupToolTips()	
-	EndMethod	
+		If tips Then SetupToolTips()
+	EndMethod
 
 	Method SetupToolTips()
 		If _tooltips Then
@@ -1090,12 +1090,12 @@ Type TWindowsGadget Extends TGadget
 		SendMessageW _tooltips,TTM_SETMAXTIPWIDTH,0,300
 		TWindowsGUIDriver.RegisterHwnd( _tooltips, Self )
 	EndMethod
-	
+
 	Method isTabbable()
 		Local style:Int = GetWindowLongW(_hwnd,GWL_STYLE)&(WS_TABSTOP|WS_CHILD)
 		Return (style=(WS_TABSTOP|WS_CHILD))
 	EndMethod
-	
+
 	Method isControl()
 		Return (GetWindowLongW(_hwnd,GWL_STYLE)&(WS_CHILD)=WS_CHILD)
 	EndMethod
@@ -1119,41 +1119,41 @@ Type TWindowsGadget Extends TGadget
 				Return RedrawWindow( _hwnd, Null, Null, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN )
 		End Select
 	EndMethod
-	
+
 	Method Rethink()
 		QueueResize(_hwnd,xpos,ypos,width,height)
-	EndMethod	
-	
+	EndMethod
+
 	Method RethinkClient(forceRedraw:Int = False)
 	EndMethod
-	
+
 	Method SetArea(x,y,w,h)
 		SetRect(x,y,w,h)
 		Rethink()
 	EndMethod
 
 	Method LayoutKids()
-		
+
 		StartResize()
-		
+
 		'Implemented hack to speed-up drawing considerably...
 		Local tmpOldState = TWindowsGadget._resizeredraw
 		TWindowsGadget._resizeredraw = False
-		
+
 		'Child windows are laid-out like normal...
 		Super.LayoutKids()
-		
+
 		'Reposition all child gadgets together.
 		EndResize()
-		
+
 		'If this control is the first parent who started the resizing, then redraw parent and all controls now.
 		If tmpOldState Then
 			If (Not kids.IsEmpty()) Then Activate(ACTIVATE_REDRAW)
 			TWindowsGadget._resizeredraw = True
 		EndIf
-		
+
 	EndMethod
-	
+
 	Method ClientWidth()
 		Local Rect[] = [xpos,ypos,xpos+width,ypos+height]
 		SendMessageW Query(QUERY_HWND), WM_NCCALCSIZE, False, LParam(Byte Ptr Rect)
@@ -1165,24 +1165,24 @@ Type TWindowsGadget Extends TGadget
 		SendMessageW Query(QUERY_HWND), WM_NCCALCSIZE, False, LParam(Byte Ptr Rect)
 		Return Rect[3]-Rect[1]-_clientY
 	EndMethod
-	
+
 	Method SetText(Text$)
 		Desensitize()
 		SetWindowTextW _hwnd, Text
 		Sensitize()
-	EndMethod	
-	
+	EndMethod
+
 	Method GetText$()
 		Local strText:Short[GetWindowTextLengthW(_hwnd)+1]		'Must include NULL terminator.
 		GetWindowTextW _hwnd, strText, strText.length
 		Return String.FromWString( strText )
 	EndMethod
-	
+
 	Method SetFont(font:TGuiFont)
 		If TWindowsFont(font) Then _font = TWindowsFont(font) Else _font = TWindowsGUIDriver.GDIFont
 		SendMessageW _hwnd,WM_SETFONT,WParam(font.handle),1
 	EndMethod
-	
+
 	Method SetShow(show)
 		If show
 			ShowWindow _hwnd,SW_SHOW
@@ -1194,7 +1194,7 @@ Type TWindowsGadget Extends TGadget
 			ShowWindow _hwnd,SW_HIDE
 		EndIf
 	EndMethod
-	
+
 	Method SetEnabled(enable)
 		_enabled = enable
 		enable = enable And Not _forceDisable
@@ -1205,26 +1205,26 @@ Type TWindowsGadget Extends TGadget
 			Next
 		EndIf
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 
 		If _wstrTooltip Then
 			MemFree _wstrTooltip
 			_wstrTooltip = Null
 		End If
-		
+
 		Local tmpToolInfo:TOOLINFOW = New TOOLINFOW
 		'tmpToolInfo.cbSize = SizeOf(tmpToolInfo)
 		tmpToolInfo.Sethwnd(GetParent_(_hwnd))
 		tmpToolInfo.Sethinst(GetModuleHandleW(Null))
 		tmpToolInfo.SetuID(_hwnd)
-		
+
 		If pTooltip Then
 			_wstrTooltip = pTooltip.Replace("~r","").Replace("~n","~r~n").ToWString()
-			
+
 			tmpToolInfo.SetuFlags(TTF_IDISHWND|TTF_TRANSPARENT|TTF_SUBCLASS)
 			tmpToolInfo.SetlpszText(_wstrTooltip)
-			
+
 			If Not _toolAdded Then
 				_toolAdded = SendMessageW(TWindowsGUIDriver._hwndTooltips, TTM_ADDTOOLW, 0, LParam(tmpToolInfo.infoPtr))
 			Else
@@ -1234,13 +1234,13 @@ Type TWindowsGadget Extends TGadget
 			SendMessageW(TWindowsGUIDriver._hwndTooltips, TTM_DELTOOLW, 0, LParam(tmpToolInfo.infoPtr ))
 			_toolAdded = 0
 		EndIf
-		
+
 	EndMethod
-	
+
 	Method GetTooltip$()
 		If _wstrTooltip Then Return String.FromWString(_wstrTooltip)
 	EndMethod
-	
+
 	Method State()
 		Local t, style = GetWindowLongW(_hwnd, GWL_STYLE)
 		If Not (style&WS_VISIBLE) Then t:|STATE_HIDDEN
@@ -1261,11 +1261,11 @@ Type TWindowsGadget Extends TGadget
 		If _htheme Then TWindowsGUIDriver.CloseThemeHandle(_hTheme);_hTheme = 0
 		_font = Null
 		_SetParent Null
-	EndMethod	
-	
+	EndMethod
+
 	Method OnNotify(wp:WParam,lp:LParam)
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_WINDOWPOSCHANGING
@@ -1276,13 +1276,13 @@ Type TWindowsGadget Extends TGadget
 		EndIf
 		Return DefWindowProcW( hwnd,msg,wp,lp )
 	EndMethod
-	
+
 	Method OnCommand(msg,wp:ULong)
 	EndMethod
-	
+
 	Method OnDrawItem( pDrawItemStruct:DRAWITEMSTRUCT )
 	EndMethod
-	
+
 	Method SetHotKey(key,modifier)
 		Local ev:TEvent = CreateEvent( EVENT_GADGETACTION,Self)
 		If _hotKey Then
@@ -1291,63 +1291,63 @@ Type TWindowsGadget Extends TGadget
 		End If
 		If key Then _hotkey=SetHotKeyEvent(key,modifier,ev,FindGadgetWindowHwnd(Self))
 	EndMethod
-	
+
 	'Slow back-up code for mimicking transparency for PANEL_GROUPs and when
 	'DrawThemeParentBackground() is not available (i.e. on Windows 9x/2000).
 	Method CreateControlBrush:Byte Ptr( hWndControl:Byte Ptr, hdc:Byte Ptr = Null )
-		
+
 		Local xOffset, yOffset
 		Local hwndWindow:Byte Ptr = GetParent_(hwndControl)
 		Local rectWindow[4], rectControl[4], rectClient[4]
-		
+
 		If _hbrush Then Return _hbrush
-		
+
 		If BgBrush() Then
 			If hdc Then SetBkColor(hdc, BgColor())
 			Return BgBrush()
 		EndIf
-		
+
 		Local tmpDC:Byte Ptr = GetDC( hwndWindow )
-		
+
 		'Fix required to offset background when controls are drawn with WS_EX_CLIENTEDGE (e.g. panel with PANEL_SUNKEN/PANEL_RAISED set)
 		If GetWindowLongW(hwndWindow,GWL_EXSTYLE)&(WS_EX_CLIENTEDGE|WS_EX_WINDOWEDGE) Then
 			xOffset = -GetSystemMetrics(SM_CXEDGE)
 			yOffset = -GetSystemMetrics(SM_CYEDGE)
 		EndIf
-		
+
 		GetClientRect( hwndControl, rectClient )
 		GetWindowRect( hwndWindow, rectWindow )
 		GetWindowRect( hwndControl, rectControl )
-		
+
 		Local x = rectControl[0]-rectWindow[0]
 		Local y = rectControl[1]-rectWindow[1]
 		Local w = rectControl[2]-rectControl[0]
 		Local h = rectControl[3]-rectControl[1]
-		
+
 		Local dcBitmap:Byte Ptr = CreateCompatibleDC( tmpDC )
 		Local bkgndBitmap:Byte Ptr = CreateCompatibleBitmap( tmpDC, rectWindow[2]-rectWindow[0], rectWindow[3]-rectWindow[1] )
 		SelectObject( dcBitmap, bkgndBitmap )
-		
+
 		'InvalidateRect( hwndWindow, Null, False )
 		SendMessageW hwndWindow, WM_ERASEBKGND, WParam(dcBitmap), 0
-		
+
 		Local bkgndClientBitmap:Byte Ptr = CreateCompatibleBitmap( tmpDC, w, h )
 		Local dcClientBitmap:Byte Ptr = CreateCompatibleDC( tmpDC )
 		SelectObject( dcClientBitmap, bkgndClientBitmap )
-		
+
 		BitBlt( dcClientBitmap, 0,0 , w, h, dcBitmap, x+xOffset, y+yOffset, ROP_SRCCOPY )
-		
+
 		DeleteObject( bkgndBitmap )
 		DeleteDC( dcBitmap )
 		DeleteDC( dcClientBitmap )
-		
+
 		_hbrush = CreatePatternBrush( bkgndClientBitmap )
 		_hbitmap = bkgndClientBitmap
-		
+
 		ReleaseDC( hwndWindow, tmpDC )
-		
+
 		Return _hbrush
-		
+
 	EndMethod
 
 	'Clears the parent background brushes.
@@ -1368,13 +1368,13 @@ Type TWindowsGadget Extends TGadget
 
 	'Method that returns a brush for drawing backgrounds.
 	Method DrawBackground:Byte Ptr( hdc:Byte Ptr, hwnd:Byte Ptr )
-		
+
 		If BgBrush() Then SetBkColor(hdc, BgColor());Return BgBrush()
-		
+
 		Return DrawParentBackground( hdc, hwnd )
 
 	EndMethod
-	
+
 	'Another method which mimics transparency on Windows Controls.
 	Function DrawParentBackground:Byte Ptr( hdc:Byte Ptr, hwndControl:Byte Ptr, pForceHack = False )
 
@@ -1384,89 +1384,89 @@ Type TWindowsGadget Extends TGadget
 		GetClientRect( hwndControl, rectClient )
 		GetClientRect( hwndWindow, rectWindow )
 		GetWindowRect( hwndControl, rectControl )
-		
+
 		'Ensures that the the drawing context is returned in exactly the same state that it was passed.
 		Local tmpSaveState = SaveDC( hdc )
-		
+
 		If Not pForceHack Then
-			
+
 			DrawThemeParentBackground(hwndControl,hdc,rectClient)
-			
+
 		Else 'Again, slow back-up code in case DrawThemeParentBackground() is not available.
-			
+
 			Local tmpDC:Byte Ptr
 			Local xOffset, yOffset
-			
+
 			'Fix required to offset background when controls are drawn with WS_EX_CLIENTEDGE (e.g. panel with PANEL_BORDER set)
 			If GetWindowLongW(hwndWindow,GWL_EXSTYLE)&WS_EX_CLIENTEDGE Then
 				xOffset = -GetSystemMetrics(SM_CXEDGE)
 				yOffset = -GetSystemMetrics(SM_CYEDGE)
 			EndIf
-			
+
 			tmpDC = GetDC( hwndWindow )
-			
+
 			ScreenToClient( hwndWindow, rectControl )
 			ScreenToClient( hwndWindow, Int Ptr (rectControl)+2 )
-			
+
 			Local x = rectControl[0]+rectClient[0]
 			Local y = rectControl[1]+rectClient[1]
 			Local w = rectClient[2]-rectClient[0]
 			Local h = rectClient[3]-rectClient[1]
-			
+
 			Local bkgndBitmap:Byte Ptr = CreateCompatibleBitmap( tmpDC, rectWindow[2]-rectWindow[0], rectWindow[3]-rectWindow[1] )
 			Local dcBitmap:Byte Ptr = CreateCompatibleDC( tmpDC )
 			SelectObject( dcBitmap, bkgndBitmap )
-			
+
 			InvalidateRect( hwndWindow, Null, False )
 			SendMessageW hwndWindow, WM_ERASEBKGND, WParam(dcBitmap), 0
-			
+
 			BitBlt( hdc, 0,0 , w, h, dcBitmap, x+xOffset, y+yOffset, ROP_SRCCOPY )
-			
+
 			DeleteObject( bkgndBitmap )
 			DeleteDC( dcBitmap )
 			ReleaseDC( hwndWindow, tmpDC )
-			
+
 		EndIf
-		
+
 		'Ensures that the the drawing context is returned in exactly the same state that it was passed.
 		RestoreDC( hdc, tmpSaveState )
-		
+
 		Return GetStockObject( NULL_BRUSH )
-		
+
 	EndFunction
 
 	Method Sensitize()
 		_sensitive = True
 	EndMethod
-	
+
 	Method DeSensitize()
 		_sensitive = False
 	EndMethod
-	
+
 	Method PostGuiEvent( pID%, pData%=0, pMods%=0, pX%=0, pY%=0, pExtra:Object = Null)
-		
+
 		Select True
 			Case TWindowsListBox(Self) <> Null, TWindowsTabber(Self) <> Null, TWindowsToolbar(Self) <> Null, TWindowsCombobox(Self) <> Null
 				If pData>-1 Then
 					If (ItemFlags(pData) & GADGETITEM_TOGGLE) Then SelectItem(pData,2)
 				EndIf
 		End Select
-		
+
 		If _sensitive Then MaxGUI.MaxGUI.PostGuiEvent( pID, Self, pData, pMods, pX, pY, pExtra )
-		
+
 	EndMethod
-	
+
 	'Resize Methods
-	
+
 	Field hdwpStruct:Byte Ptr
-	
+
 	Method StartResize()
 		If Not hdwpStruct Then
 			Local tmpCount = kids.Count()
 			If tmpCount Then hdwpStruct = BeginDeferWindowPos( tmpCount )
 		EndIf
 	EndMethod
-	
+
 	Method QueueResize( hwnd:Byte Ptr, xpos, ypos, width, height )
 		If parent And GetParent_(hwnd) = parent.Query(QUERY_HWND_CLIENT) And TWindowsGadget(parent).hdwpStruct Then
 			Local tmpFlags = SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOACTIVATE' | SWP_NOCOPYBITS
@@ -1477,7 +1477,7 @@ Type TWindowsGadget Extends TGadget
 			HasResized()
 		EndIf
 	EndMethod
-	
+
 	Method EndResize()
 		If hdwpStruct Then
 			EndDeferWindowPos( hdwpStruct );hdwpStruct = 0
@@ -1491,7 +1491,7 @@ Type TWindowsGadget Extends TGadget
 	'Required for resizing columns in listboxes (has to be done outside WM_SIZE)
 	Method HasResized()
 	EndMethod
-	
+
 	'Required to ensure problematic controls are updated when parent aesthetics are changed:
 	Method RefreshLook()
 		FlushBrushes(False)
@@ -1511,35 +1511,35 @@ Type TWindowsDesktop Extends TWindowsGadget
 		GetClientRect hwnd,Rect
 		SetShape 0,0,Rect[2]-Rect[0],Rect[3]-Rect[1]
 	EndMethod
-	
+
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Return Self
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'Shouldn't have tool-tips.
 	EndMethod
-	
+
 	Method Free()
 		'Can't be free'd.
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_DESKTOP
 	EndMethod
-	
+
 	Method ClientHeight()
 		Local Rect[4]
-		If SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 ) 
+		If SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 )
 			Return Rect[3]-Rect[1]
 		Else
 			Return Super.ClientHeight()
 		EndIf
 	EndMethod
-	
+
 	Method ClientWidth()
 		Local Rect[4]
-		If SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 ) 
+		If SystemParametersInfoW( SPI_GETWORKAREA, 0, Rect, 0 )
 			Return Rect[2]-Rect[0]
 		Else
 			Return Super.ClientWidth()
@@ -1575,11 +1575,11 @@ Type TWindowsWindow Extends TWindowsGadget
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	hwnd:Byte Ptr, parent:Byte Ptr, client:Byte Ptr
 		Local classname$ = TWindowsGUIDriver.ClassName()
-		
+
 		Self.style = style
 		_wstyle=WS_CLIPSIBLINGS|WS_CLIPCHILDREN
 		If group Then parent = group.Query(QUERY_HWND)
-		
+
 		If (style&WINDOW_TITLEBAR)
 			_wstyle:|WS_OVERLAPPED|WS_SYSMENU
 			If style&WINDOW_RESIZABLE _wstyle:|WS_MINIMIZEBOX|WS_MAXIMIZEBOX
@@ -1588,33 +1588,33 @@ Type TWindowsWindow Extends TWindowsGadget
 				_xstyle:|WS_EX_DLGMODALFRAME
 			EndIf
 		Else
-			_wstyle:|WS_POPUP		
+			_wstyle:|WS_POPUP
 		EndIf
-		
-		If style&WINDOW_RESIZABLE Then _wstyle:|WS_SIZEBOX	
-		If style&WINDOW_MENU Then 
+
+		If style&WINDOW_RESIZABLE Then _wstyle:|WS_SIZEBOX
+		If style&WINDOW_MENU Then
 			_hmenu=CreateMenu_()
 			AppendMenuW( _hmenu,MF_STRING,Null,_wstrEmpty )
 		End If
 		If style&WINDOW_TOOL Then _xstyle:|WS_EX_TOOLWINDOW
-		
+
 		' Note: No WINDOW_HIDDEN case as gadgets are always created hidden to hide initial resize flicker.
 		' TWindowsGUIDriver.CreateGadget() will later show window if WINDOW_HIDDEN is not specified.
-		
+
 		hwnd=CreateWindowExW(_xstyle,classname,"",_wstyle,0,0,0,0,parent,_hmenu,GetModuleHandleW(Null),Null)
-		
+
 		If style&WINDOW_STATUS
 			_status=CreateWindowExW(0,"msctls_statusbar32","",WS_CHILD|WS_VISIBLE,0,0,0,0,hwnd,Null,GetModuleHandleW(Null),Null)
 			SetWindowPos( _status, Byte Ptr(HWND_TOPMOST),0,0,0,0,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOOWNERZORDER|SWP_NOSIZE)
 		EndIf
-		
+
 		client=CreateWindowExW(0,TWindowsGUIDriver.ClassName(),"",WS_CHILD|WS_VISIBLE|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,0,0,0,0,hwnd,Null,GetModuleHandleW(Null),Null)
-		
+
 		Register GADGET_WINDOW,hwnd,client,False
 
 		If style&WINDOW_ACCEPTFILES Then DragAcceptFiles _hwnd,True
 		_wstyle = GetWindowLongW( hwnd, GWL_STYLE )
-			
+
 		Return Self
 	EndMethod
 
@@ -1629,29 +1629,29 @@ Type TWindowsWindow Extends TWindowsGadget
 		EndIf
 		RedrawGadget(Self)
 	EndMethod
-	
+
 	Method Rethink()
 		Local dimensions[] = [xpos,ypos,width,height]
 		ConvertToContainerDimensions( dimensions[0], dimensions[1], dimensions[2], dimensions[3] )
 		MoveWindow _hwnd, dimensions[0], dimensions[1], dimensions[2], dimensions[3], True
 		RethinkClient(True)
-	EndMethod	
-	
+	EndMethod
+
 	Method RethinkClient(forceRedraw:Int = False)
 		If _hwndClient Then
 			MoveWindow _hwndClient, _clientx,_clienty,ClientWidth(),ClientHeight(),forceRedraw
 		EndIf
 		LayoutKids()
 	EndMethod
-	
-	
+
+
 	Method ClientWidth()
 		If (style & WINDOW_CLIENTCOORDS) Then Return width
 		Local Rect:Int[4]
 		GetClientRect _hwnd, Rect
 		Return Max(Rect[2]-Rect[0]-_clientX,0)
 	EndMethod
-	
+
 	Method ClientHeight()
 		If (style & WINDOW_CLIENTCOORDS) Then Return height
 		Local h:Int = height, Rect:Int[] = [0,0,width,height]
@@ -1665,7 +1665,7 @@ Type TWindowsWindow Extends TWindowsGadget
 	Method Class()
 		Return GADGET_WINDOW
 	EndMethod
-	
+
 	Method State()
 		Local t = Super.State()
 		If IsIconic(_hwnd) t:|STATE_MINIMIZED
@@ -1692,7 +1692,7 @@ Type TWindowsWindow Extends TWindowsGadget
 			SetWindowPos( _hwnd, Null, 0, 0, 0, 0, SWP_DRAWFRAME|SWP_FRAMECHANGED|SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOOWNERZORDER|SWP_NOZORDER|SWP_NOSIZE )
 		EndIf
 	EndMethod
-	
+
 	Method SetMaximumSize(w,h)
 		'Set maximum size for current window style
 		_maxwidth=w;_maxheight=h
@@ -1707,7 +1707,7 @@ Type TWindowsWindow Extends TWindowsGadget
 			SetWindowPos( _hwnd, Null, 0, 0, 0, 0, SWP_DRAWFRAME|SWP_FRAMECHANGED|SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOOWNERZORDER|SWP_NOZORDER|SWP_NOSIZE )
 		EndIf
 	EndMethod
-	
+
 	Method GetMenu:TGadget()
 		If Not _menu Then
 			_menu = New TWindowsMenu.Create(Null,0,"")
@@ -1717,29 +1717,29 @@ Type TWindowsWindow Extends TWindowsGadget
 	EndMethod
 
 	Method UpdateMenu()
-	
+
 		Local hmenu:Byte Ptr, oldMenu:Byte Ptr
 		If _menu
 			_menu.FreeKids
 			_menu.Open
 			hmenu=_menu._hmenu
 		EndIf
-		
+
 		oldMenu = GetMenu_( _hwnd )
 		SetMenu _hwnd,hmenu
 		DrawMenuBar _hwnd
 		DestroyMenu oldMenu
-		
+
 	EndMethod
-	
+
 	Field _statustext$
-	
+
 	Method GetStatusText$()
 		If _status
 			Return _statustext
 		EndIf
 	EndMethod
-	
+
 	Method SetStatusText(Text$)
 		If _status
 			_statustext = Text
@@ -1749,23 +1749,23 @@ Type TWindowsWindow Extends TWindowsGadget
 			MemFree tmpWString
 		EndIf
 	EndMethod
-	
+
 	Field popupextra:Object
-		
+
 	Method PopupMenu(menu:TGadget,extra:Object)
 		Local pt[2], wmenu:TWindowsMenu = TWindowsMenu(menu), tmpLink:TLink
 		If wmenu
-			
+
 			GetCursorPos_ pt
 			popupextra = extra
 			wmenu.Open(True)
-			
+
 			Local hmenu:Int = TrackPopupMenu( wmenu._hmenu,TPM_LEFTALIGN|TPM_TOPALIGN|TPM_RETURNCMD|TPM_NONOTIFY,pt[0],pt[1],0,_hwnd,0 )
 			If hmenu Then HandleMenuEvent( WM_COMMAND, ULong(hmenu))
-			
+
 			wmenu.Close()
 			popupextra = Null
-			
+
 		EndIf
 	EndMethod
 
@@ -1777,7 +1777,7 @@ Type TWindowsWindow Extends TWindowsGadget
 			_firsttab=hwnd
 		Else
 			EnumChildWindows hwnd,EnumChildProc,0
-		EndIf		
+		EndIf
 		If _firsttab Return 0
 		Return 1
 	EndFunction
@@ -1802,30 +1802,30 @@ Type TWindowsWindow Extends TWindowsGadget
 				Return RedrawWindow( _hwnd, Null, Null, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN )
 		End Select
 	EndMethod
-	
+
 	Method OnCommand(msg,wp:ULong)
 		If wp>100 Then HandleMenuEvent(msg,wp)
 	EndMethod
-	
+
 	Method HandleMenuEvent( msg, wp:ULong )
 		Local tmpMenuSource:TWindowsMenu = TWindowsMenu.GetMenuFromKey(Int(wp)), tmpMenuID
 		If tmpMenuSource Then tmpMenuID = tmpMenuSource._tag
-		
+
 		Local tmpPopupExtra:Object = popupextra
 		popupextra = Null
-		
+
 		MaxGUI.MaxGUI.PostGuiEvent EVENT_MENUACTION,tmpMenuSource,tmpMenuID,0,0,0,tmpPopupExtra
-		
+
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Local x,y,w,h
 		Local move,size
 		Local Rect[4]
 		Local winrect[4]
-		
+
 		Select msg
-		
+
 			Case WM_ERASEBKGND
 				If BgBrush() Then
 					Local Rect[4]
@@ -1833,13 +1833,13 @@ Type TWindowsWindow Extends TWindowsGadget
 					FillRect( Byte Ptr wp, Rect, BgBrush() )
 					Return 1
 				EndIf
-			
+
 			Case WM_SIZE
-				
+
 				If (hwnd = _hwnd) And (wp <> SIZE_MINIMIZED) Then
-				
+
 					If _status Then SendMessageW _status,WM_SIZE,0,0
-					
+
 					If (style & WINDOW_CLIENTCOORDS) Then
 						GetClientRect _hwnd,Rect
 						w=Rect[2]
@@ -1864,24 +1864,24 @@ Type TWindowsWindow Extends TWindowsGadget
 						GetWindowRect(_hwnd,Rect)
 						x=Rect[0];y=Rect[1]
 						w=Rect[2]-Rect[0]
-						h=Rect[3]-Rect[1]	
-					EndIf	
-					
+						h=Rect[3]-Rect[1]
+					EndIf
+
 					If x<>xpos Or y<>ypos Then move = True
 					If w<>width Or h<>height Then size = True
-					
+
 					SetRect x,y,w,h
-					
+
 					If size Then RethinkClient()
-					
+
 					If move PostGuiEvent EVENT_WINDOWMOVE,0,0,x,y
 					If size PostGuiEvent EVENT_WINDOWSIZE,0,0,w,h
-					
+
 				EndIf
-				
+
 			Case WM_MOVE
 				If (hwnd = _hwnd) And Not (IsZoomed(hwnd) Or IsIconic(hwnd)) Then
-					
+
 					If (style & WINDOW_CLIENTCOORDS) Then
 						GetClientRect _hwnd,Rect
 						w=Rect[2]
@@ -1900,16 +1900,16 @@ Type TWindowsWindow Extends TWindowsGadget
 						GetWindowRect(_hwnd,Rect)
 						x=Rect[0];y=Rect[1]
 						w=Rect[2]-Rect[0]
-						h=Rect[3]-Rect[1]			
-					EndIf	
-					
+						h=Rect[3]-Rect[1]
+					EndIf
+
 					If x<>xpos Or y<>ypos Then
 						SetRect x,y,width,height
 						PostGuiEvent EVENT_WINDOWMOVE,0,0,x,y
 					EndIf
-					
+
 				EndIf
-				
+
 			Case WM_GETMINMAXINFO
 				If hwnd = _hwnd And lp Then
 
@@ -1918,12 +1918,12 @@ Type TWindowsWindow Extends TWindowsGadget
 
 					Local mw:Int = _minwidth
 					Local mh:Int = _minheight
-					
+
 					ConvertToContainerDimensions(tmpZero,tmpZero,mw,mh)
 
 					minmax.SetminTrackSizeX(mw)
 					minmax.SetminTrackSizeY(mh)
-										
+
 					If (_maxwidth >= _minwidth) And (_maxheight >= _minheight) Then
 						mw = _maxwidth
 						mh = _maxheight
@@ -1932,22 +1932,22 @@ Type TWindowsWindow Extends TWindowsGadget
 						minmax.SetmaxTrackSizeX(mw)
 						minmax.SetmaxTrackSizeY(mh)
 					EndIf
-					
+
 				EndIf
-				
+
 			Case WM_ACTIVATE
 				If (wp = WA_ACTIVE) Or (wp = WA_CLICKACTIVE) Then
 					TWindowsGUIDriver._ActiveWindow = Self
 					PostGuiEvent EVENT_WINDOWACTIVATE
 				EndIf
-				
+
 			Case WM_COMMAND
 				If wp>100 Then HandleMenuEvent(msg,ULong(wp))
 
 			Case WM_CLOSE
 				PostGuiEvent EVENT_WINDOWCLOSE
 				Return 1
-				
+
 			Case WM_DROPFILES
 				Local hdrop:Byte Ptr,pt[2],path$
 				Local pbuffer:Short[MAX_PATH]
@@ -1960,27 +1960,27 @@ Type TWindowsWindow Extends TWindowsGadget
 					PostGuiEvent EVENT_WINDOWACCEPT,0,0,pt[0],pt[1],path
 				Next
 				DragFinish Byte Ptr wp
- 
+
 		End Select
-		
+
 		Return Super.WndProc(hwnd,msg,wp,lp)
-		
+
 	EndMethod
-	
+
 	Method DoLayout()
 		'Don't do anything!
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'Windows shouldn't have tool-tips!
 	EndMethod
-	
+
 	Method SetSensitivity(flags)
 		'Problems with resizing/moving sensitive windows.
 		Super.SetSensitivity(flags&~SENSITIZE_MOUSE)
 		'Easy to create an active panel in client area as a work around.
 	EndMethod
-	
+
 	Method SetPixmap(pPixmap:TPixmap, pFlags)
 		If Not (pFlags & GADGETPIXMAP_ICON) Then Return False
 		If _iconBitmap Then
@@ -1992,32 +1992,32 @@ Type TWindowsWindow Extends TWindowsGadget
 		SendMessageW (_hwnd, WM_SETICON, 1, LParam(_iconBitmap))
 		Return True
 	EndMethod
-	
+
 	' Needed otherwise SetEnabled() locks if modal child window is opened and parent is disabled.
 	Method isControl()
 		Return False
 	EndMethod
 
 	Method ConvertToContainerDimensions%( pX Var, pY Var, pW Var , pH Var )
-		
+
 		If Not (style & WINDOW_CLIENTCOORDS) Then Return 0
-		
+
 		Local Rect[4], menu_:Byte Ptr = GetMenu_(_hwnd), menu
-		
+
 		If menu_ Then menu = True
-		If _status Then 
+		If _status Then
 			GetWindowRect _status,Rect
 			pH:+(Rect[3]-Rect[1])
 		End If
 		pW:+_clientX;pH:+_clientY;pX:-_clientX;pY:-_clientY
-		
+
 		Rect = [pX,pY,pX+pW,pY+pH]
 		AdjustWindowRectEx Rect,GetWindowLongW(_hwnd, GWL_STYLE),menu,GetWindowLongW(_hwnd, GWL_EXSTYLE)
-		
+
 		pX = Rect[0];pY = Rect[1];pW = Rect[2]-Rect[0];pH = Rect[3]-Rect[1]
-		
+
 		Return 1
-		
+
 	EndMethod
 
 	Method FlushBrushes(pRecurse:Int = True)
@@ -2033,39 +2033,39 @@ End Type
 Type TButtonImageList
 	Field buttonImageListPtr:Byte Ptr
 	Field hasImageList:Int
-	
+
 	Method New()
 		buttonImageListPtr = bmx_win32_BUTTON_IMAGELIST_new()
 	End Method
-	
+
 	Method Delete()
 		If buttonImageListPtr Then
 			If hasImageList Then
-				
+
 			End If
 			bmx_win32_BUTTON_IMAGELIST_free(buttonImageListPtr)
 			buttonImageListPtr = Null
 		End If
 	End Method
-	
+
 	Method Sethiml(himl:Byte Ptr)
 		bmx_win32_BUTTON_IMAGELIST_Sethiml(buttonImageListPtr, himl)
 		hasImageList = True
 	End Method
-	
+
 	Method SetuAlign(uAlign:UInt)
 		bmx_win32_BUTTON_IMAGELIST_SetuAlign(buttonImageListPtr, uAlign)
 	End Method
-	
+
 	Method himl:Byte Ptr()
 		Return bmx_win32_BUTTON_IMAGELIST_himl(buttonImageListPtr)
 	End Method
-	
+
 	Method Destroyhiml()
 		ImageList_Destroy(himl())
 		hasImageList = False
 	End Method
-	
+
 End Type
 
 Type TWindowsButton Extends TWindowsGadget
@@ -2073,12 +2073,12 @@ Type TWindowsButton Extends TWindowsGadget
 	'Field _buttonImageList[] = [-1,0,0,0,0,0]
 	Field _buttonImageList:TButtonImageList = New TButtonImageList
 	Field _strButtonText$, _mouseoverbutton
-	
+
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
 		Self.style = style
-		wstyle=WS_CHILD|WS_TABSTOP|WS_CLIPSIBLINGS|BS_MULTILINE		
+		wstyle=WS_CHILD|WS_TABSTOP|WS_CLIPSIBLINGS|BS_MULTILINE
 		Select style&7
 			Case 0
 				wstyle:|BS_PUSHBUTTON
@@ -2097,11 +2097,11 @@ Type TWindowsButton Extends TWindowsGadget
 				hotkey=IDCANCEL
 		End Select
 		parent=group.query(QUERY_HWND_CLIENT)
-		hwnd=CreateWindowExW(xstyle,"BUTTON","",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)				
+		hwnd=CreateWindowExW(xstyle,"BUTTON","",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 		Register GADGET_BUTTON,hwnd
-		Return Self		
+		Return Self
 	EndMethod
-	
+
 	Method SetTextColor(r,g,b)
 		If Not (style&7) Then
 			SetWindowLongW(_hwnd,GWL_STYLE,GetWindowLongW(_hwnd,GWL_STYLE)|BS_OWNERDRAW)
@@ -2127,7 +2127,7 @@ Type TWindowsButton Extends TWindowsGadget
 		EndIf
 		Super.RemoveColor()
 	EndMethod
-	
+
 	Method State()
 		Local t=Super.State()
 		Select SendMessageW( _hwnd,BM_GETCHECK,0,0 )
@@ -2148,7 +2148,7 @@ Type TWindowsButton Extends TWindowsGadget
 		EndIf
 		SendMessageW _hwnd,BM_SETCHECK,state,0
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_THEMECHANGED
@@ -2177,30 +2177,30 @@ Type TWindowsButton Extends TWindowsGadget
 			Case WM_ERASEBKGND
 				Return 1
 		EndSelect
-		
+
 		Return Super.WndProc(hwnd,msg,wp,lp)
-		
+
 	EndMethod
-	
+
 	Method OnDrawItem(pDrawItemStruct:DRAWITEMSTRUCT)
-		
+
 		Local tmpDc:Byte Ptr = pDrawItemStruct.hDc(), txtWidth%, txtHeight%
 		Local tmpDcState = SaveDC(tmpDC)
-		
+
 		' button state
 		Local tmpIsPressed = (pDrawItemStruct.ItemState() & ODS_SELECTED)
 		Local tmpIsFocused  = (pDrawItemStruct.ItemState() & ODS_FOCUS)
 		Local tmpIsDisabled = (pDrawItemStruct.ItemState() & ODS_DISABLED)
 		Local tmpDrawFocusRect = Not (pDrawItemStruct.ItemState() & ODS_NOFOCUSRECT)
-		
+
 		Local itemRect:Int Ptr = pDrawItemStruct.rcItem(), txtRect:Int[4], clientRect:Int[4]
-		
+
 		Local tmpBgMode = SetBkMode(tmpDc, TRANSPARENT)
-		
+
 		' Prepare draw... paint button background
-		
+
 		If _hTheme Then
-			
+
 			Local tmpState = PBS_NORMAL
 			If tmpIsDisabled Then
 				tmpState = PBS_DISABLED
@@ -2211,89 +2211,89 @@ Type TWindowsButton Extends TWindowsGadget
 			ElseIf tmpIsFocused Then
 				tmpState = PBS_DEFAULTED
 			EndIf
-			
+
 			If IsThemeBackgroundPartiallyTransparent(_hTheme, BP_PUSHBUTTON, tmpState) Then
 				DrawThemeParentBackground( _hwnd, tmpDc, itemRect )
 			EndIf
 			DrawThemeBackground(_hTheme, tmpDc, BP_PUSHBUTTON, tmpState, itemRect, Null)
 			GetThemeBackgroundContentRect(_hTheme, tmpDc, BP_PUSHBUTTON, tmpState, itemRect, clientRect)
-			
+
 		Else
-			
+
 			clientRect = [itemRect[0], itemRect[1], itemRect[2], itemRect[3]]
 			InflateRect(clientRect, -GetSystemMetrics(SM_CXEDGE), -GetSystemMetrics(SM_CYEDGE))
-			
+
 			If tmpIsFocused Then
-				
+
 				Local tmpBr:Byte Ptr = CreateSolidBrush($000000)
 				FrameRect(tmpDc, itemRect , tmpBr)
 				InflateRect(itemRect, -1, -1)
 				DeleteObject(tmpBr)
-				
+
 			EndIf
-			
+
 			Local crColor
 			If BgColor() < 0 Then crColor = GetSysColor(COLOR_BTNFACE) Else crColor = BgColor()
-			
+
 			Local brBackground:Byte Ptr = CreateSolidBrush(crColor)
-			
+
 			FillRect(tmpDc, itemRect, brBackground)
-			
+
 			DeleteObject(brBackground)
-			
+
 			' Draw pressed button
 			If tmpIsPressed
-				
+
 				Local brBtnShadow:Byte Ptr = CreateSolidBrush(GetSysColor(COLOR_BTNSHADOW))
 				FrameRect(tmpDc, itemRect, brBtnShadow)
 				DeleteObject(brBtnShadow)
-				
+
 				OffsetRect( clientRect, 1, 1 )
-				
+
 			Else ' ...Else draw non pressed button
-				
+
 				Local tmpUState = DFCS_BUTTONPUSH
 				If _mouseoverbutton Then tmpUState :| DFCS_HOT
 				If tmpIsPressed Then tmpUState :| DFCS_PUSHED
-				
+
 				DrawFrameControl(tmpDc, itemRect, DFC_BUTTON, tmpUState)
-				
+
 			EndIf
-			
+
 		EndIf
-		
+
 		If BgColor() > -1 Then
 			Local brBackground:Byte Ptr = CreateSolidBrush(BgColor())
 			FillRect(tmpDc, clientRect, brBackground)
 			DeleteObject(brBackground)
 		EndIf
-		
+
 		txtRect = clientRect[..]
-		
+
 		clientRect[RECT_RIGHT]:-clientRect[RECT_LEFT]
 		clientRect[RECT_BOTTOM]:-clientRect[RECT_TOP]
-		
+
 		' Read the button's title
 		Local tmpText$ = Super.GetText()
-		
+
 		' Draw the icon
 		'DrawTheIcon(GetDlgItem(hDlg, IDC_OWNERDRAW_BTN), &dc, bHasTitle, &lpDIS.rcItem, &captionRect, bIsPressed, bIsDisabled)
-		
+
 		' Write the button title (if any)
 		If tmpText Then
-			
+
 			Local tmpFlags = DT_CENTER|DT_WORDBREAK
-			
+
 			DrawTextW( tmpDc, tmpText, -1, txtRect, DT_CALCRECT|tmpFlags )
-			
+
 			txtWidth = txtRect[RECT_RIGHT]-txtRect[RECT_LEFT]
 			txtHeight = txtRect[RECT_BOTTOM]-txtRect[RECT_TOP]
-			
+
 			txtRect[RECT_LEFT] = clientRect[RECT_LEFT] + (clientRect[RECT_RIGHT] - txtWidth)/2
 			txtRect[RECT_TOP] = clientRect[RECT_TOP] + (clientRect[RECT_BOTTOM] - txtHeight)/2
 			txtRect[RECT_RIGHT] = txtRect[RECT_LEFT] + txtWidth
 			txtRect[RECT_BOTTOM] = txtRect[RECT_TOP] + txtHeight
-			
+
 			Local tmpTextColor
 			If tmpIsDisabled Then
 				tmpTextColor = GetSysColor(COLOR_GRAYTEXT)
@@ -2301,15 +2301,15 @@ Type TWindowsButton Extends TWindowsGadget
 				If FgColor() < 0 Then tmpTextColor = GetSysColor(COLOR_BTNTEXT) Else tmpTextColor = FgColor()
 			EndIf
 			tmpTextColor = SetTextColor_(tmpDc,tmpTextColor)
-			
+
 			DrawTextW( tmpDc, tmpText, -1, txtRect, tmpFlags )
-			
+
 			SetTextColor_(tmpDc,tmpTextColor)
-			
+
 		EndIf
-		
+
 		RestoreDC(tmpDc,tmpDcState)
-		
+
 		' Draw the focus rect
 		If tmpIsFocused And tmpDrawFocusRect Then
 			Local focusRect:Int[4]
@@ -2318,10 +2318,10 @@ Type TWindowsButton Extends TWindowsGadget
 			SetMapMode(tmpDc, MM_TEXT)
 			DrawFocusRect(tmpDc, focusRect)
 		EndIf
-		
+
 		Return True
 	EndMethod
-	
+
 	Method OnCommand(msg,wp:ULong)
 
 		Select wp Shr 16
@@ -2335,90 +2335,90 @@ Type TWindowsButton Extends TWindowsGadget
 								SetSelected(False)
 						EndSelect
 				EndSelect
-				
+
 				PostGuiEvent EVENT_GADGETACTION,ButtonState(Self)
-				
+
 				'Fix so that tooltips reappear on Windows XP
 				Local tmpTooltip$ = GetTooltip()
 				If tmpTooltip Then SetTooltip("");SetTooltip(tmpTooltip)
-				
+
 		EndSelect
-	EndMethod							
-	
+	EndMethod
+
 	Method SetPixmap(pixmap:TPixmap,pFlags)
 
 		Local tmpWindowStyle = GetWindowLongW(_hwnd,GWL_STYLE)
-		
+
 		If (pFlags & GADGETPIXMAP_ICON) And (((style&BUTTON_PUSH)=BUTTON_PUSH) Or (style = BUTTON_CANCEL)) Then
-			
+
 			'To remove an image from a button, a handle-list of -1 should be passed.
 			If _buttonImageList.hasImageList Then _buttonImageList.Destroyhiml()
 			If pixmap Then _buttonImageList.Sethiml(BuildImageList( pixmap ))
-			
+
 			If (pFlags & GADGETPIXMAP_NOTEXT) Then
 				_buttonImageList.SetuAlign(BUTTON_IMAGELIST_ALIGN_CENTER)
 			Else
 				_buttonImageList.SetuAlign(BUTTON_IMAGELIST_ALIGN_LEFT)
 			EndIf
-			
+
 			'If running Windows XP/Vista, let's use BCM_SETIMAGELIST
 
 			If Not SendMessageW (_hwnd, BCM_SETIMAGELIST, 0, LParam(_buttonImageList.buttonImageListPtr)) Then
 			'Otherwise, if this fails we should use BM_SETIMAGE.
-				
+
 				If _buttonImageList.hasImageList Then _buttonImageList.Destroyhiml()
-				
+
 				If _iconBitmap Then DeleteObject(_iconBitmap);_iconBitmap = 0
 				If pixmap Then _iconBitmap = TWindowsGraphic.BitmapFromPixmap( pixmap, True )
-				
+
 				SendMessageW (_hwnd, BM_SETIMAGE, IMAGE_BITMAP, LParam(_iconBitmap))
-				
+
 			EndIf
-			
+
 			'Show the text if there isn't a pixmap or if we haven't specified GADGETPIXMAP_NOTEXT.
 			If (Not pixmap) Or Not(pFlags & GADGETPIXMAP_NOTEXT) Then
 				tmpWindowStyle:&(~BS_BITMAP)
-				
+
 				'Text isn't hidden on XP image buttons regardless of whether BS_BITMAP is set
 				'so we have to hack this in - they must have fixed it on Vista though as it works fine there.
-				
+
 				Super.SetText( GetText() )
 			Else
 				tmpWindowStyle:|BS_BITMAP
-				
+
 				'Text isn't hidden on XP image buttons regardless of whether BS_BITMAP is set
 				'so we have to hack this in - they must have fixed it on Vista though as it works fine there.
-				
+
 				Super.SetText( "" )
 			EndIf
-			
+
 			SetWindowLongW _hwnd,GWL_STYLE,tmpWindowStyle
-			
+
 			InvalidateRect _hwnd, Null, False
-			
+
 			Return True
-			
+
 		EndIf
-		
+
 	EndMethod
-	
+
 	Method SetText(pText$)
 		Local oldText$ = _strButtonText
 		_strButtonText = pText
 		If (Not _buttonImageList.hasImageList  And Not _iconBitmap) Or (oldText = Super.GetText()) Then Super.SetText(pText)
 	EndMethod
-	
+
 	Method GetText$()
 		Return _strButtonText
 	EndMethod
-	
+
 	Method Free()
 		If _buttonImageList.hasImageList Then _buttonImageList.Destroyhiml()
 		If _iconBitmap Then DestroyIcon( _iconBitmap );_iconBitmap = 0
 		_buttonImageList = Null
 		Super.Free()
 	EndMethod
-	
+
 	Function BuildImageList:Byte Ptr(pixmap:TPixmap)
 
 		Local bitmap:Byte Ptr,imagelist:Byte Ptr,mask:Byte Ptr
@@ -2439,7 +2439,7 @@ Type TWindowsButton Extends TWindowsGadget
 		DeleteObject(bitmap)
 		Return imagelist
 	EndFunction
-	
+
 	Method Class()
 		Return GADGET_BUTTON
 	EndMethod
@@ -2458,45 +2458,45 @@ Type TWindowsMenu Extends TGadget
 	Field	_hotkey:THotKey
 	Field	_key:UInt = SetNewKey()
 	Field _iconBitmap:Byte Ptr
-	
+
 	Global iteminfo:MENUITEMINFOW
-	
+
 	Global keymap:TIntMap=New TIntMap 'key,gadget
 	Global keycount=100
-	
+
 	Method SetNewKey%()
 		keycount:+1
 		keymap.Insert( keycount, Self )
 		Return keycount
 	EndMethod
-	
+
 	Function GetMenuFromKey:TWindowsMenu(pKey%)
 		Return TWindowsMenu(keymap.ValueForKey(pKey))
 	EndFunction
-	
+
 	Method SetText(pText$)
 		name = pText
 	EndMethod
-	
+
 	Method GetText$()
 		Return name
 	EndMethod
-	
+
 	Method Free()
 		Close
 		_setparent Null
 		keymap.Remove(_key)
 		If _iconBitmap Then DeleteObject(_iconBitmap)
 	EndMethod
-	
+
 	Method DoLayout()
 		'Don't do anything!
 	EndMethod
-	
+
 	Method State()
 		Return _state
 	EndMethod
-	
+
 	Method SetEnabled(enable)
 		If enable
 			If _pmenu EnableMenuItem(_pmenu,_item,MF_BYPOSITION|MF_ENABLED)
@@ -2516,18 +2516,18 @@ Type TWindowsMenu Extends TGadget
 			_state:&~STATE_SELECTED
 		EndIf
 	EndMethod
-	
+
 	Method SetHotKey(keycode,modifier)
 		_hotkeycode=keycode
 		_modifier=modifier
-		
+
 		Local	pre$, suf$, m$
-		
+
 		If LocalizationMode()&LOCALIZATION_ON Then
 			pre="{{"
 			suf="}}"
 		EndIf
-		
+
 		If keycode>=KEY_0 And keycode<=KEY_9
 			m$=Chr(keycode)
 		ElseIf keycode>=KEY_A And keycode<=KEY_Z
@@ -2571,7 +2571,7 @@ Type TWindowsMenu Extends TGadget
 				Case KEY_NUMDIVIDE;m = "Num /"
 			EndSelect
 		EndIf
-		
+
 		If m
 			If modifier&MODIFIER_SHIFT m$=pre+"Shift"+suf+"+"+m$
 			If modifier&MODIFIER_CONTROL m$=pre+"Ctrl"+suf+"+"+m$
@@ -2586,9 +2586,9 @@ Type TWindowsMenu Extends TGadget
 		iteminfo.SetfMask(MIIM_TYPE)
 		iteminfo.SetdwTypeData((name+_shortcut).toWString())
 		SetMenuItemInfoW _pmenu,_item,True,iteminfo.infoPtr
-		
+
 		MemFree iteminfo.dwTypeData()
-		
+
 		Local ev:TEvent=CreateEvent( EVENT_MENUACTION, Self,_tag)
 		If _hotKey Then
 			RemoveHotKey(_hotKey)
@@ -2596,7 +2596,7 @@ Type TWindowsMenu Extends TGadget
 		End If
 		If keycode Then _hotkey=SetHotKeyEvent(keycode,modifier,ev,FindGadgetWindowHwnd(Self))
 	EndMethod
-				
+
 	Method Create:TWindowsMenu(group:TGadget,tag,Text$="")
 		If Not iteminfo Then
 			iteminfo=New MENUITEMINFOW
@@ -2610,13 +2610,13 @@ Type TWindowsMenu Extends TGadget
 		If (LocalizationMode()&LOCALIZATION_OVERRIDE) Then
 			LocalizeGadget(Self, name, "")
 		EndIf
-		Return Self	
+		Return Self
 	EndMethod
-	
+
 	Method Open(popup=False)
-	
-		Local dad:TWindowsMenu	= TWindowsMenu(parent)				
-		
+
+		Local dad:TWindowsMenu	= TWindowsMenu(parent)
+
 		If dad
 			_pmenu=dad._hmenu
 			If Not _pmenu Throw "Parent doesn't have a handle - the desktop heap may have run out of memory!"
@@ -2631,19 +2631,19 @@ Type TWindowsMenu Extends TGadget
 			If kids.count()
 				_hmenu=CreateMenu_()
 				Local tmpMenuInfo:MENUINFO = New MENUINFO
-				
+
 				tmpMenuInfo.SetfMask(MIM_APPLYTOSUBMENUS|MIM_STYLE)
 				tmpMenuInfo.SetdwStyle(MNS_CHECKORBMP|MNS_MODELESS)
 				SetMenuInfo(_hmenu, tmpMenuInfo.infoPtr)
-				
+
 				iteminfo.SetfMask(MIIM_SUBMENU)
 				iteminfo.SethSubMenu(_hmenu)
 				SetMenuItemInfoW _pmenu,_item,True,iteminfo.infoPtr
 			EndIf
-			
+
 			If _state&STATE_DISABLED SetEnabled(False)
 			If _state&STATE_SELECTED SetSelected(True)
-			
+
 			If _iconBitmap Then SetMenuItemBitmaps(_pMenu,_key,MF_BYCOMMAND,_iconBitmap,Null)
 		Else
 			If popup
@@ -2652,11 +2652,11 @@ Type TWindowsMenu Extends TGadget
 				If kids _hmenu=CreateMenu_()
 			EndIf
 		EndIf
-		
+
 		For Local kid:TWindowsMenu = EachIn kids
 			kid.Open
 		Next
-		
+
 	EndMethod
 
 	Method FreeKids()
@@ -2664,7 +2664,7 @@ Type TWindowsMenu Extends TGadget
 			kid.Close
 		Next
 	EndMethod
-	
+
 	Method Close()
 		FreeKids()
 		If _hmenu
@@ -2672,7 +2672,7 @@ Type TWindowsMenu Extends TGadget
 			_hmenu=0
 		EndIf
 	EndMethod
-	
+
 	Method SetPixmap(pixmap:TPixmap,pFlags)
 		If Not (pFlags & GADGETPIXMAP_ICON) Then Return
 		If _iconBitmap Then DeleteObject(_iconBitmap);_iconBitmap = 0
@@ -2685,13 +2685,13 @@ Type TWindowsMenu Extends TGadget
 				_iconBitmap = TWindowsGraphic.BitmapWithBackgroundFromPixmap32( pixmap, tmpRGB&$FF, (tmpRGB Shr 8) & $FF, (tmpRGB Shr 16) & $FF )
 			EndIf
 		EndIf
-		
+
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'Menus shouldn't have tool-tips.
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_MENUITEM
 	EndMethod
@@ -2703,18 +2703,18 @@ Type TWindowsListBox Extends TWindowsGadget
 	Field _icons:TWindowsIconStrip
 	Field _selected = -1
 
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")		
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
 
 		Self.style = style
-		
+
 		xstyle=WS_EX_CLIENTEDGE
-		wstyle=WS_CHILD|WS_TABSTOP|LVS_REPORT|LVS_NOCOLUMNHEADER|LVS_SHOWSELALWAYS|LVS_SHAREIMAGELISTS			
+		wstyle=WS_CHILD|WS_TABSTOP|LVS_REPORT|LVS_NOCOLUMNHEADER|LVS_SHOWSELALWAYS|LVS_SHAREIMAGELISTS
 		wstyle:|WS_CLIPSIBLINGS
-		
+
 		If (style&LISTBOX_MULTISELECT<>LISTBOX_MULTISELECT) Then wstyle:|LVS_SINGLESEL
-		
+
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"SysListView32","",wstyle,0,0,20,20,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 
@@ -2726,12 +2726,12 @@ Type TWindowsListBox Extends TWindowsGadget
 		If TWindowsGUIDriver.CheckCommonControlVersion() Then SendMessageW hwnd,LVM_SETEXTENDEDLISTVIEWSTYLE,LVS_EX_DOUBLEBUFFER,LVS_EX_DOUBLEBUFFER
 
 		Register GADGET_LISTBOX,hwnd,Null,False	'Set to True for normal Tooltips
-		
+
 		If TWindowsGUIDriver._explorerstyle Then UseExplorerTheme()
 
 		Return Self
 	EndMethod
-	
+
 	Method SetColor(r,g,b)
 		SendMessageW _hwnd,LVM_SETBKCOLOR ,0,(b Shl 16)|(g Shl 8)|r
 		SendMessageW _hwnd,LVM_SETTEXTBKCOLOR ,0,(b Shl 16)|(g Shl 8)|r
@@ -2745,7 +2745,7 @@ Type TWindowsListBox Extends TWindowsGadget
 	Method SetTextColor(r,g,b)
 		SendMessageW _hwnd,LVM_SETTEXTCOLOR,0,(b Shl 16)|(g Shl 8)|r
 	EndMethod
-	
+
 	'Hack: When image lists are removed from listviews, the items don't
 	'reposition themselves automatically. Hack involves first setting a tiny
 	'blank image-list to update item size, before attempting to remove it.
@@ -2790,9 +2790,9 @@ Type TWindowsListBox Extends TWindowsGadget
 		If Not IsSingleSelect() Then SelectionChanged()
 		Sensitize()
 		MemFree it.pszText()
-		
+
 	EndMethod
-	
+
 	Method SetListItem(index,Text$,tip$,icon,tag:Object)
 		Local tmpReselect
 		If ListItemState(index) & STATE_SELECTED Then tmpReselect = True
@@ -2800,7 +2800,7 @@ Type TWindowsListBox Extends TWindowsGadget
 		InsertListItem index,Text,tip,icon,tag
 		If tmpReselect Then SetItemState(index,STATE_SELECTED)
 	EndMethod
-	
+
 	Method RemoveListItem(index)
 		Desensitize()
 		If ListItemState(index) & STATE_SELECTED Then _selected = -1
@@ -2809,7 +2809,7 @@ Type TWindowsListBox Extends TWindowsGadget
 		If Not IsSingleSelect() Then SelectionChanged()
 		Sensitize()
 	EndMethod
-	
+
 	Method SetListItemState(index,state)
 		Local it:LVITEMW = New LVITEMW
 		it.Setmask(LVIF_STATE)
@@ -2827,21 +2827,21 @@ Type TWindowsListBox Extends TWindowsGadget
 		If Not IsSingleSelect() Then SelectionChanged()
 		Sensitize()
 	EndMethod
-	
+
 	Method ListItemState(index)
 		Local state = SendMessageW(_hwnd,LVM_GETITEMSTATE,WParam(index),LVIS_SELECTED)
 		If state&LVIS_SELECTED Return STATE_SELECTED
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'ToolTips should be set on an item-by-item basis instead.
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_MAXGUILISTREFRESH
 				Local index
-				
+
 				If IsSingleSelect() Then
 					index=SendMessageW(_hwnd,LVM_GETNEXTITEM,WParam(-1),LVNI_SELECTED)
 				Else
@@ -2853,7 +2853,7 @@ Type TWindowsListBox Extends TWindowsGadget
 					If index>=0 And index<items.length item=items[index]
 					PostGuiEvent EVENT_GADGETSELECT,index,0,0,0,item.extra
 				EndIf
-				
+
 			'If we are using XP Common Controls or higher, then the listbox will be double-buffered
 			'and so we don't need to clear the background (performance tweak).
 			Case WM_ERASEBKGND
@@ -2861,28 +2861,28 @@ Type TWindowsListBox Extends TWindowsGadget
 		EndSelect
 		Return Super.WndProc(hwnd,msg,wp,lp)
 	EndMethod
-	
+
 	Method OnNotify(wp:WParam,lp:LParam)
 		Local nmhdrPtr:Byte Ptr = lp
 		Local index, code = bmx_win32_NMHDR_code(nmhdrPtr)
 		Select code
-		
+
 			Case LVN_GETINFOTIPW
 				Local tmpItemIndex = bmx_win32_NMLVGETINFOTIPW_iItem(nmhdrPtr)
 				Local tmpMaxCharCount = bmx_win32_NMLVGETINFOTIPW_cchTextMax(nmhdrPtr)-1
 				Local tmpTipOutput:Short Ptr = bmx_win32_NMLVGETINFOTIPW_pszText(nmhdrPtr)
-				
+
 				If tmpItemIndex < items.length Then
-					
+
 					Local tmpTipString$ = items[tmpItemIndex].tip
 					If (items[tmpItemIndex].flags&GADGETITEM_LOCALIZED) Then tmpTipString = LocalizeString(tmpTipString)
-					
+
 					tmpTipString = tmpTipString[..Min(tmpTipString.length,tmpMaxCharCount)]
-					
+
 					Local tmpBufferMem:Short Ptr = tmpTipString.ToWString()
 					MemCopy tmpTipOutput, tmpBufferMem, Size_T((tmpTipString.length+1) * 2)
 					MemFree tmpBufferMem
-					
+
 				EndIf
 
 			Case LVN_ITEMCHANGED
@@ -2914,23 +2914,23 @@ Type TWindowsListBox Extends TWindowsGadget
 				Return True
 		End Select
 	EndMethod
-	
+
 	Method IsSingleSelect()
 		Return (style&LISTBOX_MULTISELECT<>LISTBOX_MULTISELECT)
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_LISTBOX
 	EndMethod
-	
+
 	Method HasResized()
 		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,-2
 	EndMethod
-	
+
 	Method UseExplorerTheme()
 		If TWindowsGUIDriver.CheckCommonControlVersion() Then SetWindowTheme( _hwnd, _wstrExplorer, Null )
 	EndMethod
-	
+
 EndType
 
 Type TWindowsTabber Extends TWindowsGadget
@@ -2942,21 +2942,21 @@ Type TWindowsTabber Extends TWindowsGadget
 	Field _tipbuffer:Short Ptr
 	Field _hittest:TCHITTESTINFO
 
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")		
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr,client:Byte Ptr
 		Self.style = style
 		xstyle=WS_EX_CONTROLPARENT
-		wstyle=WS_CHILD|TCS_HOTTRACK|WS_TABSTOP|TCS_FOCUSNEVER|WS_CLIPCHILDREN|WS_CLIPSIBLINGS		
+		wstyle=WS_CHILD|TCS_HOTTRACK|WS_TABSTOP|TCS_FOCUSNEVER|WS_CLIPCHILDREN|WS_CLIPSIBLINGS
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"SysTabControl32","",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 		client=CreateWindowExW(xstyle,TWindowsGUIDriver.ClassName(),"",WS_CHILD|WS_VISIBLE|WS_CLIPSIBLINGS|WS_CLIPCHILDREN,0,0,0,0,hwnd,Null,GetModuleHandleW(Null),Null )
 		SendMessageW hwnd,TCM_INSERTITEMW,0,LParam(_wstrSpace)
 		Register GADGET_TABBER,hwnd,client,True
 		SendMessageW _hwnd,TCM_SETTOOLTIPS,WParam(_tooltips),0
-		Return Self		
+		Return Self
 	EndMethod
-	
+
 	Method SetIconStrip(iconstrip:TIconStrip)
 		Local imagelist:Byte Ptr
 		_icons=TWindowsIconStrip(iconstrip)
@@ -2964,7 +2964,7 @@ Type TWindowsTabber Extends TWindowsGadget
 		SendMessageW _hwnd,TCM_SETIMAGELIST,0,LParam(imagelist)
 		RethinkClient()
 	EndMethod
-	
+
 	Method ClientWidth()
 		Local Rect[] = [0,0,width,height]
 		SendMessageW _hwnd,TCM_ADJUSTRECT,False,LParam Byte Ptr Rect
@@ -2988,7 +2988,7 @@ Type TWindowsTabber Extends TWindowsGadget
 
 	Method InsertListItem(index,Text$,tip$,icon,tag:Object)
 		If _tabcount=0 SendMessageW _hwnd,TCM_DELETEALLITEMS,0,0
-		Local t:TCITEMW=New TCITEMW		
+		Local t:TCITEMW=New TCITEMW
 		t.Setmask(TCIF_TEXT|TCIF_IMAGE)
 		t.SetpszText(Text.toWString())
 		t.SetiImage(icon)
@@ -2999,9 +2999,9 @@ Type TWindowsTabber Extends TWindowsGadget
 		_tabcount:+1
 		RethinkClient()
 	EndMethod
-	
+
 	Method SetListItem(index,Text$,tip$,icon,tag:Object)
-		Local t:TCITEMW=New TCITEMW		
+		Local t:TCITEMW=New TCITEMW
 		t.Setmask(TCIF_TEXT|TCIF_IMAGE)
 		t.SetpszText(Text.toWString())
 		t.SetiImage(icon)
@@ -3011,7 +3011,7 @@ Type TWindowsTabber Extends TWindowsGadget
 		MemFree t.pszText()
 		RethinkClient()
 	EndMethod
-	
+
 	Method RemoveListItem(index)
 		Desensitize()
 		SendMessageW _hwnd,TCM_DELETEITEM,WParam(index),0
@@ -3032,7 +3032,7 @@ Type TWindowsTabber Extends TWindowsGadget
 		EndIf
 		Sensitize()
 	EndMethod
-	
+
 	Method ListItemState(index)
 		Local state,Current
 		Current=-1
@@ -3046,24 +3046,24 @@ Type TWindowsTabber Extends TWindowsGadget
 		Local index
 		nmhdrPtr=lp
 		Select bmx_win32_NMHDR_code(nmhdrPtr)
-		
+
 			Case TTN_GETDISPINFOW
-				
+
 				'Local hittest:TCHITTESTINFO = New TCHITTESTINFO
 				If Not _hittest Then
 					_hittest = New TCHITTESTINFO
 				End If
-				
+
 				Local Rect[4]
-				
+
 				GetCursorPos_( _hittest.pt() );GetWindowRect( _hwnd, Rect )
 				'TCHITTESTINFO = [TCHITTESTINFO[0]-Rect[0],TCHITTESTINFO[1]-Rect[1],0]
 				_hittest.Setx(_hittest.x() - Rect[0])
 				_hittest.Sety(_hittest.y() - Rect[1])
 				_hittest.Setflags(0)
-				
+
 				Local tmpItem = SendMessageW( _hwnd, TCM_HITTEST, 0, LParam(_hittest.infoPtr))
-				
+
 				If (tmpItem > -1) And (tmpItem < items.length) Then
 					Local tmpTooltip$ = items[tmpItem].tip
 					If (items[tmpItem].flags&GADGETITEM_LOCALIZED) Then tmpTooltip = LocalizeString(tmpTooltip)
@@ -3082,36 +3082,36 @@ Type TWindowsTabber Extends TWindowsGadget
 							index=-1
 						EndIf
 						_selected=index
-						
+
 						PostGuiEvent EVENT_GADGETACTION,index,0,0,0,extra
 					EndIf
 				EndIf
-				
+
 			Case NM_RCLICK
-				
+
 				If Not _hittest Then
 					_hittest = New TCHITTESTINFO
 				End If
 				Local Rect[4], extra:Object
-				
+
 				GetCursorPos_( _hittest.pt() );GetWindowRect( _hwnd, Rect )
 				_hittest.Setx(_hittest.x() - Rect[0])
 				_hittest.Sety(_hittest.y() - Rect[1])
 				_hittest.Setflags(0)
 '				TCHITTESTINFO = [TCHITTESTINFO[0]-Rect[0],TCHITTESTINFO[1]-Rect[1],0]
-				
+
 				Local index = SendMessageW( _hwnd, TCM_HITTEST, 0, LParam(_hittest.infoPtr))
 				If (index < 0) Or (index >= items.length) Then
 					index = -1
 				Else
 					extra = items[index].extra
 				End If
-				
+
 				PostGuiEvent EVENT_GADGETMENU,index,0,_hittest.x(),_hittest.y(),extra
-				
+
 		EndSelect
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_ERASEBKGND
@@ -3123,13 +3123,13 @@ Type TWindowsTabber Extends TWindowsGadget
 		End Select
 		Return Super.WndProc(hwnd,msg,wp,lp)
 	EndMethod
-	
+
 	Method RethinkClient(forceRedraw:Int = False)
 		Local Rect[] = [0,0,width,height]
 		SendMessageW _hwnd,TCM_ADJUSTRECT,False, LParam(Byte Ptr(Rect))
 		MoveWindow _hwndclient,Rect[RECT_LEFT],Rect[RECT_TOP],Rect[RECT_RIGHT]-Rect[RECT_LEFT],Rect[RECT_BOTTOM]-Rect[RECT_TOP],forceRedraw
 	EndMethod
-	
+
 	Method SetTipBuffer( pTip$ )
 		If _tipbuffer Then MemFree _tipbuffer
 		If pTip Then
@@ -3138,21 +3138,21 @@ Type TWindowsTabber Extends TWindowsGadget
 			_tipbuffer = Null
 		End If
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'ToolTips should be set on an item-by-item basis instead.
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_TABBER
 	EndMethod
-	
+
 EndType
 
 Type TWindowsToolbar Extends TWindowsGadget
 	Field _icons:TWindowsIconStrip
 
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
 		Self.style = style
@@ -3167,34 +3167,34 @@ Type TWindowsToolbar Extends TWindowsGadget
 		Rethink()
 		Return Self
 	EndMethod
-	
-	Method SetIconStrip(iconstrip:TIconStrip)	
+
+	Method SetIconStrip(iconstrip:TIconStrip)
 		_icons=TWindowsIconStrip(iconstrip)
 		SendMessageW _hwnd,TB_SETIMAGELIST,0,LParam(_icons._imagelist)
 		SendMessageW _hwnd,TB_AUTOSIZE,0,0
 		Rethink
 	EndMethod
-	
+
 	Method SetShow(truefalse)
 		Super.SetShow(truefalse)
 		UpdateWindowClient()
 	EndMethod
-	
+
 	Method Free()
 		SetShow(False)
 		Super.Free()
 	EndMethod
-	
+
 	Method Rethink()
-		
+
 		Local tmpRect[4]
 		GetWindowRect _hwnd,tmpRect
 		SetRect(0,0,parent.ClientWidth(),(tmpRect[3]-tmpRect[1]))
 		QueueResize _hwnd,xpos,ypos,width,height
 		UpdateWindowClient()
-		
+
 	EndMethod
-	
+
 	Method UpdateWindowClient()
 		Local tmpHeight:Int = height
 		If (State()&STATE_HIDDEN) Then tmpHeight = 0
@@ -3205,15 +3205,15 @@ Type TWindowsToolbar Extends TWindowsGadget
 			parent.LayoutKids()
 		EndIf
 	EndMethod
-	
+
 	Method DoLayout()
 		Rethink()
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'ToolTips should be set on an item-by-item basis instead.
 	EndMethod
-	
+
 	Method ClearListItems()
 		While SendMessageW(_hwnd,TB_BUTTONCOUNT,0,0)
 			RemoveListItem(0)
@@ -3253,7 +3253,7 @@ Type TWindowsToolbar Extends TWindowsGadget
 		InsertListItem index,Text,tip,icon,tag
 		SetListItemState(index,tmpState)
 	EndMethod
-	
+
 	Method RemoveListItem(index)
 		Local ti:TOOLINFOW=New TOOLINFOW
 		'ti.cbSize=SizeOf(ti)
@@ -3264,7 +3264,7 @@ Type TWindowsToolbar Extends TWindowsGadget
 		SendMessageW _hwnd,TB_DELETEBUTTON,WParam(index),0
 		Sensitize()
 	EndMethod
-	
+
 	Method SetListItemState(index,state)
 		Local enable,pressed
 		If state&STATE_DISABLED=0 enable=$1
@@ -3272,14 +3272,14 @@ Type TWindowsToolbar Extends TWindowsGadget
 		SendMessageW _hwnd,TB_ENABLEBUTTON,WParam(index+1),enable
 		SendMessageW _hwnd,TB_CHECKBUTTON,WParam(index+1),pressed
 	EndMethod
-	
+
 	Method ListItemState(index)
 		Local state,flags
 		state=SendMessageW(_hwnd,TB_GETSTATE,WParam(index+1),0)
 		If state=-1 Return 0
 		If Not (state&TBSTATE_ENABLED) flags:|STATE_DISABLED
 		If state&TBSTATE_CHECKED flags:|STATE_SELECTED
-		Return flags	
+		Return flags
 	EndMethod
 
 	Method OnCommand(msg,wp:ULong)
@@ -3288,26 +3288,26 @@ Type TWindowsToolbar Extends TWindowsGadget
 		If index>=0 And index<items.length extra=items[index].extra
 		PostGuiEvent EVENT_GADGETACTION,index,0,0,0,extra
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_TOOLBAR
 	EndMethod
-	
+
 EndType
 
 Type TWindowsSlider Extends TWindowsGadget
 	Field	_slidertype,_ishorizontal,_visible = 5,_total = 10,_value
 
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,class$
 		Local	hwnd:Byte Ptr,parent:Byte Ptr,hotkey
-								
+
 		_slidertype=style&$fffc
 		_ishorizontal=style&SLIDER_HORIZONTAL
-		
+
 		Self.style = style
 		wstyle=WS_CHILD|WS_CLIPSIBLINGS|WS_CLIPCHILDREN
-		parent=group.query(QUERY_HWND_CLIENT)		
+		parent=group.query(QUERY_HWND_CLIENT)
 		Select _slidertype
 			Case SLIDER_SCROLLBAR
 				If _ishorizontal wstyle:|SBS_HORZ;Else wstyle:|SBS_VERT
@@ -3323,12 +3323,12 @@ Type TWindowsSlider Extends TWindowsGadget
 			Default
 				Return Null
 		End Select
-		
+
 		hwnd=CreateWindowExW(xstyle,class,"",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 		Register GADGET_SLIDER,hwnd
 		RefreshLook()
-		
-		Return Self		
+
+		Return Self
 	EndMethod
 
 	Method SetRange(visible,total)
@@ -3345,13 +3345,13 @@ Type TWindowsSlider Extends TWindowsGadget
 				info.SetnPage(UInt(visible))
 				SendMessageW _hwnd,SBM_SETSCROLLINFO,True,LParam(info.infoPtr)
 			Case SLIDER_TRACKBAR
-				
+
 				SendMessageW _hwnd,TBM_SETRANGEMIN,False,visible
 				SendMessageW _hwnd,TBM_SETRANGEMAX,True,total
-				
+
 				' Aesthetic tweak that should stop black tick bands forming when
 				' large ranges are used on small trackbars.
-				
+
 				Local tmpFirstTick% = SendMessageW( _hwnd, TBM_GETTICPOS, 0, 0 )
 				Local tmpNumTicks% = SendMessageW( _hwnd, TBM_GETNUMTICS, 0, 0)
 				Local tmpLastTick% = SendMessageW( _hwnd, TBM_GETTICPOS, WParam(tmpNumTicks-3), 0 )
@@ -3360,15 +3360,15 @@ Type TWindowsSlider Extends TWindowsGadget
 						SendMessageW( _hwnd, TBM_CLEARTICS, True, 0 )
 					EndIf
 				EndIf
-				
+
 			Case SLIDER_STEPPER
 				SendMessageW _hwnd,UDM_SETRANGE32,WParam(visible),total
 		End Select
 		_value = GetProp()
 		SetEnabled(tmpEnabled)
-		Sensitize()	
+		Sensitize()
 	EndMethod
-	
+
 	Method SetProp(value)
 		Desensitize()
 		Select _slidertype
@@ -3389,9 +3389,9 @@ Type TWindowsSlider Extends TWindowsGadget
 				SendMessageW _hwnd,UDM_SETPOS,True,value
 		End Select
 		_value = value
-		Sensitize()	
+		Sensitize()
 	EndMethod
-	
+
 	Method GetProp()
 		Local value
 		Select _slidertype
@@ -3403,7 +3403,7 @@ Type TWindowsSlider Extends TWindowsGadget
 				If Not _ishorizontal Then value = _visible + _total - value
 			Case SLIDER_STEPPER
 				value=SendMessageW(_hwnd,UDM_GETPOS32,0,Null)
-		End Select		
+		End Select
 		Return value
 	EndMethod
 
@@ -3439,7 +3439,7 @@ Type TWindowsSlider Extends TWindowsGadget
 		EndIf
 		Return 1
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_ERASEBKGND
@@ -3447,21 +3447,21 @@ Type TWindowsSlider Extends TWindowsGadget
 		EndSelect
 		Return Super.WndProc(hwnd,msg,wp,lp)
 	EndMethod
-	
+
 	Method RefreshLook()
 		Super.RefreshLook()
 		SetRange(_visible,_total)
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_SLIDER
 	EndMethod
-		
+
 EndType
 
 Type TWindowsProgressBar Extends TWindowsGadget
 
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")		
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
 		Self.style = style
@@ -3469,14 +3469,14 @@ Type TWindowsProgressBar Extends TWindowsGadget
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"msctls_progress32","",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 		Register GADGET_PROGBAR,hwnd
-		Return Self		
+		Return Self
 	EndMethod
-	
+
 	Method SetValue(value#)
 		Local v:WParam = value*100
 		SendMessageW _hwnd,PBM_SETPOS,v,0
 	EndMethod
-	
+
 	Method SetColor(r,g,b)
 		'Only works in Classic mode, but it's better than nothing.
 		SendMessageW _hwnd,PBM_SETBKCOLOR ,0,(b Shl 16)|(g Shl 8)|r
@@ -3491,11 +3491,11 @@ Type TWindowsProgressBar Extends TWindowsGadget
 		'Only works in Classic mode, but it's better than nothing.
 		SendMessageW _hwnd,PBM_SETBARCOLOR ,0,(b Shl 16)|(g Shl 8)|r
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_PROGBAR
 	EndMethod
-	
+
 EndType
 
 Type TWindowsComboBox Extends TWindowsGadget
@@ -3503,18 +3503,18 @@ Type TWindowsComboBox Extends TWindowsGadget
 	Field _icons:TWindowsIconStrip
 	Field _editHwnd:Byte Ptr, _comboHwnd:Byte Ptr
 	Field _selected = -1
-	
+
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey,hwnd:Byte Ptr
 		Local	parent:Byte Ptr,editstyle,combostyle
-		
+
 		Self.style = style
 		wstyle=WS_CHILD|WS_TABSTOP|WS_CLIPSIBLINGS|WS_CLIPCHILDREN|CBS_AUTOHSCROLL
 		If (style & COMBOBOX_EDITABLE) Then wstyle:|CBS_DROPDOWN Else wstyle:|CBS_DROPDOWNLIST
-		
+
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"ComboBoxEx32","",wstyle,0,0,0,180,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
-		
+
 		If (style & COMBOBOX_EDITABLE) Then
 			_editHwnd=SendMessageW(hwnd,CBEM_GETEDITCONTROL,0,0)
 			If _editHwnd Then
@@ -3526,18 +3526,18 @@ Type TWindowsComboBox Extends TWindowsGadget
 		_comboHwnd=SendMessageW(hwnd,CBEM_GETCOMBOCONTROL,0,0)
 		comboStyle=GetWindowLongW(_comboHwnd,GWL_STYLE)
 		SetWindowLongW _comboHwnd,GWL_STYLE,comboStyle|WS_TABSTOP
-		
+
 		Register GADGET_COMBOBOX,hwnd
-		
+
 		TWindowsGUIDriver.RegisterHwnd(_combohwnd,Self)
 		If _edithwnd Then TWindowsGUIDriver.RegisterHwnd(_edithwnd,Self)
-		
+
 		SetColor(255,255,255)
-		
-		Return Self	
-		
+
+		Return Self
+
 	EndMethod
-	
+
 	Method SetText(Text$)
 		If Not _editHwnd Then
 			Local tmpWString:Short Ptr = Text.ToWString()
@@ -3548,7 +3548,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 			Return Super.SetText(Text)
 		EndIf
 	EndMethod
-	
+
 	Method GetText$()
 		If Not _editHwnd Then
 			If _selected > -1 Then Return items[_selected].Text Else Return ""
@@ -3556,13 +3556,13 @@ Type TWindowsComboBox Extends TWindowsGadget
 			Return Super.GetText()
 		EndIf
 	EndMethod
-	
+
 	Method Activate(cmd)
 		If _editHwnd Then
 			Select cmd
-				Case ACTIVATE_CUT	
+				Case ACTIVATE_CUT
 					SendMessageW _editHwnd,WM_CUT,0,0
-				Case ACTIVATE_COPY	
+				Case ACTIVATE_COPY
 					SendMessageW _editHwnd,WM_COPY,0,0
 					SetFocus _hwnd
 				Case ACTIVATE_PASTE
@@ -3573,7 +3573,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 		EndIf
 		Return Super.Activate(cmd)
 	EndMethod
-	
+
 	Method SetIconStrip(iconstrip:TIconStrip)
 		Local imagelist:Byte Ptr
 		_icons=TWindowsIconStrip(iconstrip)
@@ -3603,7 +3603,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 		Sensitize()
 		MemFree it.pszText()
 	EndMethod
-	
+
 	Method SetListItem(index,Text$,tip$,icon,tag:Object)
 		Local it:COMBOBOXEXITEMW = New COMBOBOXEXITEMW
 		it.Setmask(CBEIF_TEXT)
@@ -3619,13 +3619,13 @@ Type TWindowsComboBox Extends TWindowsGadget
 		Sensitize()
 		MemFree it.pszText()
 	EndMethod
-	
+
 	Method RemoveListItem(index)
 		Desensitize()
 		SendMessageW _hwnd,CBEM_DELETEITEM,WParam(index),0
 		Sensitize()
 	EndMethod
-	
+
 	Method SetListItemState(index,state)
 		If state&STATE_SELECTED
 			_selected=index
@@ -3637,7 +3637,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 		SendMessageW _hwnd,CB_SETCURSEL,WParam(index),0
 		Sensitize()
 	EndMethod
-	
+
 	Method ListItemState(index)
 		Local Current,state
 		Current=SendMessageW(_hwnd,CB_GETCURSEL,0,0)
@@ -3645,7 +3645,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 		If Current=index state=STATE_SELECTED
 		Return state
 	EndMethod
-	
+
 	Method OnCommand(msg,wp:ULong)
 		Local index
 		Select wp Shr 16
@@ -3685,12 +3685,12 @@ Type TWindowsPanel Extends TWindowsGadget
 	Field _canvas:TGraphics
 	Field _hasalpha
 	Field _generatesPaintEvents:Int
-	
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,client:Byte Ptr,parent:Byte Ptr
 		Self.style = style
-		
+
 		parent=group.query(QUERY_HWND_CLIENT)
 		If (style&3=PANEL_GROUP) Then
 			_type=PANELGROUP
@@ -3704,21 +3704,21 @@ Type TWindowsPanel Extends TWindowsGadget
 				Case PANEL_SUNKEN xstyle:|WS_EX_CLIENTEDGE
 				Case PANEL_RAISED xstyle:|WS_EX_WINDOWEDGE ; wstyle:|WS_DLGFRAME
 			EndSelect
-			If (style&PANEL_CANVAS) Then _type=PANELCANVAS																				
+			If (style&PANEL_CANVAS) Then _type=PANELCANVAS
 			hwnd=CreateWindowExW(xstyle,TWindowsGUIDriver.ClassName(),"",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 		EndIf
-				
+
 		Register GADGET_PANEL,hwnd,client
 		If (style & PANEL_ACTIVE) Then sensitivity = SENSITIZE_ALL
-		
-		Return Self	
+
+		Return Self
 	EndMethod
-	
+
 	Method SetAlpha( alpha# )
 		_alpha=alpha
 		RedrawGadget(Self)
 	EndMethod
-	
+
 	Method Activate( cmd )
 		Select cmd
 			Case ACTIVATE_REDRAW
@@ -3729,7 +3729,7 @@ Type TWindowsPanel Extends TWindowsGadget
 		EndSelect
 		Return Super.Activate(cmd)
 	EndMethod
-	
+
 	Method SetPixmap(pixmap:TPixmap,flags)
 		If _bitmap Then DeleteObject _bitmap;_bitmap = 0
 		If pixmap Then
@@ -3748,57 +3748,57 @@ Type TWindowsPanel Extends TWindowsGadget
 		EndIf
 		RedrawGadget(Self)
 	EndMethod
-			
+
 	Method AttachGraphics:TGraphics( flags )
 		_canvas=brl.Graphics.AttachGraphics( _hwnd,flags )
 	EndMethod
-	
+
 	Method CanvasGraphics:TGraphics()
 		Return _canvas
 	EndMethod
-	
+
 	Method Free()
 		If _canvas Then CloseGraphics(_canvas);_canvas = Null
 		Super.Free()
 	EndMethod
-			
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
-				
+
 			Case WM_ERASEBKGND
-				
+
 				If _type = PANELCANVAS Then Return 1
 				If _generatesPaintEvents Then Return 1
-				
+
 				Local hdc:Byte Ptr=wp,hdcCanvas:Byte Ptr,hdcBitmap:Byte Ptr
 				Local srcw,srch,x,y,xoffset,yoffset
 				Local clientRect[4], updateRect[4], clipRect[4], windowRect[4]
-				
+
 				GetClipBox( hdc, clipRect )
 				GetWindowRect( hwnd, windowRect)
 				GetClientRect( hwnd, clientRect )
-				
+
 				If Not GetUpdateRect( hwnd, updateRect, False) Then updateRect = clipRect
 				If IsRectEmpty(updateRect) Then updateRect = [0,0,windowRect[2]-windowRect[0],windowRect[3]-windowRect[1]]
-				
+
 				'If we are drawing a bitmap or using alpha then let's do some double-buffering stuff
-				
+
 				If (hwnd <> _hwndclient) And ((_bitmap And _bitmapwidth And _bitmapheight) Or _alpha<1.0) Then
-				
+
 					hdc = CreateCompatibleDC(Byte Ptr wp)
 					hdcCanvas = CreateCompatibleBitmap(Byte Ptr wp,windowRect[2]-windowRect[0],windowRect[3]-windowRect[1])
 					SelectObject( hdc, hdcCanvas )
-				
+
 				EndIf
-				
+
 				'Fill the drawing context with the background colour, or the background of the parent
-				
+
 				If BgBrush() And (hwnd <> _hwndclient) Then FillRect(hdc,updateRect,BgBrush()) Else DrawParentBackground(hdc,hwnd)
-				
+
 				'If we aren't drawing to a bitmap or using alpha, then we can return now.
-				
+
 				If Not ((hwnd <> _hwndclient) And ((_bitmap And _bitmapwidth And _bitmapheight) Or _alpha<1.0)) Then Return 1
-				
+
 				If _bitmap And _bitmapwidth And _bitmapheight
 					hdcBitmap=CreateCompatibleDC(hdc)
 					SelectObject(hdcBitmap,_bitmap)
@@ -3826,12 +3826,12 @@ Type TWindowsPanel Extends TWindowsGadget
 							Else
 								BitBlt hdc,x,y,srcw,srch,hdcBitmap,0,0,ROP_SRCCOPY
 							EndIf
-						
+
 						Case PANELPIXMAP_FIT, PANELPIXMAP_FIT2
-						
+
 							Local mx# = Float(windowRect[RECT_RIGHT]-windowRect[RECT_LEFT])/srcw
 							Local my# = Float(windowRect[RECT_BOTTOM]-windowRect[RECT_TOP])/srch
-							
+
 							If mx>my Then
 								If (_bitmapflags&(GADGETPIXMAP_ICON-1)) = PANELPIXMAP_FIT Then mx=my Else my=mx
 							EndIf
@@ -3855,34 +3855,34 @@ Type TWindowsPanel Extends TWindowsGadget
 							Else
 								StretchBlt hdc,0,0,windowRect[RECT_RIGHT]-windowRect[RECT_LEFT],windowRect[RECT_BOTTOM]-windowRect[RECT_TOP],hdcBitmap,0,0,srcw,srch,ROP_SRCCOPY
 							EndIf
-						
-					EndSelect				
-					
+
+					EndSelect
+
 					DeleteDC(hdcBitmap)
-					
+
 				EndIf
-				
+
 				If _alpha < 1.0 Then
-					
+
 					DrawParentBackground( Byte Ptr wp, hwnd )
 					Local blendfunction = ((Int(_alpha*255)&$FF) Shl 16)
 					AlphaBlend_(Byte Ptr wp,updateRect[0],updateRect[1],updateRect[2]-updateRect[0],updateRect[3]-updateRect[1],hdc,updateRect[0],updateRect[1],updateRect[2]-updateRect[0],updateRect[3]-updateRect[1],blendfunction)
-				
+
 				Else
-					
+
 					BitBlt(Byte Ptr wp,0,0,windowRect[2]-windowRect[0],WindowRect[3]-windowRect[1],hdc,0,0,ROP_SRCCOPY)
-				
+
 				EndIf
-				
+
 				Assert hdc <> wp, "hdc == wp! Please post a MaxGUI bug report."
-				
+
 				DeleteObject( hdcCanvas )
 				DeleteDC( hdc )
-				
+
 				Return 1
-			
+
 			Case WM_PAINT
-				
+
 				Select _type
 					Case PANELCANVAS
 						PostGuiEvent EVENT_GADGETPAINT
@@ -3895,17 +3895,17 @@ Type TWindowsPanel Extends TWindowsGadget
 							Return 1
 						End If
 				EndSelect
-			
+
 			Case WM_LBUTTONDOWN
-				
+
 				SetFocus Query(QUERY_HWND_CLIENT)
-				
+
 		End Select
-		
+
 		Return Super.WndProc(hwnd,msg,wp,lp)
-		
+
 	EndMethod
-	
+
 	Method FlushBrushes(pRecurse:Int = True)
 		Super.FlushBrushes()
 		If Not pRecurse Then Return
@@ -3913,7 +3913,7 @@ Type TWindowsPanel Extends TWindowsGadget
 			tmpGadget.FlushBrushes()
 		Next
 	EndMethod
-	
+
 	Method ClientWidth()
 		If _hwndClient Then
 			Return (Super.ClientWidth()-8)
@@ -3921,7 +3921,7 @@ Type TWindowsPanel Extends TWindowsGadget
 			Return Super.ClientWidth()
 		End If
 	EndMethod
-	
+
 	Method ClientHeight()
 		If _hwndClient Then
 			Return (Super.ClientHeight()-20)
@@ -3929,13 +3929,13 @@ Type TWindowsPanel Extends TWindowsGadget
 			Return Super.ClientHeight()
 		End If
 	EndMethod
-	
+
 	Method RethinkClient(forceRedraw:Int = False)
 		If _hwndClient Then
 			MoveWindow( _hwndClient, 4+_clientX,16+_clientY,ClientWidth(),ClientHeight(),forceRedraw)
 		EndIf
 	EndMethod
-	
+
 	Method Class()
 		If _type = PANELCANVAS Then
 			Return GADGET_CANVAS
@@ -3943,27 +3943,27 @@ Type TWindowsPanel Extends TWindowsGadget
 			Return GADGET_PANEL
 		End If
 	EndMethod
-			
+
 EndType
 
 
 Type TWindowsTextField Extends TWindowsGadget
 
 	Field _busy
-	
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
 		Self.style = style
 		xstyle=WS_EX_CLIENTEDGE
 		wstyle=WS_CHILD|WS_TABSTOP|ES_AUTOHSCROLL|WS_CLIPSIBLINGS
-		If style&TEXTFIELD_PASSWORD Then wstyle:|ES_PASSWORD		
+		If style&TEXTFIELD_PASSWORD Then wstyle:|ES_PASSWORD
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"EDIT","",wstyle,0,0,0,0,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 		'SendMessageW hwnd,WM_SETFONT,TWindowsGUIDriver.GDIFont.handle,1
 		Register GADGET_TEXTFIELD,hwnd
 		SetColor(255,255,255)
-		Return Self		
+		Return Self
 	EndMethod
 
 	Method SetText(Text$)
@@ -3974,12 +3974,12 @@ Type TWindowsTextField Extends TWindowsGadget
 		SendMessageW _hwnd,EM_SETSEL,WParam(p0),LParam(p1)
 		_busy:-1
 	EndMethod
-	
+
 	Method Activate(cmd)
 		Select cmd
-			Case ACTIVATE_CUT	
+			Case ACTIVATE_CUT
 				SendMessageW _hwnd,WM_CUT,0,0
-			Case ACTIVATE_COPY	
+			Case ACTIVATE_COPY
 				SendMessageW _hwnd,WM_COPY,0,0
 			Case ACTIVATE_PASTE
 				SendMessageW _hwnd,WM_PASTE,0,0
@@ -3988,7 +3988,7 @@ Type TWindowsTextField Extends TWindowsGadget
 		End Select
 		Return Super.Activate(cmd)
 	EndMethod
-	
+
 	Method OnCommand(msg,wp:ULong)
 		If Not _busy
 			Select (wp Shr 16)
@@ -3999,7 +3999,7 @@ Type TWindowsTextField Extends TWindowsGadget
 			End Select
 		EndIf
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Local event:TEvent
 		Select msg
@@ -4020,19 +4020,19 @@ Type TWindowsTextField Extends TWindowsGadget
 		End Select
 		Return Super.WndProc(hwnd,msg,wp,lp)
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_TEXTFIELD
 	EndMethod
-	
+
 EndType
 
 Type TWindowsDefaultTextArea Extends TWindowsTextArea
-	
+
 	Global _ClassName:String = Null	'See InitializeLibrary().
-	
+
 	Global _pagemargin# = 0.5		'Page margin for print-out in inches
-	
+
 	Field _locked
 
 	Field cr1:CHARRANGE=New CHARRANGE
@@ -4042,44 +4042,44 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 	Field ole:IRichEditOLE_
 	Field idoc:ITextDocument_
 	Field busy,_readonly
-	
+
 	Field IID_ITextDocument:GUID = New GUID
-	
+
 	Function _InitializeLibrary()
-		
+
 		If Not _ClassName Then
-			
+
 			'Load RichEdit DLL
 			If Not LoadLibraryW("msftedit.dll") Then
 				If LoadLibraryW("riched20.dll") _ClassName = "RichEdit20W"
 			Else
 				_ClassName = "RICHEDIT50W"
 			EndIf
-			
+
 		EndIf
 
 	EndFunction
-	
+
 	Method New()
 		_InitializeLibrary()
 	EndMethod
-	
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
 		Local res
-		
+
 		xstyle=WS_EX_CLIENTEDGE
 		wstyle=WS_CHILD|WS_VSCROLL|WS_CLIPSIBLINGS
 		wstyle:|ES_MULTILINE|ES_NOOLEDRAGDROP|ES_NOHIDESEL|ES_LEFT
 		If Not (style&TEXTAREA_WORDWRAP) wstyle:|WS_HSCROLL|ES_AUTOHSCROLL
-'		If (style&TEXTAREA_READONLY) wstyle:|ES_READONLY						
+'		If (style&TEXTAREA_READONLY) wstyle:|ES_READONLY
 		If (style&TEXTAREA_READONLY) _readonly=True
-		
+
 		Self.style = style
-		
+
 		parent=group.query(QUERY_HWND_CLIENT)
-		
+
 		'RichText control should be made have dimensions of 1x1 pixels to fix Windows XP vertical scrollbar drawing bug.
 		hwnd=CreateWindowExW(xstyle,_ClassName,"",wstyle,0,0,1,1,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 
@@ -4093,40 +4093,40 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 		res=IIDFromString(ITextDocument_UUID,IID_ITextDocument)
 
 		'idoc = New ITextDocument
-		res=ole.QueryInterface(IID_ITextDocument.guidPtr, idoc)		
+		res=ole.QueryInterface(IID_ITextDocument.guidPtr, idoc)
 
 		Register GADGET_TEXTAREA,hwnd
 
-		Return Self		
+		Return Self
 	EndMethod
-	
+
 	Method Free()
 		If ole Then ole.Release_
 		If idoc Then idoc.Release_
 		Super.Free()
 	EndMethod
-	
+
 	Method Activate(cmd)
 		Select cmd
-			Case ACTIVATE_CUT	
+			Case ACTIVATE_CUT
 				SendMessageW _hwnd,WM_CUT,0,0
-			Case ACTIVATE_COPY	
+			Case ACTIVATE_COPY
 				SendMessageW _hwnd,WM_COPY,0,0
 				SetFocus _hwnd
 			Case ACTIVATE_PASTE
-				DoPaste	
+				DoPaste
 			Case ACTIVATE_PRINT
 				DoPrint
 			Default
 				Return Super.Activate(cmd)
 		End Select
 	EndMethod
-	
+
 	Method DoPaste()
 		Local h:Byte Ptr,handle:Byte Ptr,n:Size_T
 		Local w:Short Ptr,cp:Short Ptr
 		Local tp:Byte Ptr,bp:Byte Ptr
-		
+
 		If OpenClipboard(_hwnd)
 			If IsClipboardFormatAvailable(CF_UNICODETEXT)
 				handle=GetClipboardData(CF_UNICODETEXT)
@@ -4136,7 +4136,7 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 				cp=Short Ptr GlobalLock(h)
 				memcpy_(cp,w,n)
 				If cp[n/2-2]=10 Then cp[n/2-2]=13
-				GlobalUnlock h	
+				GlobalUnlock h
 				GlobalUnlock handle
 				If h
 					EmptyClipboard
@@ -4144,8 +4144,8 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 				EndIf
 			ElseIf IsClipboardFormatAvailable(CF_OEMTEXT)
 				handle=GetClipboardData(CF_OEMTEXT)
-				n=GlobalSize(handle)		
-				tp=Byte Ptr GlobalLock(handle)				
+				n=GlobalSize(handle)
+				tp=Byte Ptr GlobalLock(handle)
 				h=GlobalAlloc(GMEM_MOVEABLE,n)
 				bp=Byte Ptr GlobalLock(h)
 				memcpy_(bp,tp,n)
@@ -4162,103 +4162,103 @@ Type TWindowsDefaultTextArea Extends TWindowsTextArea
 			SetFocus _hwnd
 		EndIf
 	EndMethod
-	
+
 	Method DoPrint()
 Rem
 		Local tmpTextSelLen = TextAreaSelLen(Self)
-		
+
 		Local tmpPrintDialog:PRINTDLGW = New PRINTDLGW
-		
+
 		tmpPrintDialog.flags = PD_RETURNDC | PD_HIDEPRINTTOFILE | PD_NOPAGENUMS
 		If Not tmpTextSelLen Then tmpPrintDialog.flags:|PD_NOSELECTION
-		
+
 		tmpPrintDialog.hwndOwner = _hwnd
-		
+
 		If Not PrintDlg( Byte Ptr tmpPrintDialog ) Then Return 0
-		
-		Local hdcPrinter = tmpPrintDialog.hdc	
-		
+
+		Local hdcPrinter = tmpPrintDialog.hdc
+
 		Local tmpDoc:DOCINFOW = New DOCINFOW
 		Local tmpDocTitle:Short Ptr = AppTitle.ToWString()
 		tmpDoc.lpszDocName = tmpDocTitle
-		
+
 		Local tmpSuccess = (StartDocW( hdcPrinter, Byte Ptr tmpDoc ) > 0)
-		
+
 		If tmpSuccess Then
-			
+
 			Local _cursor = TWindowsGUIDriver._cursor
-			
+
 			SetPointer( POINTER_WAIT )
-			
+
 			SetMapMode( hdcPrinter, MM_TEXT )
-			
+
 			Local wPage = GetDeviceCaps( hdcPrinter, PHYSICALWIDTH )
 			Local hPage = GetDeviceCaps( hdcPrinter, PHYSICALHEIGHT )
 			Local xPPI = GetDeviceCaps( hdcPrinter, LOGPIXELSX )
 			Local yPPI = GetDeviceCaps( hdcPrinter, LOGPIXELSY )
-			
+
 			Local tmpTextLengthStruct[] = [GTL_DEFAULT,1200]
 			Local tmpTextLength = SendMessageW (_hwnd, EM_GETTEXTLENGTHEX, Int Byte Ptr tmpTextLengthStruct, 0)
-			
+
 			Local tmpTextPrinted, tmpFormatRange:FORMATRANGE = New FORMATRANGE
-			
+
 			tmpFormatRange.hdc = hdcPrinter
 			tmpFormatRange.hdcTarget = hdcPrinter
-			
+
 			tmpFormatRange.rcPageRight = (wPage*1440:Long)/xPPI
 			tmpFormatRange.rcPageBottom = (hPage*1440:Long)/yPPI
-			
+
 			tmpFormatRange.rcLeft = (1440*_pagemargin);tmpFormatRange.rcTop = (1440*_pagemargin)
 			tmpFormatRange.rcRight = tmpFormatRange.rcPageRight - (2880*_pagemargin)
 			tmpFormatRange.rcBottom = tmpFormatRange.rcPageBottom - (2880*_pagemargin)
-			
+
 			If tmpPrintDialog.flags & PD_SELECTION Then
 				tmpTextPrinted = TextAreaCursor(Self)
 				tmpFormatRange.CHARRANGE_cpMax = tmpTextPrinted+tmpTextSelLen
 			Else
 				tmpFormatRange.CHARRANGE_cpMax = tmpTextLength
 			EndIf
-			
+
 			SendMessageW (_hwnd, EM_FORMATRANGE, False, 0)
-			
+
 			While tmpSuccess And ( tmpTextPrinted < tmpFormatRange.CHARRANGE_cpMax )
-				
+
 				tmpFormatRange.CHARRANGE_cpMin = tmpTextPrinted
-				
+
 				tmpSuccess = (StartPage(hdcPrinter) > 0)
 				If Not tmpSuccess Then Exit
-				
+
 				tmpTextPrinted = SendMessageW( _hwnd, EM_FORMATRANGE, True, Int Byte Ptr tmpFormatRange )
-				
+
 				tmpSuccess = (EndPage(hdcPrinter) > 0)
-				
+
 			Wend
-			
+
 			If tmpSuccess Then EndDoc( hdcPrinter ) Else AbortDoc( hdcPrinter )
-			
+
 			SendMessageW (_hwnd, EM_FORMATRANGE, False, 0)
-			
+
 			TWindowsGUIDriver._cursor = _cursor
 			SetCursor _cursor
-			
+
 		EndIf
-		
+
 		GlobalFree( tmpPrintDialog.hDevMode )
 		GlobalFree( tmpPrintDialog.hDevNames )
 		DeleteDC( hdcPrinter )
-		
+
 		MemFree tmpDocTitle
-		
+
 		Return tmpSuccess
-End Rem	
+End Rem
 	EndMethod
-	
+
 	Global gt[] = [GTL_DEFAULT, CP_ACP]
-	
+
 	Method CharCount()
 		Return SendMessageW(_hwnd,EM_GETTEXTLENGTHEX,WParam(Byte Ptr gt),0)
 	EndMethod
-	
+
 	Method SetStyle(r,g,b,flags,pos,length,units)
 		Local iifont:ITextFont_
 		Local iirange:ITextRange_
@@ -4267,9 +4267,9 @@ End Rem
 			Local n=pos
 			pos=CharAt(pos)
 			If length>=0 length=CharAt(n+length)-pos
-		EndIf			
-		If length<0 length=charcount()-pos	
-		busy:+1		
+		EndIf
+		If length<0 length=charcount()-pos
+		busy:+1
 		res=idoc.Range(pos,pos+length,iirange)
 		res=iirange.GetFont(iifont)
 		res=iifont.SetForeColor(((b Shl 16)|(g Shl 8)|r))
@@ -4280,14 +4280,14 @@ End Rem
 		iifont.Release_
 		iirange.Release_
 		busy:-1
-	EndMethod	
-		
+	EndMethod
+
 	Method InsertText(Text$,pos,count)
 		Local iirange:ITextRange_
 		Local bstr:Short Ptr, tmpWString:Short Ptr = Text.toWString()
 		Local res, bool
 		busy:+1
-		res=idoc.Range(pos,pos+count,iirange)		
+		res=idoc.Range(pos,pos+count,iirange)
 		bstr=SysAllocStringLen(tmpWString,UInt(Text.length));MemFree tmpWString
 		LockText()
 		res=iirange.SetText(bstr)
@@ -4296,14 +4296,14 @@ End Rem
 		iirange.Release_
 		busy:-1
 	EndMethod
-	
+
 	Method ReplaceText(pos,length,Text$,units)
 		If units=TEXTAREA_LINES
 			Local n=pos
 			pos=CharAt(pos)
 			If length>=0 length=CharAt(n+length)-pos
-		EndIf			
-		If length<0 Then length=charcount()-pos	
+		EndIf
+		If length<0 Then length=charcount()-pos
 		InsertText Text,pos,length
 	EndMethod
 
@@ -4315,9 +4315,9 @@ End Rem
 			Local n=pos
 			pos=CharAt(pos)
 			If length>=0 length=CharAt(n+length)-pos
-		EndIf			
-		If length<0 length=charcount()-pos	
-		idoc.Range(pos,pos+length,iirange)		
+		EndIf
+		If length<0 length=charcount()-pos
+		idoc.Range(pos,pos+length,iirange)
 		iirange.GetText(Varptr bstr)
 		Local Text$=String.FromWString(bstr)
 		SysFreeString bstr
@@ -4325,7 +4325,7 @@ End Rem
 		Text=Text.Replace(Chr(13),Chr(10))
 		Return Text
 	EndMethod
-	
+
 	Method SetSelection(pos,length,units)
 		If units=TEXTAREA_LINES
 			Local n=pos
@@ -4334,8 +4334,8 @@ End Rem
 				length=CharAt(n+length)
 				length=length-pos
 			EndIf
-		EndIf			
-		If length<0 length=charcount()-pos	
+		EndIf
+		If length<0 length=charcount()-pos
 		'Local cr:CHARRANGE = New CHARRANGE
 		cr1.SetcpMin(pos)
 		cr1.SetcpMax(pos+length)
@@ -4347,9 +4347,9 @@ End Rem
 	Method SetMargins(leftmargin)
 		SendMessageW _hwnd,EM_SETMARGINS,EC_LEFTMARGIN,leftmargin
 	EndMethod
-	
+
 	' 72 points per inch
-	
+
 	Method SetTabs(tabs)
 		Local hdc:Byte Ptr=GetDC( 0 )
 		idoc.SetDefaultTabStop tabs * 72.0 / GetDeviceCaps( hdc,LOGPIXELSX )
@@ -4357,7 +4357,7 @@ End Rem
 	EndMethod
 
 	Method SetTextColor(r,g,b)
-		'cf.cbSize=SizeOf(CHARFORMATW)				
+		'cf.cbSize=SizeOf(CHARFORMATW)
 		cf.SetdwMask(CFM_COLOR|CFM_BOLD|CFM_ITALIC)
 		cf.SetcrTextColor((b Shl 16)|(g Shl 8)|r)
 		SendMessageW _hwnd,EM_SETCHARFORMAT,SCF_DEFAULT,LParam(cf.formatPtr)
@@ -4371,15 +4371,15 @@ End Rem
 	Method RemoveColor()
 		SendMessageW _hwnd,EM_SETBKGNDCOLOR,1,0
 	EndMethod
-	
+
 	Method GetCursorPos(units)
 		'Local cr:CHARRANGE = New CHARRANGE
 		SendMessageW _hwnd,EM_EXGETSEL,0,LParam(cr1.rangePtr)
 		Local pos=cr1.cpMin()
 		If units=TEXTAREA_LINES pos=LineAt(pos)
 		Return pos
-	EndMethod	
-	
+	EndMethod
+
 	Method GetSelectionLength(units)
 		'Local cr:CHARRANGE = New CHARRANGE
 		SendMessageW _hwnd,EM_EXGETSEL,0,LParam(cr1.rangePtr)
@@ -4406,19 +4406,19 @@ End Rem
 		If units=TEXTAREA_LINES Return LineAt(charcount())
 		Return charcount()
 	EndMethod
-	
+
 	Method CharX( char )
 		Local tmpPoint[2]
 		SendMessageW(_hwnd, EM_POSFROMCHAR, WParam(Byte Ptr tmpPoint), char)
 		Return tmpPoint[0]
 	EndMethod
-	
+
 	Method CharY( char )
 		Local tmpPoint[2]
 		SendMessageW(_hwnd, EM_POSFROMCHAR, WParam(Byte Ptr tmpPoint), char)
 		Return tmpPoint[1]
 	EndMethod
-	
+
 	Method SetText(Text$)
 		InsertText Text,0,charcount()
 	EndMethod
@@ -4431,25 +4431,25 @@ End Rem
 		cr1.SetcpMax(p)
 		SendMessageW _hwnd,EM_EXSETSEL,0,LParam(cr1.rangePtr)
 	EndMethod
-	
+
 	Method GetText$()
 		Return AreaText(0,charcount(),TEXTAREA_CHARS)
 	EndMethod
-	
+
 	Field _oldSelPos%, _oldSelLen% = 0
-	
+
 	Method LockText()
-		
+
 		If Not idoc.Freeze(_locked)
 			_oldSelPos = GetCursorPos(TEXTAREA_CHARS)
 			_oldSelLen = GetSelectionLength(TEXTAREA_CHARS)
 			If Not _oldCursor Then _oldCursor = GetCursor()
 		EndIf
-		
+
 	EndMethod
-	
+
 	Method UnlockText()
-		
+
 		If idoc.Unfreeze(_locked) = S_OK Then
 			SetSelection( _oldSelPos, _oldSelLen, TEXTAREA_CHARS )
 			If _oldCursor And (_oldCursor <> GetCursor()) Then
@@ -4457,7 +4457,7 @@ End Rem
 			EndIf
 			_oldCursor = 0
 		EndIf
-		
+
 	EndMethod
 
 	Method OnCommand(msg,wp:ULong)
@@ -4471,9 +4471,9 @@ End Rem
 	Method OnNotify(wp:WParam,lp:LParam)
 		Local nmhdrPtr:Byte Ptr
 		Local event:TEvent
-		
+
 		Super.OnNotify(wp,lp)	'Tooltip
-		
+
 		nmhdrPtr=lp
 		Select bmx_win32_NMHDR_code(nmhdrPtr)
 '			Case EN_PROTECTED
@@ -4493,21 +4493,21 @@ End Rem
 						Local my=Long(bmx_win32_MSGFILTER_lParam(nmhdrPtr)) Shr 16
 						PostGuiEvent EVENT_GADGETMENU,0,0,mx,my
 					Case WM_KEYDOWN
-						
+
 						Local k=Int(bmx_win32_MSGFILTER_wParam(nmhdrPtr))
-						
+
 						'Filtering out special shortcut combinations
 						If (keymods()&MODIFIER_CONTROL) Then
 							Select k
 								Case 76,69,82	'ctrl+l, ctrl+e, ctrl+r
 									Return 1	'Alignment shortcuts
-									
+
 								Case 188,190	'ctrl+<, ctrl+>
 											'Font size shortcuts
 									If (keymods()&MODIFIER_SHIFT) Then Return 1
 							EndSelect
 						EndIf
-						
+
 						'Read-only
 						If _readonly
 							If k>=33 And k<=40 Return 0 'selection keys
@@ -4516,15 +4516,15 @@ End Rem
 									Case 65, 67;Return 0 'ctrl-a, ctrl+c
 								EndSelect
 							EndIf
-							Return 1						
+							Return 1
 						EndIf
-						
+
 						'Event Filter
 						If eventfilter<>Null
 							event=CreateEvent(EVENT_KEYDOWN,Self,k,keymods())
 							Return Not eventfilter(event,context)
 						EndIf
-						
+
 					Case WM_CHAR
 						If _readonly Return 1
 						If eventfilter<>Null
@@ -4537,34 +4537,34 @@ End Rem
 
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
-			
+
 			Case WM_MOUSEWHEEL
 				If (Long(wp)&MK_CONTROL) Then SendMessageW _hwnd, EM_SETZOOM, 0, 0
-				
+
 			Case WM_KILLFOCUS
 				PostGuiEvent EVENT_GADGETLOSTFOCUS
-			
+
 		End Select
-		
+
 		Return Super.WndProc(hwnd,msg,wp,lp)
-		
+
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_TEXTAREA
 	EndMethod
-		
+
 EndType
 
 Type TWindowsLabel Extends TWindowsGadget
-	
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
-		
+
 		Self.style = style
 		wstyle=WS_CHILD|SS_NOPREFIX|WS_CLIPSIBLINGS|SS_NOTIFY
-		
+
 		Select style&24
 			Case LABEL_LEFT wstyle:|SS_LEFT
 			Case LABEL_RIGHT wstyle:|SS_RIGHT
@@ -4575,25 +4575,25 @@ Type TWindowsLabel Extends TWindowsGadget
 			Case LABEL_SUNKENFRAME wstyle:|SS_SUNKEN
 			Case LABEL_SEPARATOR wstyle:|SS_SUNKEN|SS_GRAYRECT
 		End Select
-		
+
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"STATIC","",wstyle,0,0,0,0,parent,Byte Ptr hotkey,GetModuleHandleW(Null),Null)
 		Register GADGET_LABEL,hwnd
-		
+
 		Return Self
 	EndMethod
-	
+
 	Method SetArea(x,y,w,h)
 		If ((style & 7) = LABEL_SEPARATOR) Then
 			If (w > h) Then h = 2 Else w = 2
 		EndIf
 		Return Super.SetArea(x,y,w,h)
 	EndMethod
-	
+
 	Method SetText(Text$)
 		If ((style & 7) <> LABEL_SEPARATOR) Then Return Super.SetText(Text)
 	EndMethod
-	
+
 	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_ERASEBKGND
@@ -4601,11 +4601,11 @@ Type TWindowsLabel Extends TWindowsGadget
 		EndSelect
 		Return Super.WndProc(hwnd,msg,wp,lp)
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_LABEL
 	EndMethod
-					
+
 EndType
 
 Type TWindowsTreeNode Extends TGadget
@@ -4616,7 +4616,7 @@ Type TWindowsTreeNode Extends TGadget
 	Field	_icon
 	Field _handle:Byte Ptr
 	Field _tv:TVITEMW
-	
+
 	Method Activate(cmd)
 		Local tmpTree:TWindowsTreeView = TWindowsTreeView(TWindowsGUIDriver.GadgetFromHwnd(_tree))
 		If tmpTree Then tmpTree.Desensitize()
@@ -4638,10 +4638,10 @@ Type TWindowsTreeNode Extends TGadget
 		End Select
 		If tmpTree Then tmpTree.Sensitize()
 	EndMethod
-	
+
 	Method CreateRoot:TWindowsTreeNode(owner:TWindowsTreeView)
 		_tree=owner._hwnd
-		_item=TVI_ROOT		
+		_item=TVI_ROOT
 		Return Self
 	EndMethod
 
@@ -4680,7 +4680,7 @@ Type TWindowsTreeNode Extends TGadget
 		SendMessageW _tree,TVM_GETITEMW,0,LParam(_tv.itemPtr)
 		Return String.FromWString(buffer)
 	EndMethod
-	
+
 	Method SetText(Text$)
 		If Not _tv Then
 			_tv = New TVITEMW
@@ -4696,11 +4696,11 @@ Type TWindowsTreeNode Extends TGadget
 		SendMessageW(_tree,TVM_SETITEMW,0,LParam(_tv.itemPtr))
 		MemFree _tv.pszText()
 	EndMethod
-	
+
 	Method DoLayout()
 		'Don't do anything!
 	EndMethod
-	
+
 	Method Free()
 		'If we don't have a parent then the node must have previously been freed.
 		If Not _parent Then Return
@@ -4718,11 +4718,11 @@ Type TWindowsTreeNode Extends TGadget
 		'Release any handle we created using HandleFromObject() in Spawn()
 		If _handle Then Release _handle
 	EndMethod
-	
+
 	Method DeSelect()
 		SendMessageW _tree,TVM_SELECTITEM,TVGN_CARET,0
 	EndMethod
-	
+
 	Method InsertNode:TGadget(index,Text$,icon)
 		Return New TWindowsTreeNode.Create(Self,0,Text,index,icon)
 	EndMethod
@@ -4731,19 +4731,19 @@ Type TWindowsTreeNode Extends TGadget
 		_icon = icon
 		SetText Text
 	EndMethod
-		
+
 	Method tviatindex:Byte Ptr(index)
 		If kids.IsEmpty() Then Return TVI_FIRST
-		If index<0 Or index>=kids.count() Return TVI_LAST		
+		If index<0 Or index>=kids.count() Return TVI_LAST
 		Local child:TWindowsTreeNode
 		child=TWindowsTreeNode(kids.valueatindex(index))
 		Return child._item
 	EndMethod
-	
+
 	Method Spawn:Byte Ptr(name$,index=-1)
-		
+
 		Local it:TVINSERTSTRUCTW = New TVINSERTSTRUCTW
-		Local hitem				
+		Local hitem
 		it.SethParent(_parent._item)
 		If index = 0 Then
 			it.SethInsertAfter(Byte Ptr TVI_FIRST)
@@ -4751,33 +4751,33 @@ Type TWindowsTreeNode Extends TGadget
 			it.SethInsertAfter(_parent.tviatindex(index-1))
 		EndIf
 		it.Setitem_mask(TVIF_TEXT|TVIF_PARAM)
-		
+
 		If _icon > -1 Then
 			it.Setitem_mask(it.item_mask()|TVIF_IMAGE|TVIF_SELECTEDIMAGE)
 			it.Setitem_iImage(_icon)
 			it.Setitem_iSelectedImage(it.item_iImage())
 		EndIf
-		
+
 		Local tmpParentHadKids = SendMessageW(_tree, TVM_GETNEXTITEM, TVGN_CHILD, LParam(_parent._item))
-		
+
 		it.Setitem_pszText(name.ToWString())
 		it.Setitem_lparam(Byte Ptr (HandleFromObject(Self))) ' FIXME
-		
+
 		'Make sure that we store handle so we can release it later.
 		If _handle Then Release _handle
 		_handle = it.item_lparam()
-		
+
 		_item=SendMessageW(_tree,TVM_INSERTITEMW,0,LParam(it.structPtr))
-		
+
 		MemFree it.item_pszText()
-		
+
 		'Fix for tree-view parent status update problem.
 		If Not tmpParentHadKids Then _parent.RedrawNode()
-		
+
 		Return _item
-		
+
 	EndMethod
-	
+
 	Method RedrawNode()
 
 		If _item = TVI_ROOT Then
@@ -4790,15 +4790,15 @@ Type TWindowsTreeNode Extends TGadget
 		EndIf
 
 	EndMethod
-	
+
 	Method SetTooltip( pTooltip$ )
 		'At the moment, nodes don't support tooltips.
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_NODE
 	EndMethod
-	
+
 EndType
 
 Type TWindowsTreeView Extends TWindowsGadget
@@ -4810,25 +4810,25 @@ Type TWindowsTreeView Extends TWindowsGadget
 	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Local	xstyle,wstyle,hotkey
 		Local	hwnd:Byte Ptr,parent:Byte Ptr
-		
+
 		Self.style = style
 		xstyle=WS_EX_CLIENTEDGE
 		wstyle=WS_CHILD|TVS_HASLINES|TVS_HASBUTTONS|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_NOTOOLTIPS|WS_CLIPSIBLINGS
 		If Not(style&TREEVIEW_DRAGNDROP) wstyle:|TVS_DISABLEDRAGDROP
-		
+
 		parent=group.query(QUERY_HWND_CLIENT)
 		hwnd=CreateWindowExW(xstyle,"SysTreeView32","",wstyle,0,0,0,0,parent,Byte Ptr hotkey,GetModuleHandleW(Null),Null)
 		If TWindowsGUIDriver.CheckCommonControlVersion() Then SendMessageW hwnd, TVM_SETEXTENDEDSTYLE, TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER
-		Register GADGET_TREEVIEW,hwnd			
-		_root=New TWindowsTreeNode.CreateRoot(Self)	
-		
+		Register GADGET_TREEVIEW,hwnd
+		_root=New TWindowsTreeNode.CreateRoot(Self)
+
 		If TWindowsGUIDriver._explorerstyle Then UseExplorerTheme()
-		
+
 		Return Self
-		
+
 	EndMethod
 
-	Method SetIconStrip(iconstrip:TIconStrip)	
+	Method SetIconStrip(iconstrip:TIconStrip)
 		_icons=TWindowsIconStrip(iconstrip)
 		SendMessageW _hwnd,TVM_SETIMAGELIST,TVSIL_NORMAL,LParam(_icons._imagelist)
 	EndMethod
@@ -4856,17 +4856,17 @@ Type TWindowsTreeView Extends TWindowsGadget
 	Method CountKids()
 		Return _root.CountKids()
 	EndMethod
-	
+
 	Method OnNotify(wp:WParam,lp:LParam)
 		Local nmhdrPtr:Byte Ptr
 		Local itemnew:Byte Ptr
 		Local node:TWindowsTreeNode
 
 		Super.OnNotify(wp,lp)	'Tool-tips
-		
+
 		nmhdrPtr=Byte Ptr lp
 		Select bmx_win32_NMHDR_code(nmhdrPtr)
-			
+
 			'MSLU glitch requires handling of ANSI equivalent
 			Case TVN_SELCHANGEDW, TVN_SELCHANGEDA
 				itemnew=bmx_win32_NMTREEVIEW_itemNew(nmhdrPtr)
@@ -4877,7 +4877,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 					_selected=TWindowsTreeNode(HandleToObject(Size_T(bmx_win32_TVITEMW_lParam(itemnew))))	'lParaM
 				EndIf
 				PostGuiEvent EVENT_GADGETSELECT,0,0,0,0,_selected
-				
+
 			Case TVN_ITEMEXPANDEDW, TVN_ITEMEXPANDEDA
 				itemnew=bmx_win32_NMTREEVIEW_itemNew(nmhdrPtr)
 				'itemnew=nmhdr+14		'Int Ptr(nmhdr[5])	'itemNew.TVITEM
@@ -4895,29 +4895,29 @@ Type TWindowsTreeView Extends TWindowsGadget
 						node._expanded=True
 				End Select
 				Return True
-				
+
 			Case TVN_BEGINDRAGW, TVN_BEGINRDRAGW, TVN_BEGINDRAGA, TVN_BEGINRDRAGA
-				
+
 				If (style&TREEVIEW_DRAGNDROP) Then
-					
+
 					Local data% = 1
 					If (bmx_win32_NMHDR_code(nmhdrPtr) = TVN_BEGINRDRAGW) Or (bmx_win32_NMHDR_code(nmhdrPtr) = TVN_BEGINRDRAGA) Then data = 2
-					
+
 					'itemnew=nmhdr+14		'Int Ptr(nmhdr[5])	'itemNew
 					itemnew=bmx_win32_NMTREEVIEW_itemNew(nmhdrPtr)
-					
+
 					If bmx_win32_TVITEMW_hItem(itemnew)<>TVI_ROOT Then
 						TGadget.dragGadget[data-1]=TWindowsTreeNode(HandleToObject(Size_T(bmx_win32_TVITEMW_lParam(itemnew))))
 						PostGuiEvent EVENT_GADGETDRAG, data, KeyMods(), bmx_win32_NMTREEVIEW_x(nmhdrPtr), bmx_win32_NMTREEVIEW_y(nmhdrPtr), TGadget.dragGadget[data-1]
 					Else
 						TGadget.dragGadget[data-1]=Null
 					EndIf
-					
+
 				EndIf
-				
+
 			Case NM_DBLCLK, NM_RETURN
 				PostGuiEvent EVENT_GADGETACTION,0,0,0,0,_selected
-				
+
 			Case NM_RCLICK
 				Local Rect[4]
 				Local pt[2]
@@ -4941,7 +4941,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 					PostGuiEvent EVENT_GADGETMENU,0,0,hittest.x(),hittest.y(),node
 				EndIf
 				Return True
-				
+
 		EndSelect
 	EndMethod
 
@@ -4956,14 +4956,14 @@ Type TWindowsTreeView Extends TWindowsGadget
 	EndMethod
 
 	Method UseExplorerTheme()
-	
+
 		If TWindowsGUIDriver.CheckCommonControlVersion() Then
 			SetWindowTheme( _hwnd, _wstrExplorer, Null )
 			SendMessageW _hwnd, TVM_SETEXTENDEDSTYLE, TVS_EX_FADEINOUTEXPANDOS, TVS_EX_FADEINOUTEXPANDOS
 		EndIf
-	
+
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_TREEVIEW
 	EndMethod
@@ -4976,27 +4976,27 @@ Type TWindowsHTMLView Extends TWindowsGadget
 	Field browser:IWebBrowser2_
 
 	Field IID_IHTMLDocument2:GUID=New GUID
-	
-	Method Create:TWindowsGadget(group:TGadget,style,Text$="")	
+
+	Method Create:TWindowsGadget(group:TGadget,style,Text$="")
 		Self.style = style
 		Local parent:Byte Ptr=group.query(QUERY_HWND_CLIENT)
-		mshtml=msHtmlCreate(Self,TWindowsGUIDriver.ClassName(),parent,style)	
+		mshtml=msHtmlCreate(Self,TWindowsGUIDriver.ClassName(),parent,style)
 		msHTMLBrowser(mshtml, Varptr browser)
 		Register GADGET_HTMLVIEW,msHtmlHwnd(mshtml)
-		
-		Local res = IIDFromString(IHTMLDocument2_UUID,IID_IHTMLDocument2)		
-		
+
+		Local res = IIDFromString(IHTMLDocument2_UUID,IID_IHTMLDocument2)
+
 		Return Self
 	EndMethod
-	
+
 	Method Rethink()
 		msHtmlSetShape mshtml,xpos,ypos,width,height
-	EndMethod	
+	EndMethod
 
 	Method SetText(Text$)	'sets document url
 		If Text Then msHtmlGo mshtml,Text
 	EndMethod
-	
+
 	Method GetText$()
 		Local bstr:Short Ptr
 		browser.lfget_LocationURL(Varptr bstr)
@@ -5004,41 +5004,41 @@ Type TWindowsHTMLView Extends TWindowsGadget
 		SysFreeString(bstr)
 		Return result
 	EndMethod
-	
+
 	Method GetTitleText$()	'returns document title
-		
+
 		Local bstr:Short Ptr
 		Local res
-		
+
 		Local disp:IDispatch_
 		Local doc:IHTMLDOCUMENT2_
-		
+
 		res=browser.lfget_Document(Varptr disp)
-		If res RuntimeError "no document"		
-		
+		If res RuntimeError "no document"
+
 		res=disp.QueryInterface(IID_IHTMLDocument2,doc)
 		If res RuntimeError "no document2 interface"
-		
+
 		If doc
 			doc.get_Title(Varptr bstr)
-		Else	
+		Else
 			browser.lfget_LocationName(Varptr bstr)
 		EndIf
-		
+
 		Local result$ = String.FromWString(bstr)
 		SysFreeString(bstr)
 		Return result
-		
+
 	End Method
 
 	Method Activate(cmd)
 		Return msHtmlActivate(mshtml,cmd)
 	EndMethod
-	
+
 	Method State()
 		Return msHtmlStatus(mshtml)
 	EndMethod
-	
+
 	Method Run$(script$)
 		msHtmlRun(mshtml,script)
 	EndMethod
@@ -5051,24 +5051,24 @@ Type TWindowsHTMLView Extends TWindowsGadget
 		EndSelect
 		Return Super.WndProc(hwnd,msg,wp,lp)
 	EndMethod
-	
+
 	Method Class()
 		Return GADGET_HTMLVIEW
 	EndMethod
-	
+
 EndType
 
 'A collection of functions that convert between Blitz pixmaps and Windows icons/bitmaps.
 Type TWindowsGraphic Final
-	
+
 	Function BitmapMaskFromPixmap:Byte Ptr(pix:TPixmap)
-		
+
 		Local x, pix2:TPixmap, usealpha
-		
+
 		If PixmapFormat(pix) = PF_RGBA8888 Or PixmapFormat(pix) = PF_BGRA8888 Then usealpha = True
-		
+
 		pix2=ConvertPixmap(pix,PF_BGR888);ClearPixels(pix2)
-		
+
 		For Local y:Int = 0 Until pix.height
 			For x = 0 Until pix.width
 				If usealpha
@@ -5078,16 +5078,16 @@ Type TWindowsGraphic Final
 				EndIf
 			Next
 		Next
-	
+
 		Return BitmapFromPixmap(pix2,False)
-		
+
 	EndFunction
-	
+
 	Function PreMultipliedBitmapFromPixmap32:Byte Ptr( pix:TPixmap )
 
 		Local argb, a
 		Local pix2:TPixmap = CreatePixmap( pix.width, pix.height, pix.format), x
-		
+
 		For Local y:Int = 0 Until pix.height
 			For x = 0 Until pix.width
 				argb = ReadPixel(pix,x,y)
@@ -5095,80 +5095,80 @@ Type TWindowsGraphic Final
 				WritePixel(pix2,x,y,((((argb&$ff00ff)*a)Shr 8)&$ff00ff)|((((argb&$ff00)*a)Shr 8)&$ff00)|(a Shl 24))
 			Next
 		Next
-		
+
 		Return BitmapFromPixmap(pix2,True)
 
 	EndFunction
-	
+
 	Function BitmapFromPixmap:Byte Ptr(pix:TPixmap, alpha:Int = True)
-	
+
 		Local bitCount:Int = 32, format:Int = PF_BGRA8888, bm:Byte Ptr
-		
+
 		If Not alpha Then
 			bitCount = 24
 			format = PF_BGR888
 		EndIf
-		
+
 		pix=ConvertPixmap(pix,format)
-	
+
 		Local hdc:Byte Ptr = GetDC(0)
-		
-		Local bi:BITMAPINFOHEADER = New BITMAPINFOHEADER	
+
+		Local bi:BITMAPINFOHEADER = New BITMAPINFOHEADER
 		bi.SetbiWidth(pix.width)
 		bi.SetbiHeight(-pix.height)
 		bi.SetbiPlanes(1)
 		bi.SetbiBitCount(bitCount)
 		bi.SetbiCompression(BI_RGB)
-	
+
 		Local bits:Byte Ptr
 		Local src:Byte Ptr = pix.pixels
-		
+
 		If alpha
 			bm = CreateDibSection(hdc,bi.infoPtr,DIB_RGB_COLORS,Varptr bits,Null,0)
 		Else
 			bm = CreateCompatibleBitmap(hdc,pix.width,pix.height)
 		EndIf
-		
+
 		Assert bm, "Cannot create bitmap.  The computer may be running low on resources."
-		
+
 		For Local y:Int = 0 Until pix.height
 			SetDIBits(hdc,bm,UInt(pix.height-y-1),1,src,bi.infoPtr,DIB_RGB_COLORS)
 			src:+pix.pitch
 		Next
-		
+
 		ReleaseDC(Null,hdc)
-		
+
 		Return bm
 
 	EndFunction
-	
+
 	Function BitmapWithBackgroundFromPixmap32:Byte Ptr( pix:TPixmap, pRed, pGreen, pBlue )
 
 		Local tmpPixel, tmpRed, tmpGreen, tmpBlue, tmpAlpha, tmpAlphaFloat#, tmpAlphaFloat2#
 		Local pix2:TPixmap = CreatePixmap( pix.width, pix.height, pix.format), x
-		
+
 		For Local y:Int = 0 Until pix.height
 			For x = 0 Until pix.width
-				
+
 				'Read pixel and alpha info
 				tmpPixel = ReadPixel(pix,x,y)
 				tmpAlpha = ((tmpPixel Shr 24) & $FF)
 				tmpAlphaFloat = tmpAlpha/255.0
 				tmpAlphaFloat2 = 1-tmpAlphaFloat
-				
+
 				'Get individual colours
 				tmpBlue = tmpPixel & $FF;tmpGreen = (tmpPixel Shr 8) & $FF;tmpRed = (tmpPixel Shr 16)&$FF
-				
+
 				'Courtesy of Mark T
 				tmpRed = (tmpRed * tmpAlphaFloat) + (tmpAlphaFloat2 * pRed)
 				tmpGreen = (tmpGreen * tmpAlphaFloat) + (tmpAlphaFloat2  * pGreen)
 				tmpBlue = (tmpBlue * tmpAlphaFloat) + (tmpAlphaFloat2  * pBlue)
-				
+
 				'Write the new pixels
 				WritePixel(pix2,x,y,(tmpAlpha Shl 24)|(tmpRed Shl 16)|(tmpGreen Shl 8)|tmpBlue)
 			Next
 		Next
-		
+
 		Return BitmapFromPixmap(pix2,False)
 
 	EndFunction
@@ -5177,27 +5177,27 @@ Type TWindowsGraphic Final
 
 		' Convert the pixmap to a HBITMAP
 		Local bitmap:Byte Ptr = BitmapFromPixmap(pix,True)
-		
+
 		' and then copy/resize it (to the default size for icons/cusors).
 		Local hSrcBMP:Byte Ptr = CopyImage(bitmap, IMAGE_BITMAP , 0 , 0 , LR_DEFAULTSIZE)
-		
+
 		' Now we need to create a mask bitmap for the image
 		Local hMaskBMP:Byte Ptr = BitmapMaskFromPixmap( pix )
-		
+
 		' So now we have our source and mask bitmaps, we can create an ICONINFO structure
 		Local IconInf:ICONINFO = New ICONINFO
 		IconInf.SetfIcon(True)
 		IconInf.SethbmMask(hMaskBMP)
 		IconInf.SethbmColor(hSrcBMP)
-		
+
 		' Create the icon
 		Local tmpIcon:Byte Ptr = CreateIconIndirect(IconInf)
-		
+
 		' Free our temporary bitmaps
 		DeleteObject(hMaskBMP)
 		DeleteObject(hSrcBMP)
 		DeleteObject(bitmap)
-		
+
 		Return tmpIcon
 
 	EndFunction
