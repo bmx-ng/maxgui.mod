@@ -1126,7 +1126,6 @@ static CocoaApp *GlobalApp;
 -(void)updateWidth{
 	int i, count;
 	count = [items count];
-	[column setMinWidth:0];
 	for (i=0;i<count;i++)
 		[self updateWidthForString:(ImageString*)[items objectAtIndex:i]];
 }
@@ -1315,7 +1314,6 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 	[outline collapseItem:node];
 	[outline tile];
 	[outline setDelegate:self];
-	[column setMinWidth:0];
 	[rootNode queueWidthUpdate];
 }
 -(void)outlineViewItemDidExpand:(NSNotification *)notification{
@@ -1331,7 +1329,6 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 -(void)outlineViewItemDidCollapse:(NSNotification *)notification{
 	id		node;
 	node=[[notification userInfo] objectForKey:@"NSObject"];
-	[column setMinWidth:0];
 	[rootNode queueWidthUpdate];
 #ifdef __x86_64
 	PostGuiEvent( BBEVENT_GADGETCLOSE,self,(BBInt64)node,0,0,0,0 );
@@ -1437,7 +1434,7 @@ tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mo
 			for (i= 0; i < [kids count]; i++) [[kids objectAtIndex:i] updateWidth];
 		if([tableColumn minWidth] < (cellWidth+indentationWidth)){
 			[tableColumn setMinWidth:(cellWidth+indentationWidth)];
-			[tableColumn setWidth:(cellWidth+indentationWidth)];
+			[tableColumn setWidth:(cellWidth+indentationWidth+10)];
 		}
 	}
 }
