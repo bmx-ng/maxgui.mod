@@ -2617,7 +2617,7 @@ Type TWindowsMenu Extends TGadget
 	
 		Local dad:TWindowsMenu	= TWindowsMenu(parent)				
 		
-		If dad
+		If dad And Not popup
 			_pmenu=dad._hmenu
 			If Not _pmenu Throw "Parent doesn't have a handle - the desktop heap may have run out of memory!"
 			_item=GetMenuItemCount(_pmenu)
