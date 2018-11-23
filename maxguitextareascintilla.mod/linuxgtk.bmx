@@ -436,31 +436,31 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 	End Method
 
 	Method EnableUndoRedo(enable:Int)
-		bmx_mgta_scintilla_enableundoredo(_hwnd, enable)
+		bmx_mgta_scintilla_enableundoredo(sciPtr, enable)
 	End Method
 
 	Method UndoRedoEnabled:Int()
-		Return bmx_mgta_scintilla_undoredoenabled(_hwnd)
+		Return bmx_mgta_scintilla_undoredoenabled(sciPtr)
 	End Method
 
 	Method Undo()
-		bmx_mgta_scintilla_undo(_hwnd)
+		bmx_mgta_scintilla_undo(sciPtr)
 	End Method
 
 	Method Redo()
-		bmx_mgta_scintilla_redo(_hwnd)
+		bmx_mgta_scintilla_redo(sciPtr)
 	End Method
 
 	Method CanUndo:Int()
-		Return bmx_mgta_scintilla_canundo(_hwnd)
+		Return bmx_mgta_scintilla_canundo(sciPtr)
 	End Method
 
 	Method CanRedo:Int()
-		Return bmx_mgta_scintilla_canredo(_hwnd)
+		Return bmx_mgta_scintilla_canredo(sciPtr)
 	End Method
 
 	Method ClearUndoRedo()
-		bmx_mgta_scintilla_clearundoredo(_hwnd)
+		bmx_mgta_scintilla_clearundoredo(sciPtr)
 	End Method
 
 End Type
