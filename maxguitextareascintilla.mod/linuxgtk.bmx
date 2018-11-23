@@ -430,7 +430,39 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 	Method SetCaretColor(r:Int, g:Int, b:Int)
 		bmx_mgta_scintilla_setcaretcolor(sciPtr, r, g, b)
 	End Method
-	
+
+	Method HasUndoRedo:Int()
+		Return True
+	End Method
+
+	Method EnableUndoRedo(enable:Int)
+		bmx_mgta_scintilla_enableundoredo(_hwnd, enable)
+	End Method
+
+	Method UndoRedoEnabled:Int()
+		Return bmx_mgta_scintilla_undoredoenabled(_hwnd)
+	End Method
+
+	Method Undo()
+		bmx_mgta_scintilla_undo(_hwnd)
+	End Method
+
+	Method Redo()
+		bmx_mgta_scintilla_redo(_hwnd)
+	End Method
+
+	Method CanUndo:Int()
+		Return bmx_mgta_scintilla_canundo(_hwnd)
+	End Method
+
+	Method CanRedo:Int()
+		Return bmx_mgta_scintilla_canredo(_hwnd)
+	End Method
+
+	Method ClearUndoRedo()
+		bmx_mgta_scintilla_clearundoredo(_hwnd)
+	End Method
+
 End Type
 
 
