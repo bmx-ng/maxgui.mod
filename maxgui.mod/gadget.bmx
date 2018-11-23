@@ -781,6 +781,22 @@ Type TGadget
 	End Method
 	Method SetCaretColor(r:Int, g:Int, b:Int)
 	End Method
+	Method HasUndoRedo:Int()
+	End Method
+	Method EnableUndoRedo(enable:Int)
+	End Method
+	Method UndoRedoEnabled:Int()
+	End Method
+	Method Undo()
+	End Method
+	Method Redo()
+	End Method
+	Method CanUndo:Int()
+	End Method
+	Method CanRedo:Int()
+	End Method
+	Method ClearUndoRedo()
+	End Method
 ' progbar
 	Method SetValue(value#)
 	End Method	
