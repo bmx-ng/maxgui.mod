@@ -1709,6 +1709,70 @@ Function SetTextAreaCaretColor( textarea:TGadget, r:Int, g:Int, b:Int )
 	textarea.SetCaretColor(r, g, b)
 End Function
 
+Rem
+bbdoc: The TextArea gadget provides its own Undo/Redo facility.
+about:
+End Rem
+Function TextAreaHasUndoRedo:Int(textarea:TGadget)
+	Return textarea.HasUndoRedo()
+End Function
+
+Rem
+bbdoc: Enables or disables undo/redo actions for the specified TextArea gadget.
+about:
+End Rem
+Function TextAreaEnableUndoRedo(textarea:TGadget, enable:Int)
+	textarea.EnableUndoRedo(enable)
+End Function
+
+Rem
+bbdoc: Returns whether undo/redo actions for the specified TextArea gadget are enabled.
+about:
+End Rem
+Function TextAreaUndoRedoEnabled:Int(textarea:TGadget)
+	Return textarea.UndoRedoEnabled()
+End Function
+
+Rem
+bbdoc: Performs an undo action for the given TextArea gadget.
+about:
+End Rem
+Function TextAreaUndo(textarea:TGadget)
+	textarea.Undo()
+End Function
+
+Rem
+bbdoc: Performs a redo action for the given TextArea gadget.
+about:
+End Rem
+Function TextAreaRedo(textarea:TGadget)
+	textarea.Redo()
+End Function
+
+Rem
+bbdoc: Returns #True if the TextArea can perform an undo action.
+about:
+End Rem
+Function TextAreaCanUndo:Int(textarea:TGadget)
+	Return textarea.CanUndo()
+End Function
+
+Rem
+bbdoc: Returns #True if the TextArea can perform a redo action.
+about:
+End Rem
+Function TextAreaCanRedo:Int(textarea:TGadget)
+	Return textarea.CanRedo()
+End Function
+
+Rem
+bbdoc: Clears any cached undo/redo actions for the TextArea.
+about:
+End Rem
+Function TextAreaClearUndoRedo(textarea:TGadget)
+	textarea.ClearUndoRedo()
+End Function
+
 ' gadget lists
 
 Rem

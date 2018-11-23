@@ -146,7 +146,7 @@ Type TCocoaMaxGUIDriver Extends TMaxGUIDriver
 			gadget.SetLayout EDGE_CENTERED,EDGE_CENTERED,EDGE_CENTERED,EDGE_CENTERED
 		EndIf
 		If group Then gadget._SetParent group
-		gadget.SetTextColor(0,0,0)
+		' gadget.SetTextColor(0,0,0) ' use default colour
 		gadget.LinkView
 		Return gadget	
 	End Method

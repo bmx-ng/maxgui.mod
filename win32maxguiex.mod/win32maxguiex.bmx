@@ -794,7 +794,7 @@ Type TWindowsFont Extends TGuiFont
 			DEFAULT_CHARSET,..
 			OUT_DEFAULT_PRECIS,..
 			CLIP_DEFAULT_PRECIS,..
-			ANTIALIASED_QUALITY,..
+			CLEARTYPE_QUALITY|ANTIALIASED_QUALITY,..
 			DEFAULT_PITCH|FF_DONTCARE,..
 			_name.toWString())
 
@@ -812,7 +812,7 @@ Type TWindowsFont Extends TGuiFont
 							SYMBOL_CHARSET,..
 							OUT_DEFAULT_PRECIS,..
 							CLIP_DEFAULT_PRECIS,..
-							ANTIALIASED_QUALITY,..
+							CLEARTYPE_QUALITY|ANTIALIASED_QUALITY,..
 							DEFAULT_PITCH|FF_DONTCARE,..
 							_name.toWString())
 
@@ -2614,10 +2614,9 @@ Type TWindowsMenu Extends TGadget
 	EndMethod
 
 	Method Open(popup=False)
-
 		Local dad:TWindowsMenu	= TWindowsMenu(parent)
 
-		If dad
+		If dad And Not popup
 			_pmenu=dad._hmenu
 			If Not _pmenu Throw "Parent doesn't have a handle - the desktop heap may have run out of memory!"
 			_item=GetMenuItemCount(_pmenu)
@@ -3311,6 +3310,7 @@ Type TWindowsToolbar Extends TWindowsGadget
 		If state&STATE_SELECTED pressed=$1
 		SendMessageW _hwnd,TB_ENABLEBUTTON,WParam(index+1),enable
 		SendMessageW _hwnd,TB_CHECKBUTTON,WParam(index+1),pressed
+		InvalidateRect _hwnd, Null, False
 	EndMethod
 
 	Method ListItemState(index)
