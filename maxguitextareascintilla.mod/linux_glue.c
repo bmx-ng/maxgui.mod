@@ -342,9 +342,9 @@ void bmx_mgta_scintilla_addtext(ScintillaObject * sci, gchar * text) {
 
 void bmx_mgta_scintilla_notifcation_update(BBObject * obj, struct SCNotification * notification) {
 #ifdef BMX_NG
-	gtk_maxguitextareascintilla_common_TSCNotification__update(obj, notification->nmhdr.code, notification->modificationType, notification->updated);
+	maxgui_maxguitextareascintilla_common_TSCNotification__update(obj, notification->nmhdr.code, notification->modificationType, notification->updated);
 #else
-	_gtk_maxguitextareascintilla_TSCNotification__update(obj, notification->nmhdr.code, notification->modificationType, notification->updated);
+	_maxgui_maxguitextareascintilla_TSCNotification__update(obj, notification->nmhdr.code, notification->modificationType, notification->updated);
 #endif
 }
 
