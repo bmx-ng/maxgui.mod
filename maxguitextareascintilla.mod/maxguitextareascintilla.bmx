@@ -68,7 +68,8 @@ Import "linuxgtk.bmx"
 
 ?macos
 
-ModuleInfo "CC_OPTS: -std=c++11 -DSCI_NAMESPACE -DSCI_LEXER"
+ModuleInfo "CPP_OPTS: -std=c++11 -DSCI_NAMESPACE -DSCI_LEXER"
+ModuleInfo "CC_OPTS: -DSCI_NAMESPACE -DSCI_LEXER"
 
 'Import "macos.bmx"
 
