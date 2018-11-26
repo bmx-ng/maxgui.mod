@@ -6,11 +6,14 @@ bbdoc: MaxGUI/MaxGUI
 End Rem
 Module MaxGUI.MaxGUI
 
-ModuleInfo "Version: 1.34"
+ModuleInfo "Version: 1.35"
 ModuleInfo "Author: Simon Armstrong, Mark Sibly"
 ModuleInfo "License: zlib/libpng"
 ModuleInfo "Copyright: Blitz Research Ltd"
 
+ModuleInfo "History: 1.35"
+ModuleInfo "History: Custom TextArea gadgets."
+ModuleInfo "History: Added support for TextArea native Undo/Redo."
 ModuleInfo "History: 1.34 Release"
 ModuleInfo "History: Left margin added to textareas through SetIndents (SetTextAreaTabs replacement)."
 ModuleInfo "History: 1.33 Release"
