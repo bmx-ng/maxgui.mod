@@ -192,6 +192,7 @@ Import "scintilla/lexers/LexStata.cxx"
 ' gtk
 Import "scintilla/gtk/PlatGTK.cxx"
 Import "scintilla/gtk/ScintillaGTK.cxx"
+Import "scintilla/gtk/ScintillaGTKAccessible.cxx"
 Import "scintilla/gtk/scintilla-marshal.c"
 
 Import "linux_glue.c"

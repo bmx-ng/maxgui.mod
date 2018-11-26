@@ -36,10 +36,9 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 #include "OptionSet.h"
+#include "DefaultLexer.h"
 
-#ifdef SCI_NAMESPACE
 using namespace Scintilla;
-#endif
 
 // for rem block
 #define SCE_B_COMMENTREM 19
@@ -101,6 +100,7 @@ static int LowerCase(int c)
 static int CheckBMFoldPoint(char const *token, int &level) {
 	if (!strcmp(token, "function") ||
 		!strcmp(token, "type") ||
+		!strcmp(token, "interface") ||
 		!strcmp(token, "method")) {
 		level |= SC_FOLDLEVELHEADERFLAG;
 		return 1;
@@ -109,6 +109,8 @@ static int CheckBMFoldPoint(char const *token, int &level) {
         !strcmp(token, "endfunction") ||
         !strcmp(token, "end type") ||
 	 	!strcmp(token, "endtype") ||
+        !strcmp(token, "end interface") ||
+        !strcmp(token, "endinterface") ||
 		!strcmp(token, "end method") ||
         	!strcmp(token, "endmethod")) {
 		return -1;
@@ -146,7 +148,7 @@ static bool CheckBMEndRem(char const *token) {
 // An individual named option for use in an OptionSet
 
 // Options used for LexerMax
-struct OptionsBasic {
+struct OptionsMax {
 	bool fold;
 	bool foldSyntaxBased;
 	bool foldCommentExplicit;
@@ -154,7 +156,7 @@ struct OptionsBasic {
 	std::string foldExplicitEnd;
 	bool foldExplicitAnywhere;
 	bool foldCompact;
-	OptionsBasic() {
+	OptionsMax() {
 		fold = false;
 		foldSyntaxBased = true;
 		foldCommentExplicit = false;
@@ -173,28 +175,28 @@ static const char * const blitzmaxWordListDesc[] = {
 	0
 };
 
-struct OptionSetBasic : public OptionSet<OptionsBasic> {
-	OptionSetBasic(const char * const wordListDescriptions[]) {
-		DefineProperty("fold", &OptionsBasic::fold);
+struct OptionSetMax : public OptionSet<OptionsMax> {
+	OptionSetMax(const char * const wordListDescriptions[]) {
+		DefineProperty("fold", &OptionsMax::fold);
 
-		DefineProperty("fold.basic.syntax.based", &OptionsBasic::foldSyntaxBased,
+		DefineProperty("fold.max.syntax.based", &OptionsMax::foldSyntaxBased,
 			"Set this property to 0 to disable syntax based folding.");
 
-		DefineProperty("fold.basic.comment.explicit", &OptionsBasic::foldCommentExplicit,
+		DefineProperty("fold.max.comment.explicit", &OptionsMax::foldCommentExplicit,
 			"This option enables folding explicit fold points when using the Basic lexer. "
 			"Explicit fold points allows adding extra folding by placing a ;{ (BB/PB) or '{ (FB) comment at the start "
 			"and a ;} (BB/PB) or '} (FB) at the end of a section that should be folded.");
 
-		DefineProperty("fold.basic.explicit.start", &OptionsBasic::foldExplicitStart,
+		DefineProperty("fold.max.explicit.start", &OptionsMax::foldExplicitStart,
 			"The string to use for explicit fold start points, replacing the standard ;{ (BB/PB) or '{ (FB).");
 
-		DefineProperty("fold.basic.explicit.end", &OptionsBasic::foldExplicitEnd,
+		DefineProperty("fold.max.explicit.end", &OptionsMax::foldExplicitEnd,
 			"The string to use for explicit fold end points, replacing the standard ;} (BB/PB) or '} (FB).");
 
-		DefineProperty("fold.basic.explicit.anywhere", &OptionsBasic::foldExplicitAnywhere,
+		DefineProperty("fold.max.explicit.anywhere", &OptionsMax::foldExplicitAnywhere,
 			"Set this property to 1 to enable explicit fold points anywhere, not just in line comments.");
 
-		DefineProperty("fold.compact", &OptionsBasic::foldCompact);
+		DefineProperty("fold.compact", &OptionsMax::foldCompact);
 
 		DefineWordListSets(wordListDescriptions);
 	}
@@ -204,8 +206,8 @@ class LexerMax : public ILexer {
 	char comment_char;
 	int (*CheckFoldPoint)(char const *, int &);
 	WordList keywordlists[4];
-	OptionsBasic options;
-	OptionSetBasic osBasic;
+	OptionsMax options;
+	OptionSetMax osBasic;
 public:
 	LexerMax(char comment_char_, int (*CheckFoldPoint_)(char const *, int &), const char * const wordListDescriptions[]) :
 	           comment_char(comment_char_),
