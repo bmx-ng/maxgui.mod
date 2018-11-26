@@ -229,13 +229,13 @@ public:
 	const char * SCI_METHOD DescribeProperty(const char *name) {
 		return osBasic.DescribeProperty(name);
 	}
-	int SCI_METHOD PropertySet(const char *key, const char *val);
+	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val);
 	const char * SCI_METHOD DescribeWordListSets() {
 		return osBasic.DescribeWordListSets();
 	}
-	int SCI_METHOD WordListSet(int n, const char *wl);
-	void SCI_METHOD Lex(unsigned int startPos, int length, int initStyle, IDocument *pAccess);
-	void SCI_METHOD Fold(unsigned int startPos, int length, int initStyle, IDocument *pAccess);
+	Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
+	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
 	void * SCI_METHOD PrivateCall(int, void *) {
 		return 0;
@@ -245,14 +245,14 @@ public:
 	}
 };
 
-int SCI_METHOD LexerMax::PropertySet(const char *key, const char *val) {
+Sci_Position SCI_METHOD LexerMax::PropertySet(const char *key, const char *val) {
 	if (osBasic.PropertySet(&options, key, val)) {
 		return 0;
 	}
 	return -1;
 }
 
-int SCI_METHOD LexerMax::WordListSet(int n, const char *wl) {
+Sci_Position SCI_METHOD LexerMax::WordListSet(int n, const char *wl) {
 	WordList *wordListN = 0;
 	switch (n) {
 	case 0:
@@ -280,7 +280,7 @@ int SCI_METHOD LexerMax::WordListSet(int n, const char *wl) {
 	return firstModification;
 }
 
-void SCI_METHOD LexerMax::Lex(unsigned int startPos, int length, int initStyle, IDocument *pAccess) {
+void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
 	LexAccessor styler(pAccess);
 
 	bool wasfirst = true, isfirst = true; // true if first token in a line
@@ -457,7 +457,7 @@ void SCI_METHOD LexerMax::Lex(unsigned int startPos, int length, int initStyle, 
 }
 
 
-void SCI_METHOD LexerMax::Fold(unsigned int startPos, int length, int /* initStyle */, IDocument *pAccess) {
+void SCI_METHOD LexerMax::Fold(Sci_PositionU startPos, Sci_Position length, int /* initStyle */, IDocument *pAccess) {
 
 	if (!options.fold)
 		return;
