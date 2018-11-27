@@ -6,6 +6,10 @@
 
 #define scintilla_send_message SendMessage
 
+#define TEXTFORMAT_BOLD 1
+#define TEXTFORMAT_ITALIC 2
+#define TEXTFORMAT_UNDERLINE 4
+
 #ifdef BMX_NG
 	void maxgui_maxguitextareascintilla_common_TSCNotification__update(BBObject *, int, int, int);
 #else
@@ -369,3 +373,126 @@ void bmx_mgta_scintilla_clearundoredo(HWND sci) {
 	scintilla_send_message(sci, SCI_EMPTYUNDOBUFFER, 0, 0);
 }
 
+void bmx_mgta_scintilla_sethighlightlanguage(HWND sci, BBString * lang) {
+	char * t = (lang != &bbEmptyString) ? bbStringToUTF8String(lang) : 0;
+
+	if (t) {
+		scintilla_send_message(sci, SCI_SETLEXERLANGUAGE, 0, t);
+		bbMemFree(t);
+	} else {
+		scintilla_send_message(sci, SCI_SETLEXER, SCLEX_NULL, 0);
+	}
+}
+
+bmx_mgta_scintilla_sethighlightkeywords(HWND sci, int index, BBString * keywords) {
+	char * t = (keywords != &bbEmptyString) ? bbStringToUTF8String(keywords) : 0;
+	
+	scintilla_send_message(sci, SCI_SETKEYWORDS, index, t != NULL ? t : "");
+
+	if (t) bbMemFree(t);
+}
+
+void bmx_mgta_scintilla_sethighlightstyle(HWND sci, int style, int flags, int color) {
+
+	int lang = scintilla_send_message(sci, SCI_GETLEXER, 0, 0);
+
+	if (style == 0) {
+		scintilla_send_message(sci, SCI_STYLESETFORE, style, color);
+	} else {
+
+		switch (lang) {
+			case 222:
+				switch (style) {
+					case 1:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_COMMENT, color);
+						break;
+					case 2:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_STRING, color);
+						break;
+					case 3:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_KEYWORD, color);
+						break;
+					case 4:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_NUMBER, color);
+						break;
+				}
+				break;
+			case SCLEX_CPP:
+				switch (style) {
+					case 1:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_COMMENT, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENTLINE, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENTDOC, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENTLINEDOC, color);
+						break;
+					case 2:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_STRING, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_CHARACTER, color);
+						break;
+					case 3:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_WORD, color);
+						break;
+					case 4:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_NUMBER, color);
+						break;
+				}
+				break;
+			case SCLEX_HTML:
+				break;
+			case SCLEX_XML:
+				break;
+			case SCLEX_LUA:
+				switch (style) {
+					case 1:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_COMMENT, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_COMMENTLINE, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_COMMENTDOC, color);
+						break;
+					case 2:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_STRING, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_CHARACTER, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_LITERALSTRING, color);
+						break;
+					case 3:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_WORD, color);
+						break;
+					case 4:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_LUA_NUMBER, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_HEXNUMBER, color);
+						break;
+				}
+				break;
+		}
+	}
+
+	if (flags & TEXTFORMAT_BOLD) {
+		scintilla_send_message(sci, SCI_STYLESETBOLD, style, 1);
+	}
+
+	if (flags & TEXTFORMAT_ITALIC) {
+		scintilla_send_message(sci, SCI_STYLESETITALIC, style, 1);
+	}
+
+	if (flags & TEXTFORMAT_UNDERLINE) {
+		scintilla_send_message(sci, SCI_STYLESETUNDERLINE, style, 1);
+	}
+}
+
+void bmx_mgta_scintilla_highlight(HWND sci) {
+	scintilla_send_message(sci, SCI_COLOURISE, 0, -1);
+}
+
+void bmx_mgta_scintilla_clearhighlightstyles(HWND sci, int backcolor, int forecolor) {
+	scintilla_send_message(sci, SCI_STYLERESETDEFAULT, 0, 0);
+	scintilla_send_message(sci, SCI_STYLESETBACK, STYLE_DEFAULT, backcolor);
+	scintilla_send_message(sci, SCI_STYLESETFORE, STYLE_DEFAULT, forecolor);
+	scintilla_send_message(sci, SCI_STYLECLEARALL, 0, 0);
+}
+
+void bmx_mgta_scintilla_setlinenumberbackcolor(HWND sci, int color) {
+	scintilla_send_message(sci, SCI_STYLESETBACK, STYLE_LINENUMBER, color);
+}
+
+void bmx_mgta_scintilla_setlinenumberforecolor(HWND sci, int color) {
+	scintilla_send_message(sci, SCI_STYLESETFORE, STYLE_LINENUMBER, color);
+}

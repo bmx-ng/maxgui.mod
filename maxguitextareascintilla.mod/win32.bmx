@@ -434,6 +434,42 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_clearundoredo(_hwnd)
 	End Method
 
+	Method HasHighlighting:Int()
+		Return True
+	End Method
+
+	Method SetHighlightLanguage(lang:String)
+		bmx_mgta_scintilla_sethighlightlanguage(_hwnd, lang)
+	End Method
+
+	Method SetHighlightKeywords(index:Int, keywords:String)
+		bmx_mgta_scintilla_sethighlightkeywords(_hwnd, index, keywords)
+	End Method
+
+	Method SetHighlightStyle(index:Int, flags:Int, red:Int, green:Int, blue:Int)
+		bmx_mgta_scintilla_sethighlightstyle(_hwnd, index, flags, red | green Shl 8 | blue Shl 16)
+	End Method
+
+	Method HighLight()
+		bmx_mgta_scintilla_highlight(_hwnd)
+	End Method
+
+	Method ClearHighlightStyles(br:Int, bg:Int, bb:Int, fr:Int, fg:Int, fb:Int)
+		bmx_mgta_scintilla_clearhighlightstyles(_hwnd, br | bg Shl 8 | bb Shl 16, fr | fg Shl 8 | fb Shl 16)
+	End Method
+
+	Method HasLineNumbers:Int()
+		Return True
+	End Method
+
+	Method SetLineNumberBackColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setlinenumberbackcolor(_hwnd, r | g Shl 8 | b Shl 16)
+	End Method
+
+	Method SetLineNumberForeColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setlinenumberforecolor(_hwnd, r | g Shl 8 | b Shl 16)
+	End Method
+
 End Type
 
 

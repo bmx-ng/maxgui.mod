@@ -89,6 +89,14 @@ Extern
 	Function bmx_mgta_scintilla_canredo:Int(handle:Byte Ptr)
 	Function bmx_mgta_scintilla_clearundoredo(handle:Byte Ptr)
 
+	Function bmx_mgta_scintilla_sethighlightlanguage(handle:Byte Ptr, lang:String)
+	Function bmx_mgta_scintilla_sethighlightkeywords(handle:Byte Ptr, index:Int, keywords:String)
+	Function bmx_mgta_scintilla_sethighlightstyle(handle:Byte Ptr, style:Int, flags:Int, color:Int)
+	Function bmx_mgta_scintilla_highlight(handle:Byte Ptr)
+	Function bmx_mgta_scintilla_clearhighlightstyles(handle:Byte Ptr, back:Int, fore:Int)
+
+	Function bmx_mgta_scintilla_setlinenumberbackcolor(handle:Byte Ptr, color:Int)
+	Function bmx_mgta_scintilla_setlinenumberforecolor(handle:Byte Ptr, color:Int)
 End Extern
 
 Type TSCNotification

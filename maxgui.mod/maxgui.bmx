@@ -1776,6 +1776,42 @@ Function TextAreaClearUndoRedo(textarea:TGadget)
 	textarea.ClearUndoRedo()
 End Function
 
+Function TextAreaHasHighlighting:Int(textarea:TGadget)
+	Return textarea.HasHighlighting()
+End Function
+
+Function TextAreaSetHighlightLanguage(textarea:TGadget, lang:String)
+	textarea.SetHighlightLanguage(lang)
+End Function
+
+Function TextAreaHighlight(textarea:TGadget)
+	textarea.HighLight()
+End Function
+
+Function TextAreaSetHighlightKeywords(textarea:TGadget, index:Int, keywords:String)
+	textarea.SetHighlightKeywords(index, keywords)
+End Function
+
+Function TextAreaSetHighlightStyle(textarea:TGadget, index:Int, flags:Int, red:Int, green:Int, blue:Int)
+	textarea.SetHighlightStyle(index, flags, red, green, blue)
+End Function
+
+Function TextAreaClearHighlightStyles(textarea:TGadget, br:Int, bg:Int, bb:Int, fr:Int, fg:Int, fb:Int)
+	textarea.ClearHighlightStyles(br, bg, bb, fr, fg, fb)
+End Function
+
+Function TextAreaHasLineNumbers:Int(textarea:TGadget)
+	Return textarea.HasLineNumbers()
+End Function
+
+Function TextAreaSetLineNumberBackColor(textarea:TGadget, red:Int, green:Int, blue)
+	textarea.SetLineNumberBackColor(red, green, blue)
+End Function
+
+Function TextAreaSetLineNumberForeColor(textarea:TGadget, red:Int, green:Int, blue)
+	textarea.SetLineNumberForeColor(red, green, blue)
+End Function
+
 ' gadget lists
 
 Rem

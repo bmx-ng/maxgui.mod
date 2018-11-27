@@ -797,6 +797,24 @@ Type TGadget
 	End Method
 	Method ClearUndoRedo()
 	End Method
+	Method HasHighlighting:Int()
+	End Method
+	Method SetHighlightLanguage(lang:String)
+	End Method
+	Method SetHighlightKeywords(index:Int, keywords:String)
+	End Method
+	Method SetHighlightStyle(index:Int, flags:Int, red:Int, green:Int, blue:Int)
+	End Method
+	Method HighLight()
+	End Method
+	Method ClearHighlightStyles(br:Int, bg:Int, bb:Int, fr:Int, fg:Int, fb:Int)
+	End Method
+	Method HasLineNumbers:Int()
+	End Method
+	Method SetLineNumberBackColor(r:Int, g:Int, b:Int)
+	End Method
+	Method SetLineNumberForeColor(r:Int, g:Int, b:Int)
+	End Method
 ' progbar
 	Method SetValue(value#)
 	End Method	

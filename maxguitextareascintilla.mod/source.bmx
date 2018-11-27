@@ -125,7 +125,6 @@ Import "scintilla/lexers/LexLua.cxx"
 Import "scintilla/lexers/LexMagik.cxx"
 Import "scintilla/lexers/LexMarkdown.cxx"
 Import "scintilla/lexers/LexMatlab.cxx"
-Import "scintilla/lexers/LexMax.cxx" ' BlitzMax lexer
 Import "scintilla/lexers/LexMetapost.cxx"
 Import "scintilla/lexers/LexMMIXAL.cxx"
 Import "scintilla/lexers/LexModula.cxx"
@@ -187,6 +186,8 @@ Import "scintilla/lexers/LexNull.cxx"
 Import "scintilla/lexers/LexProps.cxx"
 Import "scintilla/lexers/LexSAS.cxx"
 Import "scintilla/lexers/LexStata.cxx"
+
+Import "LexMax.cxx" ' BlitzMax lexer
 
 ?linux
 ' gtk

@@ -36,6 +36,7 @@ ModuleInfo "History: Initial Release."
 ' Notes :
 '   commented out EM_SETSEL handler section in ScintillaWin.cxx - it was causing all the text to highlight whenever the gadget came into focus.
 '
+'   Added LINK_LEXER(lmBlitzMax); to Catalogue.cxx
 
 ModuleInfo "CC_OPTS: -fexceptions"
 
