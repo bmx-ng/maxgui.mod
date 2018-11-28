@@ -1812,6 +1812,10 @@ Function TextAreaSetLineNumberForeColor(textarea:TGadget, red:Int, green:Int, bl
 	textarea.SetLineNumberForeColor(red, green, blue)
 End Function
 
+Function TextAreaHasCharEventSupressionFixup:Int(textarea:TGadget)
+	Return textarea.HasCharEventSupressionFixup()
+End Function
+
 ' gadget lists
 
 Rem

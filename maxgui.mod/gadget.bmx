@@ -815,6 +815,8 @@ Type TGadget
 	End Method
 	Method SetLineNumberForeColor(r:Int, g:Int, b:Int)
 	End Method
+	Method HasCharEventSupressionFixup:Int()
+	End Method
 ' progbar
 	Method SetValue(value#)
 	End Method	

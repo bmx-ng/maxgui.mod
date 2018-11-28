@@ -70,6 +70,11 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		Select msg
 			'Case WM_MOUSEWHEEL
 			'	If (Long(wp)&MK_CONTROL) Then SendMessageW _hwnd, EM_SETZOOM, 0, 0
+			Case WM_KEYDOWN
+				If eventfilter<>Null
+					event=CreateEvent(EVENT_KEYDOWN,Self,Int(wp),keymods())
+					If Not eventfilter(event,context) Return True
+				EndIf
 				
 			Case WM_KILLFOCUS
 				PostGuiEvent EVENT_GADGETLOSTFOCUS
@@ -78,6 +83,10 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 				If (keymods()&MODIFIER_CONTROL) Then
 					Return 1
 				End If
+				If eventfilter<>Null
+					event=CreateEvent(EVENT_KEYCHAR,Self,Int(wp),keymods())
+					If Not eventfilter(event,context) Return True
+				EndIf
 
 		End Select
 		
@@ -468,6 +477,10 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 
 	Method SetLineNumberForeColor(r:Int, g:Int, b:Int)
 		bmx_mgta_scintilla_setlinenumberforecolor(_hwnd, r | g Shl 8 | b Shl 16)
+	End Method
+
+	Method HasCharEventSupressionFixup:Int()
+		Return True
 	End Method
 
 End Type
