@@ -186,6 +186,8 @@ Import "scintilla/lexers/LexNull.cxx"
 Import "scintilla/lexers/LexProps.cxx"
 Import "scintilla/lexers/LexSAS.cxx"
 Import "scintilla/lexers/LexStata.cxx"
+Import "scintilla/lexers/LexRegistry.cxx"
+Import "scintilla/lexers/LexDMIS.cxx"
 
 Import "LexMax.cxx" ' BlitzMax lexer
 
@@ -209,8 +211,6 @@ Import "macos_glue.mm"
 Import "scintilla/win32/PlatWin.cxx"
 Import "scintilla/win32/ScintillaWin.cxx"
 Import "scintilla/win32/HanjaDic.cxx"
-Import "scintilla/lexers/LexRegistry.cxx"
-Import "scintilla/lexers/LexDMIS.cxx"
 
 Import "win32_glue.c"
 ?

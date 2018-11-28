@@ -463,6 +463,42 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		bmx_mgta_scintilla_clearundoredo(sciPtr)
 	End Method
 
+	Method HasHighlighting:Int()
+		Return True
+	End Method
+
+	Method SetHighlightLanguage(lang:String)
+		bmx_mgta_scintilla_sethighlightlanguage(sciPtr, lang)
+	End Method
+
+	Method SetHighlightKeywords(index:Int, keywords:String)
+		bmx_mgta_scintilla_sethighlightkeywords(sciPtr, index, keywords)
+	End Method
+
+	Method SetHighlightStyle(index:Int, flags:Int, red:Int, green:Int, blue:Int)
+		bmx_mgta_scintilla_sethighlightstyle(sciPtr, index, flags, red | green Shl 8 | blue Shl 16)
+	End Method
+
+	Method HighLight()
+		bmx_mgta_scintilla_highlight(sciPtr)
+	End Method
+
+	Method ClearHighlightStyles(br:Int, bg:Int, bb:Int, fr:Int, fg:Int, fb:Int)
+		bmx_mgta_scintilla_clearhighlightstyles(sciPtr, br | bg Shl 8 | bb Shl 16, fr | fg Shl 8 | fb Shl 16)
+	End Method
+
+	Method HasLineNumbers:Int()
+		Return True
+	End Method
+
+	Method SetLineNumberBackColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setlinenumberbackcolor(sciPtr, r | g Shl 8 | b Shl 16)
+	End Method
+
+	Method SetLineNumberForeColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setlinenumberforecolor(sciPtr, r | g Shl 8 | b Shl 16)
+	End Method
+
 End Type
 
 

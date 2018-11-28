@@ -65,6 +65,9 @@ ModuleInfo "CC_OPTS: -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include"
 ModuleInfo "CC_OPTS: -I/usr/lib/arm-linux-gnueabihf/gtk-3.0/include"
 
 ?linux
+ModuleInfo "CPP_OPTS: -std=c++11 -DSCI_NAMESPACE -DSCI_LEXER"
+ModuleInfo "CC_OPTS: -DSCI_NAMESPACE -DSCI_LEXER"
+
 Import "linuxgtk.bmx"
 
 ?macos
