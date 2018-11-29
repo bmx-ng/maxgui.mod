@@ -31,6 +31,7 @@
 #define TEXTFORMAT_BOLD 1
 #define TEXTFORMAT_ITALIC 2
 #define TEXTFORMAT_UNDERLINE 4
+#define SCE_B_COMMENTREM 19
 
 #ifdef BMX_NG
 	void maxgui_maxguitextareascintilla_common_TSCNotification__update(BBObject *, int, int, int);
@@ -424,6 +425,7 @@ void bmx_mgta_scintilla_sethighlightstyle(ScintillaObject * sci, int style, int 
 				switch (style) {
 					case 1:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_COMMENT, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_COMMENTREM, color);
 						break;
 					case 2:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_STRING, color);
