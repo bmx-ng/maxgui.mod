@@ -439,14 +439,16 @@ void bmx_mgta_scintilla_sethighlightstyle(ScintillaObject * sci, int style, int 
 			case SCLEX_CPP:
 				switch (style) {
 					case 1:
-						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_COMMENT, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENT, color);
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENTLINE, color);
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENTDOC, color);
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_COMMENTLINEDOC, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_PREPROCESSORCOMMENT, color);
 						break;
 					case 2:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_STRING, color);
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_CHARACTER, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_PREPROCESSOR, color);
 						break;
 					case 3:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_C_WORD, color);
