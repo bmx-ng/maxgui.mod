@@ -74,7 +74,7 @@ Extern
 	Function bmx_mgta_scintilla_getselectionlength:Int(handle:Byte Ptr, units:Int)
 	Function bmx_mgta_scintilla_addtext(handle:Byte Ptr, Text:Byte Ptr)
 	Function bmx_mgta_scintilla_textwidth:Int(handle:Byte Ptr, Text:String)
-	Function bmx_mgta_scintilla_setlinedigits(handle:Byte Ptr, lineDigits:Int Ptr)
+	Function bmx_mgta_scintilla_setlinedigits(handle:Byte Ptr, lineDigits:Int Ptr, show:Int)
 	Function bmx_mgta_scintilla_setmarginleft(handle:Byte Ptr, leftmargin:Int)
 	Function bmx_mgta_scintilla_setcaretwidth(handle:Byte Ptr, width:Int)
 	Function bmx_mgta_scintilla_setcaretcolor(handle:Byte Ptr, r:Int, g:Int, b:Int)

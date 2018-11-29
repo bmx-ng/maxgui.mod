@@ -46,6 +46,8 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 	
 	Field lineDigits:Int
 	
+	Field showLineNumbers:Int = True
+	
 	' holder for the latest notification
 	' keep one in the type rather than locally in the callback function so we don't have to create a new object for every notification
 	Field notification:TSCNotification = New TSCNotification
@@ -115,7 +117,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 					End If
 					ignoreChange = False
 					
-					bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits)
+					bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
 				End If
 		End Select
 
@@ -142,7 +144,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_setfont(_hwnd, font.name, font.size)
 		
 		' set the margin size for line numbers
-		bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits)
+		bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
 		
 		SetTabs()
 	End Method
@@ -479,6 +481,11 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_setlinenumberforecolor(_hwnd, r | g Shl 8 | b Shl 16)
 	End Method
 
+	Method SetLineNumberEnable(enabled:Int)
+		showLineNumbers = enabled
+		bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
+	End Method
+	
 	Method HasCharEventSupressionFixup:Int()
 		Return True
 	End Method

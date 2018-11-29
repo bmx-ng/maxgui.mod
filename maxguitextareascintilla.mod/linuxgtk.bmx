@@ -46,6 +46,8 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 	
 	Field lineDigits:Int
 	
+	Field showLineNumbers:Int = True
+
 	' holder for the latest notification
 	' keep one in the type rather than locally in the callback function so we don't have to create a new object for every notification
 	Field notification:TSCNotification = New TSCNotification
@@ -135,7 +137,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		bmx_mgta_scintilla_setfont(sciPtr, font.name, font.size)
 		
 		' set the margin size for line numbers
-		bmx_mgta_scintilla_setlinedigits(sciPtr, Varptr lineDigits)
+		bmx_mgta_scintilla_setlinedigits(sciPtr, Varptr lineDigits, showLineNumbers)
 		
 		SetTabs()
 	End Method
@@ -417,7 +419,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 					End If
 					ta.ignoreChange = False
 					
-					bmx_mgta_scintilla_setlinedigits(ta.sciPtr, Varptr ta.lineDigits)
+					bmx_mgta_scintilla_setlinedigits(ta.sciPtr, Varptr ta.lineDigits, showLineNumbers)
 				End If
 		End Select
 
@@ -497,6 +499,11 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 
 	Method SetLineNumberForeColor(r:Int, g:Int, b:Int)
 		bmx_mgta_scintilla_setlinenumberforecolor(sciPtr, r | g Shl 8 | b Shl 16)
+	End Method
+
+	Method SetLineNumberEnable(enabled:Int)
+		showLineNumbers = enabled
+		bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
 	End Method
 
 End Type

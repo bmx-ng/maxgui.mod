@@ -1804,6 +1804,10 @@ Function TextAreaHasLineNumbers:Int(textarea:TGadget)
 	Return textarea.HasLineNumbers()
 End Function
 
+Function TextAreaSetLineNumberEnable(textarea:TGadget, enabled:Int)
+	textarea.SetLineNumberEnable(enabled)
+End Function
+
 Function TextAreaSetLineNumberBackColor(textarea:TGadget, red:Int, green:Int, blue)
 	textarea.SetLineNumberBackColor(red, green, blue)
 End Function

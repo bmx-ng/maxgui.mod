@@ -85,8 +85,14 @@ void bmx_mgta_scintilla_setfont(ScintillaObject * sci, BBString * name, int size
 	bbMemFree(n);
 }
 
-void bmx_mgta_scintilla_setlinedigits(ScintillaObject * sci, int * digits) {
+void bmx_mgta_scintilla_setlinedigits(ScintillaObject * sci, int * digits, int show) {
 
+	if (!show) {
+		*digits = 0;
+		scintilla_send_message(sci, SCI_SETMARGINWIDTHN, 0, 0);
+		return;
+	}
+	
 	int lines = scintilla_send_message(sci, SCI_GETLINECOUNT, 0, 0);
 	int newDigits = (lines < 10 ? 1 : (lines < 100 ? 2 :   
 		(lines < 1000 ? 3 : (lines < 10000 ? 4 :   
@@ -435,6 +441,8 @@ void bmx_mgta_scintilla_sethighlightstyle(ScintillaObject * sci, int style, int 
 						break;
 					case 4:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_NUMBER, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_HEXNUMBER, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_BINNUMBER, color);
 						break;
 				}
 				break;
