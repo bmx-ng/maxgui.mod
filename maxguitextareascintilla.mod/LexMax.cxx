@@ -416,7 +416,7 @@ void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int i
 		if (sc.atLineStart)
 			isfirst = true;
 
-		if (sc.state == SCE_B_DEFAULT || sc.state == SCE_B_ERROR) {
+		if (sc.state == SCE_B_DEFAULT || sc.state == SCE_B_ERROR || sc.state == SCE_B_OPERATOR) {
 			if (isfirst && sc.Match('.')) {
 				sc.SetState(SCE_B_LABEL);
 			} else if (isfirst && sc.Match('#')) {
