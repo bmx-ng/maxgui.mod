@@ -419,7 +419,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 					End If
 					ta.ignoreChange = False
 					
-					bmx_mgta_scintilla_setlinedigits(ta.sciPtr, Varptr ta.lineDigits, showLineNumbers)
+					bmx_mgta_scintilla_setlinedigits(ta.sciPtr, Varptr ta.lineDigits, ta.showLineNumbers)
 				End If
 		End Select
 
@@ -503,7 +503,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 
 	Method SetLineNumberEnable(enabled:Int)
 		showLineNumbers = enabled
-		bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
+		bmx_mgta_scintilla_setlinedigits(sciPtr, Varptr lineDigits, showLineNumbers)
 	End Method
 
 End Type
