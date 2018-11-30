@@ -30,6 +30,8 @@
 #define scintilla_send_message SendMessage
 typedef HWND SCI_HANDLE;
 #else
+#include <gtk/gtk.h>
+#include "ScintillaWidget.h"
 typedef ScintillaObject * SCI_HANDLE;
 #endif
 
