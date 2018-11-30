@@ -199,6 +199,7 @@ Import "scintilla/gtk/ScintillaGTKAccessible.cxx"
 Import "scintilla/gtk/scintilla-marshal.c"
 
 Import "linux_glue.c"
+Import "glue.c"
 ?macos
 ' cocoa
 Import "scintilla/cocoa/PlatCocoa.mm"
@@ -213,6 +214,7 @@ Import "scintilla/win32/ScintillaWin.cxx"
 Import "scintilla/win32/HanjaDic.cxx"
 
 Import "win32_glue.c"
+Import "glue.c"
 ?
 
 
