@@ -15,11 +15,13 @@ Your MaxGUI applications should import this module if they want BlitzMax to sele
 End Rem
 Module MaxGUI.Drivers
 
-ModuleInfo "Version: 0.05"
+ModuleInfo "Version: 0.06"
 ModuleInfo "Author: Simon Armstrong"
 ModuleInfo "License: zlib/libpng"
 ModuleInfo "Copyright: Blitz Research Ltd"
 
+ModuleInfo "History: 0.06"
+ModuleInfo "History: MaxGUI.GTK3MaxGUI has now become the standard Linux MaxGUI driver."
 ModuleInfo "History: 0.05"
 ModuleInfo "History: gtk.GTK3MaxGUI has now become the standard Linux MaxGUI driver."
 ModuleInfo "History: 0.04 Release"
@@ -41,9 +43,9 @@ Import Maxgui.CocoaMaxGui
 ?LinuxX86
 'Import Maxgui.FLTKMaxGui
 ' default to the GTK3 version of MaxGUI
-Import gtk.GTK3MaxGUI
+Import MaxGUI.GTK3MaxGUI
 ?LinuxX64
-Import gtk.GTK3MaxGUI
+Import MaxGUI.GTK3MaxGUI
 ?raspberrypi
-Import gtk.GTK3MaxGUI
+Import MaxGUI.GTK3MaxGUI
 ?
