@@ -58,7 +58,7 @@ ModuleInfo "CC_OPTS: -I/usr/include/gdk-pixbuf-2.0"
 ' atk
 ModuleInfo "CC_OPTS: -I/usr/include/atk-1.0"
 ' OpenSuse wayland includes
-ModulesInfo "CC_OPTS: -I/usr/include/wayland"
+ModuleInfo "CC_OPTS: -I/usr/include/wayland"
 
 ?linuxarm
 ' glib
