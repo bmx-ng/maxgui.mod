@@ -1960,7 +1960,12 @@ Type TWindowsWindow Extends TWindowsGadget
 					PostGuiEvent EVENT_WINDOWACCEPT,0,0,pt[0],pt[1],path
 				Next
 				DragFinish Byte Ptr wp
-
+			Case WM_SYSCOMMAND
+				' suppress F10 KEYMENU when window has no menu
+				If wp = $F100 And Not (style&WINDOW_MENU) Then ' SC_KEYMENU
+					Return 0
+				End If
+				
 		End Select
 
 		Return Super.WndProc(hwnd,msg,wp,lp)
