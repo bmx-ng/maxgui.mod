@@ -1948,6 +1948,10 @@ Type TWindowsWindow Extends TWindowsGadget
 				PostGuiEvent EVENT_WINDOWCLOSE
 				Return 1
 
+			Case WM_QUERYENDSESSION ' system shutdown or restart
+				PostGuiEvent EVENT_APPTERMINATE
+				Return 1
+
 			Case WM_DROPFILES
 				Local hdrop:Byte Ptr,pt[2],path$
 				Local pbuffer:Short[MAX_PATH]
