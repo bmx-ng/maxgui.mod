@@ -135,7 +135,7 @@ Extern
 	Function g_object_set_double(handle:Byte Ptr, property:Byte Ptr, value:Double, _null:Byte Ptr=Null) = "void g_object_set(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*) !"
 	Function g_value_set_string(handle:Byte Ptr, str:Byte Ptr)
 	Function g_value_unset(handle:Byte Ptr)
-	Function g_value_init:Byte Ptr(handle:Byte Ptr, _type:Int)
+	Function g_value_init:Byte Ptr(handle:Byte Ptr, _type:Size_T)
 	Function g_value_set_object(handle:Byte Ptr, obj:Byte Ptr)
 	Function g_value_get_string:Byte Ptr(handle:Byte Ptr)
 	Function g_object_ref:Byte Ptr(handle:Byte Ptr)
@@ -250,7 +250,7 @@ Extern
 	Function gdk_pixbuf_new_from_data:Byte Ptr(data:Byte Ptr, colorspace:Int, has_alpha:Int, bits_per_sample:Int, width:Int, height:Int, ..
                     rowstride:Int, destroy_fn:Byte Ptr, data_fn:Byte Ptr)
 	Function gdk_pixbuf_new_from_bytes:Byte Ptr(data:Byte Ptr, colorspace:Int, has_alpha:Int, bits_per_sample:Int, width:Int, height:Int, rowstride:Int)
-	Function gdk_pixbuf_get_type:Int()
+	Function gdk_pixbuf_get_type:Size_T()
 	Function gdk_pixbuf_copy_area(handle:Byte Ptr, sx:Int, sy:Int, width:Int, height:Int, dest:Byte Ptr, dx:Int, dy:Int)
 	Function gdk_pixbuf_scale_simple:Byte Ptr(src:Byte Ptr, dw:Int, dh:Int, inter:Int)
 	Function gdk_pixbuf_new:Byte Ptr(colorspace:Int, alpha:Int, bps:Int, width:Int, height:Int)
@@ -307,7 +307,7 @@ Extern
 	
 	' GtkListStore
 	Function gtk_list_store_set_value(handle:Byte Ptr, iter:Byte Ptr, column:Int, value:Byte Ptr)
-	Function gtk_list_store_new:Byte Ptr(COLS:Int, type1:Int, type2:Int)
+	Function gtk_list_store_new:Byte Ptr(COLS:Int, type1:Size_T, type2:Size_T)
 	Function gtk_list_store_insert(handle:Byte Ptr, iter:Byte Ptr, position:Int)
 	Function gtk_list_store_clear(handle:Byte Ptr)
 	Function gtk_list_store_remove:Int(handle:Byte Ptr, iter:Byte Ptr)
@@ -317,7 +317,7 @@ Extern
 	Function gtk_tree_store_append(handle:Byte Ptr, iter:Byte Ptr, parent:Byte Ptr)
 	Function gtk_tree_store_insert(handle:Byte Ptr, iter:Byte Ptr, parent:Byte Ptr, position:Int)
 	Function gtk_tree_store_remove:Int(handle:Byte Ptr, iter:Byte Ptr)
-	Function gtk_tree_store_new:Byte Ptr(columns:Int, _type1:Int, _type2:Int)
+	Function gtk_tree_store_new:Byte Ptr(columns:Int, _type1:Size_T, _type2:Size_T)
 	
 	' GtkTreeView
 	Function gtk_tree_view_append_column:Int(handle:Byte Ptr, column:Byte Ptr)
@@ -918,7 +918,7 @@ Const GDK_CURSOR_IS_PIXMAP:Int = -1
 Global gtkWindows:TList = New TList
 
 ' I know... cup of cocoa anyone?
-Global GadgetMap:TMap=New TMap
+Global GadgetMap:TPtrMap=New TPtrMap
 
 ' creates an Object out of an "int"
 Type TGTKInteger
@@ -932,21 +932,6 @@ Type TGTKInteger
 		Return value-TGTKInteger(o).value
 	End Method
 End Type
-
-' creates an Object out of an "Byte Ptr"
-Type TGTKBytePtr
-	Field value:Byte Ptr
-	Function Set:TGTKBytePtr(value:Byte Ptr)
-		Local this:TGTKBytePtr = New TGTKBytePtr
-		this.value = value
-		Return this
-	End Function
-	Method Compare:Int(o:Object)
-		Return value-TGTKBytePtr(o).value
-	End Method
-
-End Type
-
 
 Type TGTKGuiFont Extends TGuiFont
 

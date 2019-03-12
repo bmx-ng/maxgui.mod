@@ -716,7 +716,7 @@ End Rem
 End Type
 
 Function GadgetFromHandle:TGTKGadget( handle:Byte Ptr )
-	Return TGTKGadget( GadgetMap.ValueForKey( TGTKBytePtr.Set(handle) ) )
+	Return TGTKGadget( GadgetMap.ValueForKey( handle ) )
 End Function
 
 Rem

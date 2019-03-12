@@ -125,7 +125,7 @@ End Rem
 
 		' map the new gadget - so we can find it later if required
 		If gadget Then
-			GadgetMap.Insert(TGTKBytePtr.Set(gadget.handle),gadget)
+			GadgetMap.Insert(gadget.handle, gadget)
 		End If
 		
 		If group Then
@@ -156,7 +156,7 @@ End Rem
 
 		' remove reference from global reference map
 		If handle Then
-			GadgetMap.Remove(TGTKBytePtr.Set(handle))
+			GadgetMap.Remove(handle)
 		End If
 		
 		connectionMap.Clear()
