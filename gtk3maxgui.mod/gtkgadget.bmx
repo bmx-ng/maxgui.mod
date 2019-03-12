@@ -138,23 +138,18 @@ End Rem
 		Return gadget
 	End Function
 
-	Method Delete()
-		Free(False)
-	End Method
-
-	Method Free:Int(implicit:Int = True)
-		If implicit Then
-			Local gadget:TGTKGadget
-			Local rkids:TList		
-			rkids=kids.Reversed()
-			For gadget = EachIn rkids
-				gadget.Free(True)
-			Next
-			gadget = TGTKGadget(parent)
-			If gadget Then
-				gadget.kids.remove Self
-			End If
+	Method Free:Int()
+		Local gadget:TGTKGadget
+		Local rkids:TList		
+		rkids=kids.Reversed()
+		For gadget = EachIn rkids
+			gadget.Free()
+		Next
+		gadget = TGTKGadget(parent)
+		If gadget Then
+			gadget.kids.remove Self
 		End If
+
 		' remove reference from global reference map
 		If handle Then
 			GadgetMap.Remove(handle)
@@ -906,7 +901,7 @@ Print "OnDragDrop"
 
 	Method addToolbar(_toolbar:TGTKToolbar)
 		If toolbar <> Null Then
-			toolbar.free(True)
+			toolbar.free()
 		End If
 
 		toolbar = _toolbar
@@ -989,8 +984,8 @@ Print "OnDragDrop"
 		End If
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle 
 			gtk_widget_destroy(handle)
@@ -1386,8 +1381,8 @@ Type TGTKMenuItem Extends TGTKGadget
 		End If
 	End Method
 	
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle
 			gtk_widget_destroy(handle)
@@ -1644,8 +1639,8 @@ Type TGTKButton Extends TGTKGadget
 		gtk_widget_override_color(buttonLabel, GTK_STATE_FLAG_PRELIGHT, color)
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle 
 			gtk_widget_destroy(handle)
@@ -2026,8 +2021,8 @@ Type TGTKLabel Extends TGTKGadget
 		Return Null
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If frame
 			gtk_widget_destroy(frame)
@@ -2264,8 +2259,8 @@ Type TGTKTextField Extends TGTKEditable
 		MemFree(txtPtr)
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle 
 			gtk_widget_destroy(handle)
@@ -2570,8 +2565,8 @@ Type TGTKComboBox Extends TGTKList
 			Return st
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle 
 			gtk_widget_destroy(handle)
@@ -2845,8 +2840,8 @@ Type TGTKListbox Extends TGTKListWithScrollWindow
 		End If
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.free(implicit)
+	Method free:Int() Override
+		Super.free()
 
 		' destroying the widget should destroy the handle (list) too.
 		If scrollWindow Then
@@ -3046,8 +3041,8 @@ Type TGTKTreeViewNode Extends TGTKListWithScrollWindow
 		Return kids.count()
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.free(implicit)
+	Method free:Int() Override
+		Super.free()
 
 		If isRoot Then
 			If scrollWindow Then
@@ -3347,8 +3342,8 @@ Type TGTKRange Extends TGTKGadget
 		Return False
 	End Function
 	
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle 
 			gtk_widget_destroy(handle)
@@ -3601,8 +3596,8 @@ Type TGTKProgressBar Extends TGTKGadget
 		Return gtk_progress_bar_get_fraction(handle)
 	End Method
 	
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle
 			gtk_widget_destroy(handle)
@@ -3782,8 +3777,8 @@ Type TGTKToolbar Extends TGTKGadget
 	Method rethink:Int()
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If handle
 			gtk_widget_destroy(handle)
@@ -4068,8 +4063,8 @@ Type TGTKTabber Extends TGTKContainer
 		icons = TGTKIconStrip(iconstrip)
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 		
 		If container Then
 			gtk_widget_destroy(container)
@@ -4395,8 +4390,8 @@ Type TGTKPanel Extends TGTKContainer
 		UpdateChildVisibility()
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If frame Then
 			gtk_widget_destroy(frame)
@@ -5297,8 +5292,8 @@ Type TGTKDefaultTextArea Extends TGTKTextArea
 		Return ret
 	End Method
 
-	Method free:Int(implicit:Int = True) Override
-		Super.Free(implicit)
+	Method free:Int() Override
+		Super.Free()
 
 		If scrollWindow Then
 			gtk_widget_destroy(scrollWindow)
