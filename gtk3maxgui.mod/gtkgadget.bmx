@@ -3861,6 +3861,9 @@ Type TGTKTabber Extends TGTKContainer
 	End Rem
 	Method InsertListItem:Int(index:Int, text:String, tip:String, icon:Int, tag:Object)
 
+		' don't create gui events when inserting new pages.
+		ignoreChange = True
+		
 		Local image:Byte Ptr
 
 		If icons And icon>=0 Then
