@@ -233,6 +233,7 @@ Extern
 	Function g_signal_cb4:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,url:Byte Ptr,stream:Byte Ptr,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
 	Function g_signal_cb4a:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback:Int(widget:Byte Ptr,val1:Int,val2:Double,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
 	Function g_signal_cb5:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,val1:Int,val2:Int,val3:Int,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
+	Function g_signal_cb8:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,context:Byte Ptr, val1:Int,val2:Int,data:Byte Ptr,val3:Int,val4:Int,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
 	Function g_signal_handler_disconnect(gtkwidget:Byte Ptr, handlerid:Long)
 	Function g_signal_tabchange:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,a:Byte Ptr, index:Int,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
 	
@@ -560,6 +561,10 @@ Extern
 	' GdkMonitor
 	'Function gdk_display_get_primary_monitor:Byte Ptr(display:Byte Ptr)
 	
+	' drag n drop
+	Function gtk_drag_dest_set(handle:Byte Ptr, flags:Int, targets:Byte Ptr, numTargets:Int, actions:Int)
+	Function gtk_drag_dest_add_uri_targets(handle:Byte Ptr)
+	
 	' glue
 	Function bmx_gtk3_gtkdesktop_gethertz:Int()
 	Function bmx_gtk3_gvalue_new:Byte Ptr(_type:Int)
@@ -585,6 +590,7 @@ Extern
 	Function bmx_gtk3maxgui_gdkeventwindowstate(event:Byte Ptr, state:Int Ptr)
 	Function bmx_gtk3maxgui_gdkeventmotiondevice:Byte Ptr(event:Byte Ptr)
 
+	Function bmx_gtk3_selection_data_get_uris:String[](data:Byte Ptr)
 End Extern
 
 ' gadget identifiers
@@ -912,6 +918,20 @@ Const GDK_WATCH:Int = 150
 Const GDK_XTERM:Int = 152
 Const GDK_BLANK_CURSOR:Int = -2
 Const GDK_CURSOR_IS_PIXMAP:Int = -1
+
+' GtkDestDefaults
+Const GTK_DEST_DEFAULT_MOTION:Int = 1 Shl 0
+Const GTK_DEST_DEFAULT_HIGHLIGHT:Int = 1 Shl 1
+Const GTK_DEST_DEFAULT_DROP:Int = 1 Shl 2
+Const GTK_DEST_DEFAULT_ALL:Int = $07
+
+' GdkDragAction
+Const GDK_ACTION_DEFAULT:Int = 1 Shl 0
+Const GDK_ACTION_COPY:Int = 1 Shl 1
+Const GDK_ACTION_MOVE:Int = 1 Shl 2
+Const GDK_ACTION_LINK:Int = 1 Shl 3
+Const GDK_ACTION_PRIVATE:Int = 1 Shl 4
+Const GDK_ACTION_ASK:Int = 1 Shl 5
 
 ' List of application windows
 ' We use it for SetPointer etc.

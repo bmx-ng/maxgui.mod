@@ -22,6 +22,8 @@
 #include "gtk/gtk.h"
 #include "gdk/gdk.h"
 
+#include "brl.mod/blitz.mod/blitz.h"
+
 int bmx_gtk3_gtkdesktop_gethertz() {
 
 #if GTK_MINOR_VERSION >= 22
@@ -69,4 +71,27 @@ GtkTextTag * bmx_gtk3_set_text_tag_style(GtkTextBuffer *buffer, const gchar *tag
 
 GtkTextTag * bmx_gtk3_set_text_bg_tag(GtkTextBuffer *buffer, const gchar *tag, GdkRGBA * color) {
 	return gtk_text_buffer_create_tag(buffer, tag, "background-gdk", color, 0);
+}
+
+BBArray * bmx_gtk3_selection_data_get_uris(GtkSelectionData * data) {
+	gchar ** uris = gtk_selection_data_get_uris(data);
+	
+	if (uris == NULL) {
+		return &bbEmptyString;
+	}
+	
+	int count = 0;
+	while (uris[count] && count < 128) {
+		count++;
+	}
+	
+	BBArray *p=bbArrayNew1D( "$",count );
+	BBString **s=(BBString**)BBARRAYDATA( p,p->dims );
+	for( int i=0;i<count;++i ){
+		s[i]=bbStringFromUTF8String( uris[i] );
+	}
+	
+	g_strfreev(uris);
+	
+	return p;
 }

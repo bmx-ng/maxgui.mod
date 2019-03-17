@@ -153,6 +153,7 @@ End Rem
 		' remove reference from global reference map
 		If handle Then
 			GadgetMap.Remove(handle)
+			handle = Null
 		End If
 		
 		connectionMap.Clear()
@@ -596,14 +597,12 @@ Type TGTKWindow Extends TGTKContainer
 		addConnection("window-state-event", g_signal_cb3_ret(handle, "window-state-event", OnWindowStateChange, Self, Destroy, 0))
 
 		If style & WINDOW_ACCEPTFILES Then
-
 			'Local entries:Byte Ptr
 			
-			'gtk_drag_dest_set(container, GTK_DEST_DEFAULT_DROP | GTK_DEST_DEFAULT_HIGHLIGHT, Varptr entries, 0, GDK_ACTION_COPY)
-			'gtk_drag_dest_add_uri_targets(container)
-			'gtk_drag_dest_add_text_targets(container)
+			gtk_drag_dest_set(handle, GTK_DEST_DEFAULT_ALL, Null, 0, GDK_ACTION_COPY)
+			gtk_drag_dest_add_uri_targets(handle)
 			
-			'g_signal_cb6(container, "drag-drop", OnDragDrop, Self, Destroy, 0)
+			addConnection("drag-drop", g_signal_cb8(handle, "drag-data-received", OnDragDrop, Self, Destroy, 0))
 		End If
 		
 		' used for tabbers - ensure they are redrawn properly when required
@@ -797,8 +796,11 @@ Type TGTKWindow Extends TGTKContainer
 		Return False
 	End Function
 	
-	Function OnDragDrop:Int(widget:Byte Ptr, context:Byte Ptr, x:Int, y:Int, time:Int, obj:Object)
-Print "OnDragDrop"
+	Function OnDragDrop(widget:Byte Ptr, context:Byte Ptr, x:Int, y:Int, data:Byte Ptr, info:Int, time:Int, obj:Object)
+		Local uris:String[] = bmx_gtk3_selection_data_get_uris(data)
+		If uris Then
+			PostGuiEvent EVENT_WINDOWACCEPT,TGadget(obj),0,0,x,y,uris[0].Replace("file://", "")
+		End If
 	End Function
 
 	Method SetShape:Int(x:Int,y:Int,w:Int,h:Int)
