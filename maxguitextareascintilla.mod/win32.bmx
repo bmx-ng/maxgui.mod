@@ -1,4 +1,4 @@
-' Copyright (c) 2014-2018 Bruce A Henderson
+' Copyright (c) 2014-2019 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -162,18 +162,14 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 				startPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos, True)
 				endPos = startPos
 			Else
-				startPos = bmx_mgta_scintilla_bytefromchar(_hwnd, pos, 0, 0)
-				endPos = startPos
+				bmx_mgta_scintilla_startendfromchar(_hwnd, pos, length, startPos, endPos)
 			End If
 		Else
 			If units = TEXTAREA_LINES Then
 				startPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos, True)
 				endPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos + length, True)
 			Else ' must be TEXTAREA_CHARS
-				'startPos = pos
-				'endPos = pos + length
-				startPos = bmx_mgta_scintilla_bytefromchar(_hwnd, pos, 0, 0)
-				endPos = bmx_mgta_scintilla_bytefromchar(_hwnd, length, startPos, pos)
+				bmx_mgta_scintilla_startendfromchar(_hwnd, pos, length, startPos, endPos)
 			End If
 		End If
 
@@ -222,10 +218,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 				startPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos, True)
 				endPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos + length, True)
 			Else ' must be TEXTAREA_CHARS
-				'startPos = pos
-				'endPos = pos + length
-				startPos = bmx_mgta_scintilla_bytefromchar(_hwnd, pos, 0, 0)
-				endPos = bmx_mgta_scintilla_bytefromchar(_hwnd, length, startPos, pos)
+				bmx_mgta_scintilla_startendfromchar(_hwnd, pos, length, startPos, endPos)
 			End If
 
 			bmx_mgta_scintilla_settargetstart(_hwnd, startPos)
@@ -317,8 +310,9 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 			startPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos, True)
 			realLength = bmx_mgta_scintilla_positionfromline(_hwnd, pos + length, True) - startPos
 		Else ' must be TEXTAREA_CHARS
-			startPos = bmx_mgta_scintilla_bytefromchar(_hwnd, pos, 0, 0)
-			realLength = bmx_mgta_scintilla_bytefromchar(_hwnd, length, startPos, pos) - startPos
+			Local endPos:Int
+			bmx_mgta_scintilla_startendfromchar(_hwnd, pos, length, startPos, endPos)
+			realLength = endPos - startPos
 		End If
 
 		bmx_mgta_scintilla_startstyling(_hwnd, startPos)
@@ -334,10 +328,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 			startPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos, True)
 			endPos = bmx_mgta_scintilla_positionfromline(_hwnd, pos + length, True)
 		Else ' must be TEXTAREA_CHARS
-			'startPos = pos
-			'endPos = pos + length
-			startPos = bmx_mgta_scintilla_bytefromchar(_hwnd, pos, 0, 0)
-			endPos = bmx_mgta_scintilla_bytefromchar(_hwnd, length, startPos, pos)
+			bmx_mgta_scintilla_startendfromchar(_hwnd, pos, length, startPos, endPos)
 		End If
 		
 		Return bmx_mgta_scintilla_gettextrange(_hwnd, startPos, endPos)

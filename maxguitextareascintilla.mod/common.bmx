@@ -70,7 +70,6 @@ Extern
 	Function bmx_mgta_scintilla_linefromposition:Int(handle:Byte Ptr, index:Int)
 	Function bmx_mgta_scintilla_appendtext(handle:Byte Ptr, Text:String)
 	Function bmx_mgta_scintilla_scrolltoend(handle:Byte Ptr)
-	Function bmx_mgta_scintilla_bytefromchar:Int(handle:Byte Ptr, charPos:Int, startBytePos:Int, startCharPos:Int)
 	Function bmx_mgta_scintilla_getselectionlength:Int(handle:Byte Ptr, units:Int)
 	Function bmx_mgta_scintilla_addtext(handle:Byte Ptr, Text:Byte Ptr)
 	Function bmx_mgta_scintilla_textwidth:Int(handle:Byte Ptr, Text:String)
@@ -78,6 +77,7 @@ Extern
 	Function bmx_mgta_scintilla_setmarginleft(handle:Byte Ptr, leftmargin:Int)
 	Function bmx_mgta_scintilla_setcaretwidth(handle:Byte Ptr, width:Int)
 	Function bmx_mgta_scintilla_setcaretcolor(handle:Byte Ptr, r:Int, g:Int, b:Int)
+	Function bmx_mgta_scintilla_startendfromchar(handle:Byte Ptr, pos:Int, length:Int, startPos:Int Var, endPos:Int Var)
 
 	Function bmx_mgta_scintilla_notifcation_update(obj:Object, handle:Byte Ptr)
 	

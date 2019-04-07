@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018 Bruce A Henderson
+ Copyright (c) 2014-2019 Bruce A Henderson
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ HWND bmx_mgta_scintilla_getsci(HWND parent) {
 	scintilla_send_message(obj, SCI_SETCODEPAGE, SC_CP_UTF8, 0);
 	scintilla_send_message(obj, SCI_SETMODEVENTMASK , SC_MODEVENTMASKALL, 0);
 	scintilla_send_message(obj, SCI_SETEOLMODE, SC_EOL_LF, 0); // the default of CRLF results in double LFs for some reason, which breaks (at least) maxide
+	scintilla_send_message(obj, SCI_ALLOCATELINECHARACTERINDEX, SC_LINECHARACTERINDEX_UTF16 , 0);
 
 	return obj;
 }
