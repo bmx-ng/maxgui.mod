@@ -343,6 +343,22 @@ void bmx_mgta_scintilla_setmarginleft(SCI_HANDLE sci, int leftmargin) {
 	scintilla_send_message(sci, SCI_SETMARGINLEFT, 0, leftmargin);
 }
 
+void bmx_mgta_scintilla_setcaretlinevisible(SCI_HANDLE sci, int enable) {
+	scintilla_send_message(sci, SCI_SETCARETLINEVISIBLE, enable, 0);
+}
+
+int bmx_mgta_scintilla_getcaretlinevisible(SCI_HANDLE sci) {
+	return scintilla_send_message(sci, SCI_GETCARETLINEVISIBLE, 0, 0);
+}
+
+void bmx_mgta_scintilla_setcaretlineback(SCI_HANDLE sci, int r, int g, int b) {
+	scintilla_send_message(sci, SCI_SETCARETLINEBACK, r | (g << 8) | (b << 16), 0);
+}
+
+int bmx_mgta_scintilla_getcaretlineback(SCI_HANDLE sci) {
+	return scintilla_send_message(sci, SCI_GETCARETLINEBACK, 0, 0);
+}
+
 void bmx_mgta_scintilla_setcaretwidth(SCI_HANDLE sci, int width) {
 	scintilla_send_message(sci, SCI_SETCARETWIDTH, width, 0);
 }

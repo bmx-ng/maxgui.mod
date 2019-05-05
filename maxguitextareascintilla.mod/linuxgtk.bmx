@@ -47,6 +47,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 	Field lineDigits:Int
 	
 	Field showLineNumbers:Int = True
+	Field showCaretLine:Int = True
 
 	' holder for the latest notification
 	' keep one in the type rather than locally in the callback function so we don't have to create a new object for every notification
@@ -495,6 +496,24 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 	Method SetLineNumberEnable(enabled:Int)
 		showLineNumbers = enabled
 		bmx_mgta_scintilla_setlinedigits(sciPtr, Varptr lineDigits, showLineNumbers)
+	End Method
+	
+	Method SetCaretLineVisible(enabled:Int)
+		showCaretLine = enabled
+		bmx_mgta_scintilla_setcaretlinevisible(sciPtr, showCaretLine)
+	End Method
+
+	Method GetCaretLineVisible:int()
+		showCaretLine = bmx_mgta_scintilla_getcaretlinevisible(sciPtr)
+		Return showCaretLine
+	End Method
+
+	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setcaretlineback(sciPtr, r, g, b)
+	End Method
+
+	Method GetCaretLineBackgroundColor:int()
+		Return bmx_mgta_scintilla_getcaretlineback(sciPtr)
 	End Method
 
 End Type

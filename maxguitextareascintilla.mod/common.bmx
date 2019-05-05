@@ -78,6 +78,10 @@ Extern
 	Function bmx_mgta_scintilla_setcaretwidth(handle:Byte Ptr, width:Int)
 	Function bmx_mgta_scintilla_setcaretcolor(handle:Byte Ptr, r:Int, g:Int, b:Int)
 	Function bmx_mgta_scintilla_startendfromchar(handle:Byte Ptr, pos:Int, length:Int, startPos:Int Var, endPos:Int Var)
+	Function bmx_mgta_scintilla_setcaretlinevisible(handle:Byte Ptr, enable:int)
+	Function bmx_mgta_scintilla_getcaretlinevisible:Int(handle:Byte Ptr)
+	Function bmx_mgta_scintilla_setcaretlineback:Int(handle:Byte Ptr, r:Int, g:Int, b:Int)
+	Function bmx_mgta_scintilla_getcaretlineback:Int(handle:Byte Ptr)
 
 	Function bmx_mgta_scintilla_notifcation_update(obj:Object, handle:Byte Ptr)
 	
