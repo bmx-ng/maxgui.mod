@@ -799,7 +799,9 @@ Type TGTKWindow Extends TGTKContainer
 	Function OnDragDrop(widget:Byte Ptr, context:Byte Ptr, x:Int, y:Int, data:Byte Ptr, info:Int, time:Int, obj:Object)
 		Local uris:String[] = bmx_gtk3_selection_data_get_uris(data)
 		If uris Then
-			PostGuiEvent EVENT_WINDOWACCEPT,TGadget(obj),0,0,x,y,uris[0].Replace("file://", "")
+			For Local uri:String = EachIn uris
+				PostGuiEvent EVENT_WINDOWACCEPT,TGadget(obj),0,0,x,y,uri.Replace("file://", "")
+			Next
 		End If
 	End Function
 
