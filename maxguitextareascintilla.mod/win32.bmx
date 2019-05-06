@@ -82,11 +82,12 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 				PostGuiEvent EVENT_GADGETLOSTFOCUS
 
 			Case WM_CHAR
-				If (keymods()&MODIFIER_CONTROL) Then
+				Local mods:Int = keymods()
+				If (mods & MODIFIER_CONTROL And Not (mods & MODIFIER_OPTION)) Then
 					Return 1
 				End If
 				If eventfilter<>Null
-					event=CreateEvent(EVENT_KEYCHAR,Self,Int(wp),keymods())
+					event=CreateEvent(EVENT_KEYCHAR,Self,Int(wp),mods)
 					If Not eventfilter(event,context) Return True
 				EndIf
 
