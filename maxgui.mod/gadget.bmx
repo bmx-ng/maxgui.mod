@@ -817,6 +817,14 @@ Type TGadget
 	End Method
 	Method SetLineNumberEnable(enabled:Int)
 	End Method
+	Method GetCaretLineVisible()
+	End Method
+	Method SetCaretLineVisible(enabled:Int)
+	End Method
+	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
+	End Method
+	Method GetCaretLineBackgroundColor:int()
+	End Method
 	Method HasCharEventSupressionFixup:Int()
 	End Method
 ' progbar

@@ -478,6 +478,24 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
 	End Method
 	
+	Method SetCaretLineVisible(enabled:Int)
+		showCaretLine = enabled
+		bmx_mgta_scintilla_setcaretlinevisible(_hwnd, showCaretLine)
+	End Method
+
+	Method GetCaretLineVisible:int()
+		showCaretLine = bmx_mgta_scintilla_getcaretlinevisible(_hwnd)
+		Return showCaretLine
+	End Method
+
+	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setcaretlineback(_hwnd, r, g, b)
+	End Method
+
+	Method GetCaretLineBackgroundColor:int()
+		Return bmx_mgta_scintilla_getcaretlineback(_hwnd)
+	End Method
+	
 	Method HasCharEventSupressionFixup:Int()
 		Return True
 	End Method

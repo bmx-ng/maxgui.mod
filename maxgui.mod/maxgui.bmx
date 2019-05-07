@@ -1808,12 +1808,28 @@ Function TextAreaSetLineNumberEnable(textarea:TGadget, enabled:Int)
 	textarea.SetLineNumberEnable(enabled)
 End Function
 
-Function TextAreaSetLineNumberBackColor(textarea:TGadget, red:Int, green:Int, blue)
+Function TextAreaSetLineNumberBackColor(textarea:TGadget, red:Int, green:Int, blue:Int)
 	textarea.SetLineNumberBackColor(red, green, blue)
 End Function
 
-Function TextAreaSetLineNumberForeColor(textarea:TGadget, red:Int, green:Int, blue)
+Function TextAreaSetLineNumberForeColor(textarea:TGadget, red:Int, green:Int, blue:Int)
 	textarea.SetLineNumberForeColor(red, green, blue)
+End Function
+
+Function TextAreaSetCaretLineVisible(textarea:TGadget, enabled:Int)
+	textarea.SetCaretLineVisible(enabled)
+End Function
+
+Function TextAreaGetCaretLineVisible:int(textarea:TGadget)
+	return textarea.GetCaretLineVisible()
+End Function
+
+Function TextAreaSetCaretLineBackgroundColor(textarea:TGadget, red:Int, green:Int, blue:Int)
+	textarea.SetCaretLineBackgroundColor(red, green, blue)
+End Function
+
+Function TextAreaGetCaretLineBackgroundColor:int(textarea:TGadget)
+	return textarea.GetCaretLineBackgroundColor()
 End Function
 
 Function TextAreaHasCharEventSupressionFixup:Int(textarea:TGadget)
