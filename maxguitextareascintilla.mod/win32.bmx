@@ -498,6 +498,10 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		Return True
 	End Method
 
+	Method HasBlockIndent:Int()
+		Return True
+	End Method
+
 End Type
 
 

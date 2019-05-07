@@ -1836,6 +1836,10 @@ Function TextAreaHasCharEventSupressionFixup:Int(textarea:TGadget)
 	Return textarea.HasCharEventSupressionFixup()
 End Function
 
+Function TextAreaHasBlockIndent:Int(textarea:TGadget)
+	Return textarea.HasBlockIndent()
+End Function
+
 ' gadget lists
 
 Rem

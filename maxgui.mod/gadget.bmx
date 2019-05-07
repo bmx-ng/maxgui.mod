@@ -828,6 +828,8 @@ Type TGadget
 	End Method
 	Method HasCharEventSupressionFixup:Int()
 	End Method
+	Method HasBlockIndent:Int()
+	End Method
 ' progbar
 	Method SetValue(value#)
 	End Method	

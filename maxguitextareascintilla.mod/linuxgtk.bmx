@@ -513,6 +513,10 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		Return bmx_mgta_scintilla_getcaretlineback(sciPtr)
 	End Method
 
+	Method HasBlockIndent:Int()
+		Return True
+	End Method
+
 End Type
 
 
