@@ -523,3 +523,11 @@ void bmx_mgta_scintilla_setlinenumberbackcolor(SCI_HANDLE sci, int color) {
 void bmx_mgta_scintilla_setlinenumberforecolor(SCI_HANDLE sci, int color) {
 	scintilla_send_message(sci, SCI_STYLESETFORE, STYLE_LINENUMBER, color);
 }
+
+void bmx_mgta_scintilla_beginundoaction(SCI_HANDLE sci) {
+	scintilla_send_message(sci, SCI_BEGINUNDOACTION, 0, 0);
+}
+
+void bmx_mgta_scintilla_endundoaction(SCI_HANDLE sci) {
+	scintilla_send_message(sci, SCI_ENDUNDOACTION, 0, 0);
+}

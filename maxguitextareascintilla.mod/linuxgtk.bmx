@@ -517,6 +517,14 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		Return True
 	End Method
 
+	Method BeginUndoAction()
+		bmx_mgta_scintilla_beginundoaction(sciPtr)
+	End Method
+	
+	Method EndUndoAction()
+		bmx_mgta_scintilla_endundoaction(sciPtr)
+	End Method
+
 End Type
 
 

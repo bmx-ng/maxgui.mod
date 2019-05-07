@@ -502,6 +502,14 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		Return True
 	End Method
 
+	Method BeginUndoAction()
+		bmx_mgta_scintilla_beginundoaction(_hwnd)
+	End Method
+	
+	Method EndUndoAction()
+		bmx_mgta_scintilla_endundoaction(_hwnd)
+	End Method
+
 End Type
 
 

@@ -101,6 +101,9 @@ Extern
 
 	Function bmx_mgta_scintilla_setlinenumberbackcolor(handle:Byte Ptr, color:Int)
 	Function bmx_mgta_scintilla_setlinenumberforecolor(handle:Byte Ptr, color:Int)
+
+	Function bmx_mgta_scintilla_beginundoaction(handle:Byte Ptr)
+	Function bmx_mgta_scintilla_endundoaction(handle:Byte Ptr)
 End Extern
 
 Type TSCNotification

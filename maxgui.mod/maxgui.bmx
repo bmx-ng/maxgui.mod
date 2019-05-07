@@ -1840,6 +1840,14 @@ Function TextAreaHasBlockIndent:Int(textarea:TGadget)
 	Return textarea.HasBlockIndent()
 End Function
 
+Function TextAreaBeginUndoAction(textarea:TGadget)
+	textarea.BeginUndoAction()
+End Function
+
+Function TextAreaEndUndoAction(textarea:TGadget)
+	textarea.EndUndoAction()
+End Function
+
 ' gadget lists
 
 Rem

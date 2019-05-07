@@ -830,6 +830,10 @@ Type TGadget
 	End Method
 	Method HasBlockIndent:Int()
 	End Method
+	Method BeginUndoAction()
+	End Method
+	Method EndUndoAction()
+	End Method
 ' progbar
 	Method SetValue(value#)
 	End Method	
