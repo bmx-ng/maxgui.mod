@@ -1820,16 +1820,16 @@ Function TextAreaSetCaretLineVisible(textarea:TGadget, enabled:Int)
 	textarea.SetCaretLineVisible(enabled)
 End Function
 
-Function TextAreaGetCaretLineVisible:int(textarea:TGadget)
-	return textarea.GetCaretLineVisible()
+Function TextAreaGetCaretLineVisible:Int(textarea:TGadget)
+	Return textarea.GetCaretLineVisible()
 End Function
 
 Function TextAreaSetCaretLineBackgroundColor(textarea:TGadget, red:Int, green:Int, blue:Int)
 	textarea.SetCaretLineBackgroundColor(red, green, blue)
 End Function
 
-Function TextAreaGetCaretLineBackgroundColor:int(textarea:TGadget)
-	return textarea.GetCaretLineBackgroundColor()
+Function TextAreaGetCaretLineBackgroundColor:Int(textarea:TGadget)
+	Return textarea.GetCaretLineBackgroundColor()
 End Function
 
 Function TextAreaHasCharEventSupressionFixup:Int(textarea:TGadget)
@@ -1852,8 +1852,8 @@ Function TextAreaHasBracketMatching:Int(textarea:TGadget)
 	Return textarea.HasBracketMatching()
 End Function
 
-Function TextAreaSetBracketMatchingColor(textarea:TGadget, red:Int, green:Int, blue:Int)
-	textarea.SetBracketMatchingColor(red, green, blue)
+Function TextAreaSetBracketMatchingColor(textarea:TGadget, red:Int, green:Int, blue:Int, flags:Int)
+	textarea.SetBracketMatchingColor(red, green, blue, flags)
 End Function
 
 Function TextAreaMatchBrackets(textarea:TGadget)

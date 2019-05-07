@@ -529,8 +529,8 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		Return True
 	End Method
 	
-	Method SetBracketMatchingColor(r:Int, g:Int, b:Int)
-		bmx_mgta_scintilla_setbracketmatchingcolor(sciPtr, r, g, b)
+	Method SetBracketMatchingColor(r:Int, g:Int, b:Int, flags:Int)
+		bmx_mgta_scintilla_setbracketmatchingcolor(sciPtr, r, g, b, flags)
 	End Method
 	
 	Method MatchBrackets()

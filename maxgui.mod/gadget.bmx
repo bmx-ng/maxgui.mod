@@ -824,7 +824,7 @@ Type TGadget
 	End Method
 	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
 	End Method
-	Method GetCaretLineBackgroundColor:int()
+	Method GetCaretLineBackgroundColor:Int()
 	End Method
 	Method HasCharEventSupressionFixup:Int()
 	End Method
@@ -836,7 +836,7 @@ Type TGadget
 	End Method
 	Method HasBracketMatching:Int()
 	End Method
-	Method SetBracketMatchingColor(r:Int, g:Int, b:Int)
+	Method SetBracketMatchingColor(r:Int, g:Int, b:Int, flags:Int)
 	End Method
 	Method MatchBrackets()
 	End Method

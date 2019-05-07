@@ -514,8 +514,8 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		Return True
 	End Method
 	
-	Method SetBracketMatchingColor(r:Int, g:Int, b:Int)
-		bmx_mgta_scintilla_setbracketmatchingcolor(_hwnd, r, g, b)
+	Method SetBracketMatchingColor(r:Int, g:Int, b:Int, flags:Int)
+		bmx_mgta_scintilla_setbracketmatchingcolor(_hwnd, r, g, b, flags)
 	End Method
 	
 	Method MatchBrackets()

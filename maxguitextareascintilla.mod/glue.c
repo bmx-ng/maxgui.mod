@@ -353,6 +353,7 @@ int bmx_mgta_scintilla_getcaretlinevisible(SCI_HANDLE sci) {
 
 void bmx_mgta_scintilla_setcaretlineback(SCI_HANDLE sci, int r, int g, int b) {
 	scintilla_send_message(sci, SCI_SETCARETLINEBACK, r | (g << 8) | (b << 16), 0);
+	scintilla_send_message(sci, SCI_SETCARETLINEBACKALPHA, 30, 0);
 }
 
 int bmx_mgta_scintilla_getcaretlineback(SCI_HANDLE sci) {
@@ -532,8 +533,24 @@ void bmx_mgta_scintilla_endundoaction(SCI_HANDLE sci) {
 	scintilla_send_message(sci, SCI_ENDUNDOACTION, 0, 0);
 }
 
-void bmx_mgta_scintilla_setbracketmatchingcolor(SCI_HANDLE sci, int r, int g, int b) {
+void bmx_mgta_scintilla_setbracketmatchingcolor(SCI_HANDLE sci, int r, int g, int b, int flags) {
 	scintilla_send_message(sci, SCI_STYLESETFORE, STYLE_BRACELIGHT, r | (g << 8) | (b << 16));
+
+	scintilla_send_message(sci, SCI_STYLESETBOLD, STYLE_BRACELIGHT, 0);
+	scintilla_send_message(sci, SCI_STYLESETITALIC, STYLE_BRACELIGHT, 0);
+	scintilla_send_message(sci, SCI_STYLESETUNDERLINE, STYLE_BRACELIGHT, 0);
+
+	if (flags & TEXTFORMAT_BOLD) {
+		scintilla_send_message(sci, SCI_STYLESETBOLD, STYLE_BRACELIGHT, 1);
+	}
+
+	if (flags & TEXTFORMAT_ITALIC) {
+		scintilla_send_message(sci, SCI_STYLESETITALIC, STYLE_BRACELIGHT, 1);
+	}
+
+	if (flags & TEXTFORMAT_UNDERLINE) {
+		scintilla_send_message(sci, SCI_STYLESETUNDERLINE, STYLE_BRACELIGHT, 1);
+	}
 }
 
 void bmx_mgta_scintilla_matchbrackets(SCI_HANDLE sci) {
