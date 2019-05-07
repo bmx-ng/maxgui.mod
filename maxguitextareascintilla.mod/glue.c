@@ -531,3 +531,17 @@ void bmx_mgta_scintilla_beginundoaction(SCI_HANDLE sci) {
 void bmx_mgta_scintilla_endundoaction(SCI_HANDLE sci) {
 	scintilla_send_message(sci, SCI_ENDUNDOACTION, 0, 0);
 }
+
+void bmx_mgta_scintilla_setbracketmatchingcolor(SCI_HANDLE sci, int r, int g, int b) {
+	scintilla_send_message(sci, SCI_STYLESETFORE, STYLE_BRACELIGHT, r | (g << 8) | (b << 16));
+}
+
+void bmx_mgta_scintilla_matchbrackets(SCI_HANDLE sci) {
+	int pos = scintilla_send_message(sci, SCI_GETCURRENTPOS, 0, 0);
+	int endPos = scintilla_send_message(sci, SCI_BRACEMATCH, pos, 0);
+	if (endPos != -1) {
+		scintilla_send_message(sci, SCI_BRACEHIGHLIGHT, pos, endPos);
+	} else {
+		scintilla_send_message(sci, SCI_BRACEBADLIGHT, -1, 0);
+	}
+}

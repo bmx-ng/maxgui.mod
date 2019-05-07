@@ -1848,6 +1848,18 @@ Function TextAreaEndUndoAction(textarea:TGadget)
 	textarea.EndUndoAction()
 End Function
 
+Function TextAreaHasBracketMatching:Int(textarea:TGadget)
+	Return textarea.HasBracketMatching()
+End Function
+
+Function TextAreaSetBracketMatchingColor(textarea:TGadget, red:Int, green:Int, blue:Int)
+	textarea.SetBracketMatchingColor(red, green, blue)
+End Function
+
+Function TextAreaMatchBrackets(textarea:TGadget)
+	textarea.MatchBrackets()
+End Function
+
 ' gadget lists
 
 Rem

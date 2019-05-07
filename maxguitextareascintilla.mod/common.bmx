@@ -104,6 +104,10 @@ Extern
 
 	Function bmx_mgta_scintilla_beginundoaction(handle:Byte Ptr)
 	Function bmx_mgta_scintilla_endundoaction(handle:Byte Ptr)
+
+	Function bmx_mgta_scintilla_setbracketmatchingcolor(handle:Byte Ptr, r:Int, g:Int, b:Int)
+	Function bmx_mgta_scintilla_matchbrackets(handle:Byte Ptr)
+
 End Extern
 
 Type TSCNotification

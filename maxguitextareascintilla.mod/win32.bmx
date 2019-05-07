@@ -510,6 +510,18 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_endundoaction(_hwnd)
 	End Method
 
+	Method HasBracketMatching:Int()
+		Return True
+	End Method
+	
+	Method SetBracketMatchingColor(r:Int, g:Int, b:Int)
+		bmx_mgta_scintilla_setbracketmatchingcolor(_hwnd, r, g, b)
+	End Method
+	
+	Method MatchBrackets()
+		bmx_mgta_scintilla_matchbrackets(_hwnd)
+	End Method
+
 End Type
 
 

@@ -834,6 +834,12 @@ Type TGadget
 	End Method
 	Method EndUndoAction()
 	End Method
+	Method HasBracketMatching:Int()
+	End Method
+	Method SetBracketMatchingColor(r:Int, g:Int, b:Int)
+	End Method
+	Method MatchBrackets()
+	End Method
 ' progbar
 	Method SetValue(value#)
 	End Method	
