@@ -47,6 +47,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 	Field lineDigits:Int
 	
 	Field showLineNumbers:Int = True
+	Field showCaretLine:Int = True
 	
 	' holder for the latest notification
 	' keep one in the type rather than locally in the callback function so we don't have to create a new object for every notification
@@ -483,7 +484,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_setcaretlinevisible(_hwnd, showCaretLine)
 	End Method
 
-	Method GetCaretLineVisible:int()
+	Method GetCaretLineVisible:Int()
 		showCaretLine = bmx_mgta_scintilla_getcaretlinevisible(_hwnd)
 		Return showCaretLine
 	End Method
@@ -492,7 +493,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		bmx_mgta_scintilla_setcaretlineback(_hwnd, r, g, b)
 	End Method
 
-	Method GetCaretLineBackgroundColor:int()
+	Method GetCaretLineBackgroundColor:Int()
 		Return bmx_mgta_scintilla_getcaretlineback(_hwnd)
 	End Method
 	
