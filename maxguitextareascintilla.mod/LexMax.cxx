@@ -101,6 +101,7 @@ static int CheckBMFoldPoint(char const *token, int &level) {
 	if (!strcmp(token, "function") ||
 		!strcmp(token, "type") ||
 		!strcmp(token, "interface") ||
+		!strcmp(token, "struct") ||
 		!strcmp(token, "method")) {
 		level |= SC_FOLDLEVELHEADERFLAG;
 		return 1;
@@ -111,6 +112,8 @@ static int CheckBMFoldPoint(char const *token, int &level) {
 	 	!strcmp(token, "endtype") ||
         !strcmp(token, "end interface") ||
         !strcmp(token, "endinterface") ||
+        !strcmp(token, "end struct") ||
+        !strcmp(token, "endstruct") ||
 		!strcmp(token, "end method") ||
         	!strcmp(token, "endmethod")) {
 		return -1;
@@ -311,7 +314,7 @@ void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int i
 					};
 					sc.GetCurrentLowered(s, sizeof(s));
 					// special case for Rem blocks
-    				if (strcmp(s, "rem") == 0) {
+    				if (wasfirst && strcmp(s, "rem") == 0) {
 	   				    sc.ChangeState(SCE_B_COMMENTREM);
 	                } else {
 						for (int i = 0; i < 4; i++) {
