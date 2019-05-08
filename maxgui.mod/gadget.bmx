@@ -822,7 +822,7 @@ Type TGadget
 	End Method
 	Method SetCaretLineVisible(enabled:Int)
 	End Method
-	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
+	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int, a:Int)
 	End Method
 	Method GetCaretLineBackgroundColor:Int()
 	End Method

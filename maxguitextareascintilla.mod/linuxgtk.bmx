@@ -505,8 +505,8 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		Return bmx_mgta_scintilla_getcaretlinevisible(sciPtr)
 	End Method
 
-	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
-		bmx_mgta_scintilla_setcaretlineback(sciPtr, r, g, b)
+	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int, a:Int)
+		bmx_mgta_scintilla_setcaretlineback(sciPtr, r, g, b, a)
 	End Method
 
 	Method GetCaretLineBackgroundColor:Int()

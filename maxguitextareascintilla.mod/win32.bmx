@@ -486,8 +486,8 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		Return bmx_mgta_scintilla_getcaretlinevisible(_hwnd)
 	End Method
 
-	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int)
-		bmx_mgta_scintilla_setcaretlineback(_hwnd, r, g, b)
+	Method SetCaretLineBackgroundColor(r:Int, g:Int, b:Int, a:Int)
+		bmx_mgta_scintilla_setcaretlineback(_hwnd, r, g, b, a)
 	End Method
 
 	Method GetCaretLineBackgroundColor:Int()

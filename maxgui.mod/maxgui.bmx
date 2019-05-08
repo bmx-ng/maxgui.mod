@@ -1824,8 +1824,8 @@ Function TextAreaGetCaretLineVisible:Int(textarea:TGadget)
 	Return textarea.GetCaretLineVisible()
 End Function
 
-Function TextAreaSetCaretLineBackgroundColor(textarea:TGadget, red:Int, green:Int, blue:Int)
-	textarea.SetCaretLineBackgroundColor(red, green, blue)
+Function TextAreaSetCaretLineBackgroundColor(textarea:TGadget, red:Int, green:Int, blue:Int, alpha:Int)
+	textarea.SetCaretLineBackgroundColor(red, green, blue, alpha)
 End Function
 
 Function TextAreaGetCaretLineBackgroundColor:Int(textarea:TGadget)

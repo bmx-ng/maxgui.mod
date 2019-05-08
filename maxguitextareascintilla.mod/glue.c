@@ -351,9 +351,9 @@ int bmx_mgta_scintilla_getcaretlinevisible(SCI_HANDLE sci) {
 	return scintilla_send_message(sci, SCI_GETCARETLINEVISIBLE, 0, 0);
 }
 
-void bmx_mgta_scintilla_setcaretlineback(SCI_HANDLE sci, int r, int g, int b) {
+void bmx_mgta_scintilla_setcaretlineback(SCI_HANDLE sci, int r, int g, int b, int alpha) {
 	scintilla_send_message(sci, SCI_SETCARETLINEBACK, r | (g << 8) | (b << 16), 0);
-	scintilla_send_message(sci, SCI_SETCARETLINEBACKALPHA, 30, 0);
+	scintilla_send_message(sci, SCI_SETCARETLINEBACKALPHA, alpha, 0);
 }
 
 int bmx_mgta_scintilla_getcaretlineback(SCI_HANDLE sci) {
