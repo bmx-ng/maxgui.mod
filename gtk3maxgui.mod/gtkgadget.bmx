@@ -1386,12 +1386,13 @@ Type TGTKMenuItem Extends TGTKGadget
 	End Method
 	
 	Method free:Int() Override
+		Local _handle:Byte Ptr = handle
+
 		Super.Free()
 
-		If handle
-			gtk_widget_destroy(handle)
+		If _handle
+			gtk_widget_destroy(_handle)
 		End If
-		handle = Null
 		menu = Null
 
 		If pixmap Then
