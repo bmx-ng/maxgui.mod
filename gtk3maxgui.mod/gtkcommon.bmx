@@ -503,6 +503,7 @@ Extern
 	' GtkTextIter
 	Function gtk_text_iter_get_line:Int(handle:Byte Ptr)
 	Function gtk_text_iter_get_offset:Int(handle:Byte Ptr)
+	Function gtk_text_iter_backward_char:Int(handle:Byte Ptr)
 	
 	' GtkTextTagTable
 	Function gtk_text_tag_table_lookup:Byte Ptr(handle:Byte Ptr, txt$z)

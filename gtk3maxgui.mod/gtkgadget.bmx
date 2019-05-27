@@ -5094,8 +5094,10 @@ Type TGTKDefaultTextArea Extends TGTKTextArea
 		If hasSelection Then
 
 			If units = TEXTAREA_LINES Then
+			
+				gtk_text_iter_backward_char(_end)
 
-				length = gtk_text_iter_get_line(_end) - gtk_text_iter_get_line(_start)
+				length = (gtk_text_iter_get_line(_end) - gtk_text_iter_get_line(_start)) + 1
 
 			Else ' must be TEXTAREA_CHARS
 
