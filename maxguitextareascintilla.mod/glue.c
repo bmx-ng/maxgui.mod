@@ -320,8 +320,8 @@ int bmx_mgta_scintilla_getselectionlength(SCI_HANDLE sci, int units) {
 	if (units == 2) {
 		/* lines */
 		int startPos = scintilla_send_message(sci, SCI_LINEFROMPOSITION, scintilla_send_message(sci, SCI_GETSELECTIONSTART, 0, 0), 0);
-		int endPos = scintilla_send_message(sci, SCI_LINEFROMPOSITION, scintilla_send_message(sci, SCI_GETSELECTIONEND, 0, 0), 0);
-		return endPos - startPos;
+		int endPos = scintilla_send_message(sci, SCI_LINEFROMPOSITION, scintilla_send_message(sci, SCI_GETSELECTIONEND, 0, 0) - 1, 0);
+		return (endPos - startPos) + 1;
 	} else {
 		/* chars */
 		int startPos = scintilla_send_message(sci, SCI_GETSELECTIONSTART, 0, 0);
