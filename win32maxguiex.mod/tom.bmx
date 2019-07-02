@@ -1,8 +1,8 @@
+Strict
+
 ' tom.bmx
 
 Import pub.win32
-
-Strict
 
 Import "tom.cpp"
 
