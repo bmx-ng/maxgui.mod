@@ -1,3 +1,4 @@
+Strict
 Rem
 bbdoc: MaxGUI Drivers/CocoaMaxGUI
 about:
@@ -10,8 +11,6 @@ This Module provides a Cocoa based #MaxGUI driver For Mac OS X.
 
 End Rem
 Module MaxGUI.CocoaMaxGUI
-
-Strict
 
 ModuleInfo "Version: 1.55B"
 ModuleInfo "Author: Simon Armstrong, Seb Hollington"
