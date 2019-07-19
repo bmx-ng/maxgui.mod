@@ -18,6 +18,11 @@
 ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ' THE SOFTWARE.
 ' 
+SuperStrict
+
+Rem
+bbdoc: GTK3 MaxGUI
+End Rem
 Module MaxGUI.GTK3MaxGUI
 
 ModuleInfo "Version: 2.01"
