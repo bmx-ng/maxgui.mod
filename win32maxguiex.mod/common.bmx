@@ -40,6 +40,7 @@ Extern
 	Function msHtmlBrowser(handle:Byte Ptr, browser:IWebBrowser2_ Var)
 	Function mstmlDocument:Byte Ptr(handle:Byte Ptr)
 
+	Function bbAppIcon:Byte Ptr(handle:Byte Ptr) = "HICON bbAppIcon(HINSTANCE)!"
 End Extern
 
 Extern "win32"

@@ -605,7 +605,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 		If Not _name
 			_name="BLITZMAX_WINDOW_CLASS"
-			_icon=LoadIconW(GetModuleHandleW(Null),Short Ptr(101))
+			_icon=bbAppIcon(GetModuleHandleW(Null))
 			_wc=New WNDCLASSW
 			_wc.Setstyle(CS_OWNDC|CS_HREDRAW|CS_VREDRAW)
 			_wc.SetlpfnWndProc(ClassWndProc)
