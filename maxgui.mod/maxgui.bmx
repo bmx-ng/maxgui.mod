@@ -1561,7 +1561,7 @@ End Function
 Rem
 bbdoc: Set the tab stops of a TextArea gadget measured in pixels.
 about:
-See Also: #CreateTextArea #SetIndents
+See Also: #CreateTextArea
 EndRem
 Function SetTextAreaTabs( textarea:TGadget,tabwidth )
 	textarea.SetTabs tabwidth
