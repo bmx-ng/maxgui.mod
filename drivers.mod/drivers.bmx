@@ -9,7 +9,7 @@ Your MaxGUI applications should import this module if they want BlitzMax to sele
 [ @Platform | @{Default Driver}
 * Windows 2000/XP/Vista | #MaxGUI.Win32MaxGUIEx
 * Windows 9X | #MaxGUI.Win32MaxGUIEx (requires unicows.dll or MSLU to run)
-* Linux | #Gtk.Gtk3MaxGUI
+* Linux | #MaxGUI.Gtk3MaxGUI
 * Mac OS X | #MaxGUI.CocoaMaxGUI
 ]
 End Rem
