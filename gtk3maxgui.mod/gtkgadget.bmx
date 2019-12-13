@@ -1250,7 +1250,7 @@ Type TGTKMenuItem Extends TGTKGadget
 
 	Rem
 	bbdoc: Callback function for selecting a menu option.
-	about: Triggers a menu action event.<br>
+	about: Triggers a menu action event.<br/>
 	NOTE - We have to ignore "obj" because it is not reliable
 	End Rem
 	Function MenuSelected:Int(widget:Byte Ptr, obj:Object)
@@ -5115,11 +5115,11 @@ Type TGTKDefaultTextArea Extends TGTKTextArea
 
 	Rem
 	bbdoc: Sets the style of part of the text area
-	about: @flags are any mix of TEXTFORMAT_BOLD, TEXTFORMAT_ITALIC, TEXTFORMAT_UNDERLINE and TEXTFORMAT_STRIKETHROUGH.<br>
+	about: @flags are any mix of TEXTFORMAT_BOLD, TEXTFORMAT_ITALIC, TEXTFORMAT_UNDERLINE and TEXTFORMAT_STRIKETHROUGH.<br/>
 	We utilise the buffers' tag table to cache tags that we reuse - based on the attributes.
-	This way we only create one for each different style we actually use in the buffer.<br>
+	This way we only create one for each different style we actually use in the buffer.<br/>
 	Note: "fastUpdate" flag enables or disables the use of gtk_text_buffer_remove_all_tags which strips
-	old tags from the area before applying the new one.<br>
+	old tags from the area before applying the new one.<br/>
 	Ideally, you would first remove tags before applying new ones, but since removal is slow, the following
 	method can work well :
 	<pre>
@@ -5354,7 +5354,7 @@ End Type
 
 Rem
 bbdoc: A base type for html view gadgets.
-about: Implementations are in seperate modules.<br>
+about: Implementations are in seperate modules.<br/>
 See bah.gtkwebmozilla and bah.gtkwebgtkhtml mods.
 End Rem
 Type TGTKHTMLView Extends TGTKGadget
