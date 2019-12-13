@@ -659,13 +659,13 @@ Gadgets that have been disabled should not emit key events, although they may st
 Not all gadgets will be able to emit all of the events, particularly those that don't receive typical focus
 such as labels or htmlviews, but even this may differ depending on the platform.
 
-%{ @{Warning:} This is a powerful new function that possibly involves hooking into the system's message queue
-to ask for mouse/key events before they are processed even by the OS's GUI library. As such, using this function
-on certain controls may cause them to be behave differently. In addition, care should be taken when using
-this function to avoid infinite loops, for example repositioning gadgets in an event hook that processes the
-message as it is received.
-
-It is therefore recommended that this function is only used by advanced MaxGUI users.}
+> @{Warning:} This is a powerful new function that possibly involves hooking into the system's message queue
+> to ask for mouse/key events before they are processed even by the OS's GUI library. As such, using this function
+> on certain controls may cause them to be behave differently. In addition, care should be taken when using
+> this function to avoid infinite loops, for example repositioning gadgets in an event hook that processes the
+> message as it is received.
+> 
+> It is therefore recommended that this function is only used by advanced MaxGUI users.
 
 See Also: #GadgetSensitivity
 EndRem
