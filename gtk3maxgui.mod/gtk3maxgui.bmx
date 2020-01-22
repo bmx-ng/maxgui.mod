@@ -42,6 +42,7 @@ ModuleInfo "CC_OPTS: -I/usr/include/gtk-3.0  -I/usr/lib/i386-linux-gnu/gtk-3.0/i
 ModuleInfo "CC_OPTS: -I/usr/include/cairo"
 ' pango
 ModuleInfo "CC_OPTS: -I/usr/include/pango-1.0"
+ModuleInfo "CC_OPTS: -I/usr/include/harfbuzz"
 ' gdk
 ModuleInfo "CC_OPTS: -I/usr/include/gdk-pixbuf-2.0"
 ' atk
