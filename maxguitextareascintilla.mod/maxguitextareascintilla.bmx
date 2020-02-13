@@ -48,7 +48,7 @@ ModuleInfo "CC_OPTS: -DGTK"
 ModuleInfo "CC_OPTS: -std=c++11"
 
 ' glib
-ModuleInfo "CC_OPTS: -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include -I/usr/lib64/glib-2.0/include"
+ModuleInfo "CC_OPTS: -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include -I/usr/lib/aarch64-linux-gnu/glib-2.0/include -I/usr/lib64/glib-2.0/include"
 ' gtk
 ModuleInfo "CC_OPTS: -I/usr/include/gtk-3.0  -I/usr/lib/i386-linux-gnu/gtk-3.0/include"
 ' cairo
