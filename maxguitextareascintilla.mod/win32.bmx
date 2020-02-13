@@ -1,4 +1,4 @@
-' Copyright (c) 2014-2019 Bruce A Henderson
+' Copyright (c) 2014-2020 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -117,6 +117,10 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 						PostGuiEvent(EVENT_GADGETACTION, Self)
 					End If
 					ignoreChange = False
+					
+					If notification.modificationType & SC_MOD_DELETETEXT Then
+						bmx_mgta_scintilla_resetscrollwidth(_hwnd)
+					End If
 					
 					bmx_mgta_scintilla_setlinedigits(_hwnd, Varptr lineDigits, showLineNumbers)
 				End If

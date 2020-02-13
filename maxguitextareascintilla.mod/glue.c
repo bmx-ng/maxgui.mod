@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019 Bruce A Henderson
+ Copyright (c) 2014-2020 Bruce A Henderson
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -561,4 +561,8 @@ void bmx_mgta_scintilla_matchbrackets(SCI_HANDLE sci) {
 	} else {
 		scintilla_send_message(sci, SCI_BRACEBADLIGHT, -1, 0);
 	}
+}
+
+void bmx_mgta_scintilla_resetscrollwidth(SCI_HANDLE sci) {
+	scintilla_send_message(sci, SCI_SETSCROLLWIDTH, 1 , 0);
 }
