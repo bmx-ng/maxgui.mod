@@ -410,7 +410,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 					End If
 					ta.ignoreChange = False
 
-					If notification.modificationType & SC_MOD_DELETETEXT Then
+					If ta.notification.modificationType & SC_MOD_DELETETEXT Then
 						bmx_mgta_scintilla_resetscrollwidth(ta.sciPtr)
 					End If
 
