@@ -1,4 +1,4 @@
-' Copyright (c) 2006-2018 Bruce A Henderson
+' Copyright (c) 2006-2020 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ Module MaxGUI.GTK3MaxGUI
 
 ModuleInfo "Version: 2.01"
 ModuleInfo "License: MIT"
-ModuleInfo "Copyright: 2006-2018 Bruce A Henderson"
+ModuleInfo "Copyright: 2006-2020 Bruce A Henderson"
 
 ModuleInfo "History: 2.01"
 ModuleInfo "History: Updated for new NG system driver."

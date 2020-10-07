@@ -1,4 +1,4 @@
-' Copyright (c) 2006-2018 Bruce A Henderson
+' Copyright (c) 2006-2020 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -1587,7 +1587,7 @@ Type TGTKButton Extends TGTKGadget
 
 		If button = 3 Then ' right mouse button
 
-			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,x,y)
+			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,Int(x),Int(y))
 
 			Return True
 		End If
