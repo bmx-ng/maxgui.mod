@@ -2100,14 +2100,14 @@ Type TGTKLabel Extends TGTKGadget
 		
 		If button = 3 Then ' right mouse button
 
-			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,x,y)
+			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,Int(x),Int(y))
 
 		Else ' other mouse buttons
 			If button = 2 Then
 				button = 3
 			End If
 
-			PostGuiEvent(EVENT_MOUSEDOWN, TGadget(obj),button,,x,y)
+			PostGuiEvent(EVENT_MOUSEDOWN, TGadget(obj),button,,Int(x),Int(y))
 		End If
 		
 		Return True
@@ -2293,7 +2293,7 @@ Type TGTKTextField Extends TGTKEditable
 
 		If button = 3 Then ' right mouse button
 
-			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,x,y)
+			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,Int(x),Int(y))
 
 			Return True
 		End If
@@ -2489,9 +2489,9 @@ Type TGTKComboBox Extends TGTKList
 			Local row:Int = TGTKComboBox(obj).SelectedItem()
 			
 			If row >= 0 Then
-				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,x,y,TGTKList(obj).items[row].extra)
+				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,Int(x),Int(y),TGTKList(obj).items[row].extra)
 			Else
-				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,x,y)
+				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,Int(x),Int(y))
 			End If
 			Return True
 		End If
@@ -2821,9 +2821,9 @@ Type TGTKListbox Extends TGTKListWithScrollWindow
 			End If
 		
 			If row >= 0 Then
-				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,x,y,TGTKList(obj).items[row].extra)
+				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,Int(x),Int(y),TGTKList(obj).items[row].extra)
 			Else
-				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,x,y)
+				PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),row,,Int(x),Int(y))
 			End If
 			Return True
 		End If
@@ -3275,7 +3275,7 @@ Type TGTKTreeView Extends TGTKTreeViewNode
 				gtk_tree_path_free(treePath)
 			End If
 		
-			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,x,y,node)
+			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,Int(x),Int(y),node)
 
 			Return True
 		End If
@@ -4208,7 +4208,7 @@ Type TGTKPanel Extends TGTKContainer
 				button = 3
 			End If
 
-			PostGuiEvent(EVENT_MOUSEDOWN, TGadget(obj),button,,x,y)
+			PostGuiEvent(EVENT_MOUSEDOWN, TGadget(obj),button,,Int(x),Int(y))
 		End If
 		Return True
 	End Function
@@ -4227,7 +4227,7 @@ Type TGTKPanel Extends TGTKContainer
 				button = 3
 			End If
 			
-			PostGuiEvent(EVENT_MOUSEUP, TGadget(obj),button,,x,y)
+			PostGuiEvent(EVENT_MOUSEUP, TGadget(obj),button,,Int(x),Int(y))
 		End If
 		Return True
 	End Function
@@ -4308,9 +4308,9 @@ Type TGTKPanel Extends TGTKContainer
 			bmx_gtk3maxgui_gdkeventscroll(event, Varptr x, Varptr y, Varptr direction)
 
 			If direction = GDK_SCROLL_UP Or direction = GDK_SCROLL_LEFT Then
-				PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),-1,,x,y)
+				PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),-1,,Int(x),Int(y))
 			Else
-				PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),1,,x,y)
+				PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),1,,Int(x),Int(y))
 			End If
 		End If
 	End Function
@@ -4680,7 +4680,7 @@ Type TGTKCanvas Extends TGTKGadget
 			button = 3
 		End If
 
-		PostGuiEvent(EVENT_MOUSEDOWN, TGadget(obj),button,,x,y)
+		PostGuiEvent(EVENT_MOUSEDOWN, TGadget(obj),button,,Int(x),Int(y))
 
 		Return True
 	End Function
@@ -4690,9 +4690,9 @@ Type TGTKCanvas Extends TGTKGadget
 		bmx_gtk3maxgui_gdkeventscroll(event, Varptr x, Varptr y, Varptr direction)
 
 		If direction = GDK_SCROLL_UP Or direction = GDK_SCROLL_LEFT Then
-			PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),-1,,x,y)
+			PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),-1,,Int(x),Int(y))
 		Else
-			PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),1,,x,y)
+			PostGuiEvent(EVENT_MOUSEWHEEL, TGadget(obj),1,,Int(x),Int(y))
 		End If
 	End Function
 
@@ -4706,7 +4706,7 @@ Type TGTKCanvas Extends TGTKGadget
 			button = 3
 		End If
 
-		PostGuiEvent(EVENT_MOUSEUP, TGadget(obj),button,,x,y)
+		PostGuiEvent(EVENT_MOUSEUP, TGadget(obj),button,,Int(x),Int(y))
 
 		Return True
 	End Function
@@ -4740,7 +4740,7 @@ Type TGTKCanvas Extends TGTKGadget
 		Else
 			button = 0
 		End If
-		PostGuiEvent(EVENT_MOUSEMOVE, TGadget(obj),button,,x,y)
+		PostGuiEvent(EVENT_MOUSEMOVE, TGadget(obj),button,,Int(x),Int(y))
 
 		Return True
 	End Function
@@ -4909,7 +4909,7 @@ Type TGTKDefaultTextArea Extends TGTKTextArea
 		bmx_gtk3maxgui_gdkeventbutton(event, Varptr x, Varptr y, Varptr button)
 
 		If button = 3 Then ' right mouse button
-			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,x,y)
+			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,Int(x),Int(y))
 			Return True
 		End If
 
