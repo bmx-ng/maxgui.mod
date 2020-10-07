@@ -108,7 +108,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		bmx_gtk3maxgui_gdkeventbutton(event, Varptr x, Varptr y, Varptr button)
 
 		If button = 3 Then ' right mouse button
-			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,x,y)
+			PostGuiEvent(EVENT_GADGETMENU, TGadget(obj),,,Int(x),Int(y))
 			Return True
 		End If
 
