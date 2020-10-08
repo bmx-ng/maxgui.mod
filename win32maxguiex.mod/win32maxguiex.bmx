@@ -2798,7 +2798,8 @@ Type TWindowsListBox Extends TWindowsGadget
 		If Not IsSingleSelect() Then SelectionChanged()
 		Sensitize()
 		MemFree it.pszText()
-
+		
+		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,LVSCW_AUTOSIZE_USEHEADER
 	EndMethod
 
 	Method SetListItem(index,Text$,tip$,icon,tag:Object)
@@ -3188,9 +3189,9 @@ Type TWindowsToolbar Extends TWindowsGadget
 	'Use this method to grayscale/fade-out a given pixmap and assign the contained icons
 	'as disabled icons.
 	Method CreateDisabledIconStrip:TIconStrip(pixmap:TPixmap, saturation:Float = 0.1, alpha:Float = 0.4)
-		if not pixmap then return
+		If Not pixmap Then Return
 		'work on a copy to avoid manipulating the original pixmap data
-		local disabledPixmap:TPixmap = pixmap.copy()
+		Local disabledPixmap:TPixmap = pixmap.copy()
 		'grayscale and fadeout each pixel
 		For Local x:Int = 0 Until pixmap.width
 			For Local y:Int = 0 Until pixmap.height
