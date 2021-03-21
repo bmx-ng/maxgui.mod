@@ -720,7 +720,6 @@ Type TGTKWindow Extends TGTKContainer
 	End Function
 	
 	Method Rethink:Int()
-		gtk_window_move(handle, xpos, ypos)
 		If style & WINDOW_RESIZABLE Then
 			gtk_window_resize(handle, width, calcHeight(height))
 		Else
