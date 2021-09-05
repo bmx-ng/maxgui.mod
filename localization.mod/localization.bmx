@@ -220,7 +220,8 @@ Type TMaxGUILocalizationEngine
 					Case Asc("}")
 						
 						'If previous char was also a closing "}" then we're leaving a token, so interpret it.
-						If tmpPrevChar = Text[i] Then
+						'ensure tmpCount is > 0 ("{{" was found)
+						If tmpPrevChar = Text[i] and tmpCount > 0 Then
 							
 							' Retrieve the token text
 							tmpCount:-1
