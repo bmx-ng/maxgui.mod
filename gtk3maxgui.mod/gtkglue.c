@@ -66,11 +66,11 @@ void bmx_gtk3_gtktextiter_free(GtkTextIter * iter) {
 }
 
 GtkTextTag * bmx_gtk3_set_text_tag_style(GtkTextBuffer *buffer, const gchar *tag, GdkRGBA * color, int _style, int _weight, int _under, int _strike) { 
-	return gtk_text_buffer_create_tag(buffer, tag, "foreground-gdk", color, "style", _style, "weight", _weight, "underline", _under, "strikethrough", _strike, 0);
+	return gtk_text_buffer_create_tag(buffer, tag, "foreground-rgba", color, "style", _style, "weight", _weight, "underline", _under, "strikethrough", _strike, 0);
 }
 
 GtkTextTag * bmx_gtk3_set_text_bg_tag(GtkTextBuffer *buffer, const gchar *tag, GdkRGBA * color) {
-	return gtk_text_buffer_create_tag(buffer, tag, "background-gdk", color, 0);
+	return gtk_text_buffer_create_tag(buffer, tag, "background-rgba", color, 0);
 }
 
 BBArray * bmx_gtk3_selection_data_get_uris(GtkSelectionData * data) {
