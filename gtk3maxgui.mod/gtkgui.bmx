@@ -417,43 +417,14 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 		Local _context:Byte Ptr = gtk_widget_get_pango_context(widget)
 
 		getPangoDescriptionFromGuiFont(TGtkGuiFont(font))
-		'Local fontdesc:Byte Ptr = font.fontDesc
 		Local _fontset:Byte Ptr = pango_context_load_fontset(_context, TGtkGuiFont(font).fontDesc, Null)
 
 		pango_fontset_foreach(_fontset, fontforeach, font)
 
-		'pango_font_description_free(fontdesc)
-
 		gtk_widget_destroy(widget)
 		g_object_unref(_context)
 
-		If font.path = "OK!" Then
-			font.path = ""
-			Return font
-		Else
-			Select font.name
-				Case "Lucida"
-					font.name = "DejaVu Sans Mono"
-					font = DoLoadFont(font)
-				Case "DejaVu Sans Mono"
-					font.name = "Droid Sans Mono"
-					font = DoLoadFont(font)
-				Case "Droid Sans Mono"
-					font.name = "FreeMono"
-					font = DoLoadFont(font)
-				Case "FreeMono"
-					Return Null
-				Default ' try a default...
-					font.name = "Lucida"
-					font = DoLoadFont(font)
-			End Select
-
-			If font Then
-				Return font
-			End If
-		
-			Return Null
-		End If
+		Return font
 	End Method
 
 	Method LibraryFont:TGuiFont( fontType:Int = GUIFONT_SYSTEM, size:Double = 0, style:Int = FONT_NORMAL )
@@ -490,12 +461,10 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 		Local fontdesc:Byte Ptr = pango_font_describe(_font)
 		Local thisfont:TGuiFont = getGuiFontFromPangoDescription(fontdesc)
 
-		If thisfont.name.toLower() = TGuiFont(data).name.tolower()  Then
-			TGuiFont(data).name = thisfont.name
+		TGuiFont(data).name = thisfont.name
+		TGuiFont(data).path = ""
 
-			TGuiFont(data).path = "OK!"
-			Return True
-		End If
+		Return True
 	End Function
 
 	Method CreateGadget:TGadget(GadgetClass:Int, name:String, x:Int, y:Int, w:Int, h:Int,group:TGadget, style:Int)
