@@ -412,19 +412,60 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 		Return DoLoadFont(font)
 	End Method
 	
-	Method DoLoadFont:TGuiFont(font:TGuiFont)
+	Method DoLoadFont:TGuiFont(font:TGuiFont, automaticFallback:Int = False )
 		Local widget:Byte Ptr = gtk_label_new(Null)
 		Local _context:Byte Ptr = gtk_widget_get_pango_context(widget)
 
 		getPangoDescriptionFromGuiFont(TGtkGuiFont(font))
+		'Local fontdesc:Byte Ptr = font.fontDesc
 		Local _fontset:Byte Ptr = pango_context_load_fontset(_context, TGtkGuiFont(font).fontDesc, Null)
 
-		pango_fontset_foreach(_fontset, fontforeach, font)
+		If automaticFallback
+			pango_fontset_foreach(_fontset, fontforeachFallback, font)
+		Else
+			pango_fontset_foreach(_fontset, fontforeach, font)
+		EndIf
+
+		'pango_font_description_free(fontdesc)
 
 		gtk_widget_destroy(widget)
 		g_object_unref(_context)
 
-		Return font
+		If font.path = "OK!" Then
+			font.path = ""
+			Return font
+		Else
+			Select font.name
+				Case "Lucida"
+					font.name = "DejaVu Sans Mono"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
+					font = DoLoadFont(font)
+				Case "DejaVu Sans Mono"
+					font.name = "Droid Sans Mono"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
+					font = DoLoadFont(font)
+				Case "Droid Sans Mono"
+					font.name = "FreeMono"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
+					font = DoLoadFont(font)
+				Case "FreeMono"
+					font.name = "Monospace"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
+					font = DoLoadFont(font, True)
+				Case "MonoSpace"
+					Return Null
+				Default ' try a default...
+					font.name = "Lucida"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
+					font = DoLoadFont(font)
+			End Select
+
+			If font Then
+				Return font
+			End If
+		
+			Return Null
+		End If
 	End Method
 
 	Method LibraryFont:TGuiFont( fontType:Int = GUIFONT_SYSTEM, size:Double = 0, style:Int = FONT_NORMAL )
@@ -461,8 +502,20 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 		Local fontdesc:Byte Ptr = pango_font_describe(_font)
 		Local thisfont:TGuiFont = getGuiFontFromPangoDescription(fontdesc)
 
+		If thisfont.name.toLower() = TGuiFont(data).name.tolower()  Then
+			TGuiFont(data).name = thisfont.name
+
+			TGuiFont(data).path = "OK!"
+			Return True
+		End If
+	End Function
+
+	Function fontforeachFallback:Int(fontset:Byte Ptr, _font:Byte Ptr, data:Object)
+		Local fontdesc:Byte Ptr = pango_font_describe(_font)
+		Local thisfont:TGuiFont = getGuiFontFromPangoDescription(fontdesc)
+
 		TGuiFont(data).name = thisfont.name
-		TGuiFont(data).path = ""
+		TGuiFont(data).path = "OK!"
 
 		Return True
 	End Function
