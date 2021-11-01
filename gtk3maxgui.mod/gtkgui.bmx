@@ -412,7 +412,7 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 		Return DoLoadFont(font)
 	End Method
 	
-	Method DoLoadFont:TGuiFont(font:TGuiFont)
+	Method DoLoadFont:TGuiFont(font:TGuiFont, automaticFallback:Int = False )
 		Local widget:Byte Ptr = gtk_label_new(Null)
 		Local _context:Byte Ptr = gtk_widget_get_pango_context(widget)
 
@@ -420,7 +420,11 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 		'Local fontdesc:Byte Ptr = font.fontDesc
 		Local _fontset:Byte Ptr = pango_context_load_fontset(_context, TGtkGuiFont(font).fontDesc, Null)
 
-		pango_fontset_foreach(_fontset, fontforeach, font)
+		If automaticFallback
+			pango_fontset_foreach(_fontset, fontforeachFallback, font)
+		Else
+			pango_fontset_foreach(_fontset, fontforeach, font)
+		EndIf
 
 		'pango_font_description_free(fontdesc)
 
@@ -434,17 +438,25 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 			Select font.name
 				Case "Lucida"
 					font.name = "DejaVu Sans Mono"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
 					font = DoLoadFont(font)
 				Case "DejaVu Sans Mono"
 					font.name = "Droid Sans Mono"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
 					font = DoLoadFont(font)
 				Case "Droid Sans Mono"
 					font.name = "FreeMono"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
 					font = DoLoadFont(font)
 				Case "FreeMono"
+					font.name = "Monospace"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
+					font = DoLoadFont(font, True)
+				Case "MonoSpace"
 					Return Null
 				Default ' try a default...
 					font.name = "Lucida"
+					clearPangoDescriptionCacheForGuiFont(TGtkGuiFont(font))
 					font = DoLoadFont(font)
 			End Select
 
@@ -496,6 +508,16 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 			TGuiFont(data).path = "OK!"
 			Return True
 		End If
+	End Function
+
+	Function fontforeachFallback:Int(fontset:Byte Ptr, _font:Byte Ptr, data:Object)
+		Local fontdesc:Byte Ptr = pango_font_describe(_font)
+		Local thisfont:TGuiFont = getGuiFontFromPangoDescription(fontdesc)
+
+		TGuiFont(data).name = thisfont.name
+		TGuiFont(data).path = "OK!"
+
+		Return True
 	End Function
 
 	Method CreateGadget:TGadget(GadgetClass:Int, name:String, x:Int, y:Int, w:Int, h:Int,group:TGadget, style:Int)

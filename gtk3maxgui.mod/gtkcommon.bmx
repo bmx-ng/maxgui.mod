@@ -1042,6 +1042,16 @@ Function getPangoDescriptionFromGuiFont(font:TGtkGuiFont)
 End Function
 
 Rem
+internal: Clear a cached Pango font description for a TGuiFont. (INTERNAL)
+End Rem
+Function clearPangoDescriptionCacheForGuiFont(font:TGtkGuiFont)
+	If font.fontDesc Then
+		pango_font_description_free(font.fontDesc)
+		font.fontDesc = Null
+	EndIf
+End Function
+
+Rem
 internal: Returns a TGuiFont from a pango description object. (INTERNAL)
 End Rem
 Function getGuiFontFromPangoDescription:TGuiFont(fontdesc:Byte Ptr)
