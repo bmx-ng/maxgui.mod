@@ -529,8 +529,8 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 					'Sort and determine whether to emit the event
 					Select msg
 						Case WM_MOUSEMOVE
-							If (owner._oldcursorlp<>l) Then
-								owner._oldcursorlp=l
+							If (owner._oldcursorlp<>Byte Ptr(l)) Then
+								owner._oldcursorlp=Byte Ptr(l)
 								SystemEmitOSEvent hwnd,msg,w,l,owner
 							EndIf
 						Case WM_LBUTTONUP, WM_RBUTTONUP, WM_MBUTTONUP
@@ -719,7 +719,7 @@ Type TWindowsIconStrip Extends TIconStrip
 				ImageList_Add(imagelist,bitmap,Null)
 			EndIf
 		EndIf
-		If imagelist=0
+		If imagelist=Byte Ptr(0)
 			bitmap=TWindowsGraphic.BitmapFromPixmap(pixmap, False)
 			mask=TWindowsGraphic.BitmapMaskFromPixmap(pixmap)
 			imagelist=ImageList_Create(sz,sz,ILC_COLOR24|ILC_MASK,0,1)
@@ -2438,7 +2438,7 @@ Type TWindowsButton Extends TWindowsGadget
 				ImageList_Add(imagelist,bitmap,Null)
 			EndIf
 		EndIf
-		If imagelist=0
+		If imagelist=Byte Ptr(0)
 			bitmap=TWindowsGraphic.BitmapFromPixmap(pixmap, False)
 			mask=TWindowsGraphic.BitmapMaskFromPixmap(pixmap)
 			imagelist=ImageList_Create(pixmap.width,pixmap.height,ILC_COLOR24|ILC_MASK,0,1)
@@ -3923,7 +3923,7 @@ Type TWindowsPanel Extends TWindowsGadget
 
 				EndIf
 
-				Assert hdc <> wp, "hdc == wp! Please post a MaxGUI bug report."
+				Assert hdc <> Byte Ptr(wp), "hdc == wp! Please post a MaxGUI bug report."
 
 				DeleteObject( hdcCanvas )
 				DeleteDC( hdc )
@@ -4671,7 +4671,7 @@ Type TWindowsTreeNode Extends TGadget
 		If tmpTree Then tmpTree.Desensitize()
 		Select cmd
 			Case ACTIVATE_SELECT
-				If _item <> TVI_ROOT Then
+				If _item <> Byte Ptr(TVI_ROOT) Then
 					SendMessageW _tree,TVM_SELECTITEM,TVGN_CARET,LParam(_item)
 				Else
 					SendMessageW _tree,TVM_SELECTITEM,TVGN_CARET,0
@@ -4829,7 +4829,7 @@ Type TWindowsTreeNode Extends TGadget
 
 	Method RedrawNode()
 
-		If _item = TVI_ROOT Then
+		If _item = Byte Ptr(TVI_ROOT) Then
 			InvalidateRect _tree, Null, True
 		Else
 			Local Rect[] = [Int(_item),0,0,0]
@@ -4921,7 +4921,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 			Case TVN_SELCHANGEDW, TVN_SELCHANGEDA
 				itemnew=bmx_win32_NMTREEVIEW_itemNew(nmhdrPtr)
 				'itemnew=nmhdr+14		'Int Ptr(nmhdr[5])	'itemNew
-				If bmx_win32_TVITEMW_hItem(itemnew)=TVI_ROOT	'hItem
+				If bmx_win32_TVITEMW_hItem(itemnew)=Byte Ptr(TVI_ROOT)	'hItem
 					_selected=_root
 				Else
 					_selected=TWindowsTreeNode(HandleToObject(Size_T(bmx_win32_TVITEMW_lParam(itemnew))))	'lParaM
@@ -4931,7 +4931,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 			Case TVN_ITEMEXPANDEDW, TVN_ITEMEXPANDEDA
 				itemnew=bmx_win32_NMTREEVIEW_itemNew(nmhdrPtr)
 				'itemnew=nmhdr+14		'Int Ptr(nmhdr[5])	'itemNew.TVITEM
-				If bmx_win32_TVITEMW_hItem(itemnew)=TVI_ROOT		'hItem
+				If bmx_win32_TVITEMW_hItem(itemnew)=Byte Ptr(TVI_ROOT)		'hItem
 					node=_root
 				Else
 					node=TWindowsTreeNode(HandleToObject(Size_T(bmx_win32_TVITEMW_lParam(itemnew))))	'lParaM
@@ -4956,7 +4956,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 					'itemnew=nmhdr+14		'Int Ptr(nmhdr[5])	'itemNew
 					itemnew=bmx_win32_NMTREEVIEW_itemNew(nmhdrPtr)
 
-					If bmx_win32_TVITEMW_hItem(itemnew)<>TVI_ROOT Then
+					If bmx_win32_TVITEMW_hItem(itemnew)<>Byte Ptr(TVI_ROOT) Then
 						TGadget.dragGadget[data-1]=TWindowsTreeNode(HandleToObject(Size_T(bmx_win32_TVITEMW_lParam(itemnew))))
 						PostGuiEvent EVENT_GADGETDRAG, data, KeyMods(), bmx_win32_NMTREEVIEW_x(nmhdrPtr), bmx_win32_NMTREEVIEW_y(nmhdrPtr), TGadget.dragGadget[data-1]
 					Else
