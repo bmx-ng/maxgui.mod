@@ -171,6 +171,10 @@ Extern
 	' gdk pango
 	Function gdk_pango_context_get:Byte Ptr()
 	
+	
+	' gtkcanvas
+	Function gdk_x11_window_get_xid:Byte Ptr(handle:Byte Ptr)
+
 	' gtkwindow
 	Function gtk_window_new:Byte Ptr(_type:Int)
 	Function gtk_window_move(handle:Byte Ptr, x:Int, y:Int)

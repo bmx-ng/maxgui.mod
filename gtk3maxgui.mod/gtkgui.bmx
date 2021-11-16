@@ -572,10 +572,8 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 				gtkclass = GTK_PROGRESSBAR
 			Case GADGET_MENUITEM
 				gtkclass = GTK_MENUITEM
-Rem 
 			Case GADGET_CANVAS
 				gtkclass = GTK_CANVAS
-End Rem
 		End Select
 
 		gtkgroup = TGTKGadget(group)

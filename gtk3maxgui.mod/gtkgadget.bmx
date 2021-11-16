@@ -117,10 +117,8 @@ Type TGTKGadget Extends TGadget
 				gadget = TGTKListbox.CreateListBox(x, y ,w , h, label, group, style)
 			Case GTK_TREEVIEW
 				gadget = TGTKTreeView.CreateTreeView(x, y ,w , h, label, group, style)
-Rem 
 			Case GTK_CANVAS
 				gadget = TGTKCanvas.CreateCanvas(x, y ,w , h, label, group, style)
-End Rem
 		End Select
 
 		' map the new gadget - so we can find it later if required
@@ -4590,7 +4588,6 @@ End Type
 Rem
 bbdoc: A canvas.
 End Rem
-Rem 
 Type TGTKCanvas Extends TGTKGadget
 
 	Field canvas:TGraphics
@@ -4622,23 +4619,22 @@ Type TGTKCanvas Extends TGTKGadget
 		' we need to handle our own redrawing...
 		'gtk_widget_set_double_buffered(handle, False)
 
-		addConnection("expose_event", g_signal_cb3(handle, "expose_event", CanvasRedraw, Self, Destroy, 0))
+		addConnection("draw", g_signal_cb3(handle, "draw", CanvasRedraw, Self, Destroy, 0))
 
 		gtk_widget_add_events(handle, GDK_BUTTON_PRESS_MASK | ..
 			GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | ..
 			GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK)' | ..
 '				GDK_POINTER_MOTION_HINT_MASK)
 
-		addConnection("button-press-event", g_signal_cb3(handle, "button-press-event", OnMouseDown, Self, Destroy, 0))
-		addConnection("button-release-event", g_signal_cb3(handle, "button-release-event", OnMouseUp, Self, Destroy, 0))
-		addConnection("enter-notify-event", g_signal_cb3(handle, "enter-notify-event", OnMouseEnter, Self, Destroy, 0))
-		addConnection("leave-notify-event", g_signal_cb3(handle, "leave-notify-event", OnMouseLeave, Self, Destroy, 0))
-		addConnection("motion-notify-event", g_signal_cb3(handle, "motion-notify-event", OnMouseMove, Self, Destroy, 0))
+		addConnection("button-press-event", g_signal_cb3_ret(handle, "button-press-event", OnMouseDown, Self, Destroy, 0))
+		addConnection("button-release-event", g_signal_cb3_ret(handle, "button-release-event", OnMouseUp, Self, Destroy, 0))
+		addConnection("enter-notify-event", g_signal_cb3_ret(handle, "enter-notify-event", OnMouseEnter, Self, Destroy, 0))
+		addConnection("leave-notify-event", g_signal_cb3_ret(handle, "leave-notify-event", OnMouseLeave, Self, Destroy, 0))
+		addConnection("motion-notify-event", g_signal_cb3_ret(handle, "motion-notify-event", OnMouseMove, Self, Destroy, 0))
 		addConnection("scroll-event", g_signal_cb3(handle, "scroll-event", OnScroll, Self, Destroy, 0))
 
-		addConnection("key-press-event", g_signal_cb3(handle, "key-press-event", OnKeyDown, Self, Destroy, 0))
-		addConnection("key-release-event", g_signal_cb3(handle, "key-release-event", OnKeyUp, Self, Destroy, 0))
-
+		addConnection("key-press-event", g_signal_cb3_ret(handle, "key-press-event", OnKeyDown, Self, Destroy, 0))
+		addConnection("key-release-event", g_signal_cb3_ret(handle, "key-release-event", OnKeyUp, Self, Destroy, 0))
 		SetShow(True)
 	End Method
 
@@ -4652,7 +4648,7 @@ Type TGTKCanvas Extends TGTKGadget
 
 	Method CanvasGraphics:TGraphics()
 		If Not canvas Then
-			canvas = BRL.Graphics.AttachGraphics(gdk_x11_drawable_get_xid(gtk_widget_get_window(handle)), Mode)
+			canvas = BRL.Graphics.AttachGraphics(gdk_x11_window_get_xid(gtk_widget_get_window(handle)), Mode)
 		End If
 
 		Return canvas
@@ -4792,7 +4788,7 @@ Type TGTKCanvas Extends TGTKGadget
 		handle = Null
 	End Method
 End Type
-End Rem
+
 
 Rem
 bbdoc: A text area.
