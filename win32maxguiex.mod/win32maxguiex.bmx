@@ -3798,7 +3798,7 @@ Type TWindowsPanel Extends TWindowsGadget
 		RedrawGadget(Self)
 	EndMethod
 
-	Method AttachGraphics:TGraphics( flags )
+	Method AttachGraphics:TGraphics( flags:Long )
 		_canvas=brl.Graphics.AttachGraphics( _hwnd,flags )
 	EndMethod
 

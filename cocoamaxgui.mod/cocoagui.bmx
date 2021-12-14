@@ -924,7 +924,7 @@ Type TNSGadget Extends TGadget
 	
 ' canvas
 
-	Method AttachGraphics:TGraphics( flags )
+	Method AttachGraphics:TGraphics( flags:Long )
 		canvas=brl.Graphics.AttachGraphics( Query(QUERY_NSVIEW_CLIENT),flags )
 	End Method
 	

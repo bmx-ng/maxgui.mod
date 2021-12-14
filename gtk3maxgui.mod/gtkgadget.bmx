@@ -4591,7 +4591,7 @@ End Rem
 Type TGTKCanvas Extends TGTKGadget
 
 	Field canvas:TGraphics
-	Field Mode:Int
+	Field Mode:Long
 	
 
 	Function CreateCanvas:TGTKCanvas(x:Int, y:Int, w:Int, h:Int, label:String, group:TGadget, style:Int)
@@ -4642,7 +4642,7 @@ Type TGTKCanvas Extends TGTKGadget
 		PostGuiEvent(EVENT_GADGETPAINT, TGadget(obj))
 	End Function
 	
-	Method AttachGraphics:TGraphics( flags:Int )
+	Method AttachGraphics:TGraphics( flags:Long )
 		Mode = flags
 	End Method
 

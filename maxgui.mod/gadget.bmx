@@ -851,7 +851,7 @@ Type TGadget
 	Method GetProp()
 	End Method
 ' canvas
-	Method AttachGraphics:TGraphics( flags )
+	Method AttachGraphics:TGraphics( flags:Long )
 	End Method
 	Method CanvasGraphics:TGraphics()
 	End Method
@@ -1108,7 +1108,7 @@ Type TProxyGadget Extends TGadget
 		Return proxy.SetPixmap(pixmap,flags)
 	End Method
 ' canvas
-	Method AttachGraphics:TGraphics( flags )
+	Method AttachGraphics:TGraphics( flags:Long )
 		Return proxy.AttachGraphics( flags )
 	End Method
 	Method CanvasGraphics:TGraphics()
