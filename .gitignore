@@ -5,6 +5,9 @@
 *.x64.a
 *.x64.i
 
-.bmx/
+.bmx
 *.i2
 commands.html
+
+*.i
+*.a
