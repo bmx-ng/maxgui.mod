@@ -356,7 +356,7 @@ Type TGTK3SystemDriver Extends TSystemDriver
 		Return NativeDriver.OpenURL(url)
 	End Method
 
-	Method DesktopWidth:Int()
+	Method DesktopWidth:Int(display:Int) Override
 		If Not _desktop Then
 			_desktop = TGTKDesktop.CreateDesktop()
 		End If
@@ -364,7 +364,7 @@ Type TGTK3SystemDriver Extends TSystemDriver
 		Return _desktop.ClientWidth()
 	End Method
 	
-	Method DesktopHeight:Int()
+	Method DesktopHeight:Int(display:Int) Override
 		If Not _desktop Then
 			_desktop = TGTKDesktop.CreateDesktop()
 		End If
@@ -372,7 +372,7 @@ Type TGTK3SystemDriver Extends TSystemDriver
 		Return _desktop.ClientHeight()
 	End Method
 
-	Method DesktopDepth:Int()
+	Method DesktopDepth:Int(display:Int) Override
 		If Not _desktop Then
 			_desktop = TGTKDesktop.CreateDesktop()
 		End If
@@ -380,7 +380,7 @@ Type TGTK3SystemDriver Extends TSystemDriver
 		Return _desktop.GetDepth()
 	End Method
 
-	Method DesktopHertz:Int()
+	Method DesktopHertz:Int(display:Int) Override
 		If Not _desktop Then
 			_desktop = TGTKDesktop.CreateDesktop()
 		End If
