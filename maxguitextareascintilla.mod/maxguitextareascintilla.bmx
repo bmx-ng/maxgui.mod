@@ -45,7 +45,7 @@ ModuleInfo "CC_OPTS: -fexceptions"
 ?Linux
 
 ModuleInfo "CC_OPTS: -DGTK"
-ModuleInfo "CC_OPTS: -std=c++11"
+ModuleInfo "CPP_OPTS: -std=c++11"
 
 ' glib
 ModuleInfo "CC_OPTS: -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include -I/usr/lib/aarch64-linux-gnu/glib-2.0/include -I/usr/lib64/glib-2.0/include"
@@ -84,7 +84,8 @@ ModuleInfo "CC_OPTS: -DSCI_NAMESPACE -DSCI_LEXER"
 
 ?win32
 
-ModuleInfo "CC_OPTS: -std=c++11 -DSCI_NAMESPACE -DSCI_LEXER -DSTATIC_BUILD"
+ModuleInfo "CPP_OPTS: -std=c++11"
+ModuleInfo "CC_OPTS: -DSCI_NAMESPACE -DSCI_LEXER -DSTATIC_BUILD"
 
 Import "win32.bmx"
 
