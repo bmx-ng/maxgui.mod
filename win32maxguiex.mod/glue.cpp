@@ -44,7 +44,7 @@ extern "C" {
 BOOL AlphaBlendArgs(HDC hdcDest, int xoriginDest, int yoriginDest, int wDest, int hDest, HDC hdcSrc, int xoriginSrc,
 		int yoriginSrc, int wSrc, int hSrc, int blend) {
 
-	BLENDFUNCTION ftn = { blend & 0xff, (blend & 0xff00) >> 8, (blend & 0xff0000) >> 16,(blend & 0xff000000) >> 24 };
+	BLENDFUNCTION ftn = { static_cast<BYTE>(blend & 0xff), static_cast<BYTE>((blend & 0xff00) >> 8), static_cast<BYTE>((blend & 0xff0000) >> 16),static_cast<BYTE>((blend & 0xff000000) >> 24) };
 	
 	return AlphaBlend(hdcDest, xoriginDest, yoriginDest, wDest, hDest, hdcSrc, xoriginSrc,
 		yoriginSrc, wSrc, hSrc, ftn);
