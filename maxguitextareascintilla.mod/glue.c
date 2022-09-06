@@ -178,7 +178,11 @@ void bmx_mgta_scintilla_startendfromchar(SCI_HANDLE sci, int pos, int length, in
 }
 
 int bmx_mgta_scintilla_positionfromline(SCI_HANDLE sci, int line, int valueInBytes) {
-	return scintilla_send_message(sci, SCI_INDEXPOSITIONFROMLINE, line, SC_LINECHARACTERINDEX_UTF16);
+	if (valueInBytes){
+		return scintilla_send_message(sci, SCI_POSITIONFROMLINE, line, 0);
+	} else {
+		return scintilla_send_message(sci, SCI_INDEXPOSITIONFROMLINE, line, SC_LINECHARACTERINDEX_UTF16);
+	}
 }
 
 void bmx_mgta_scintilla_setselectionstart(SCI_HANDLE sci, int pos) {
