@@ -51,7 +51,7 @@ BBString * bmx_mgta_scintilla_gettext(SCI_HANDLE sci) {
 	
 	char * buffer = malloc(len + 1);
 	
-	scintilla_send_message(sci, SCI_GETTEXT, len, buffer);
+	scintilla_send_message(sci, SCI_GETTEXT, len, (LPARAM)buffer);
 	
 	BBString * s = bbStringFromUTF8String(buffer);
 	
@@ -63,7 +63,7 @@ BBString * bmx_mgta_scintilla_gettext(SCI_HANDLE sci) {
 void bmx_mgta_scintilla_settext(SCI_HANDLE sci, BBString * text) {
 	char * t = bbStringToUTF8String(text);
 
-	scintilla_send_message(sci, SCI_SETTEXT, 0, t);
+	scintilla_send_message(sci, SCI_SETTEXT, 0, (LPARAM)t);
 	
 	bbMemFree(t);
 }
@@ -75,7 +75,7 @@ void bmx_mgta_scintilla_setfont(SCI_HANDLE sci, BBString * name, int size) {
 
 	/* make sure all the styles are changed */
 	for (style = 0; style < STYLE_MAX; style++) {
-		scintilla_send_message(sci, SCI_STYLESETFONT, style, n);
+		scintilla_send_message(sci, SCI_STYLESETFONT, style, (LPARAM)n);
 		scintilla_send_message(sci, SCI_STYLESETSIZE, style, size);
 	}
 	
@@ -110,7 +110,7 @@ void bmx_mgta_scintilla_setlinedigits(SCI_HANDLE sci, int * digits, int show) {
 		}
 		
 		/* set the linenumber margin width */
-		int textWidth = scintilla_send_message(sci, SCI_TEXTWIDTH, STYLE_LINENUMBER, buf) + 4;
+		int textWidth = scintilla_send_message(sci, SCI_TEXTWIDTH, STYLE_LINENUMBER, (LPARAM)buf) + 4;
 		scintilla_send_message(sci, SCI_SETMARGINWIDTHN, 0, textWidth);
 		
 		free(buf);
@@ -119,7 +119,7 @@ void bmx_mgta_scintilla_setlinedigits(SCI_HANDLE sci, int * digits, int show) {
 
 int bmx_mgta_scintilla_textwidth(SCI_HANDLE sci, BBString * text) {
 	char * t = bbStringToUTF8String(text);
-	int textWidth = scintilla_send_message(sci, SCI_TEXTWIDTH, STYLE_LINENUMBER, t);
+	int textWidth = scintilla_send_message(sci, SCI_TEXTWIDTH, STYLE_LINENUMBER, (LPARAM)t);
 	bbMemFree(t);
 
 	return textWidth;
@@ -140,7 +140,7 @@ int bmx_mgta_scintilla_charfrombyte(SCI_HANDLE sci, int pos, int startPos) {
 	
 	range.lpstrText = malloc(length + 1);
 	
-	int len = scintilla_send_message(sci, SCI_GETTEXTRANGE, 0, &range);
+	int len = scintilla_send_message(sci, SCI_GETTEXTRANGE, 0, (LPARAM)(&range));
 
 	for (i = 0; i < length; i++) {
 		char c = range.lpstrText[i];
@@ -202,7 +202,7 @@ void bmx_mgta_scintilla_setsel(SCI_HANDLE sci, int startPos, int endPos) {
 }
 
 void bmx_mgta_scintilla_replacesel(SCI_HANDLE sci, const char * text) {
-	scintilla_send_message(sci, SCI_REPLACESEL, 0, text);
+	scintilla_send_message(sci, SCI_REPLACESEL, 0, (LPARAM)text);
 }
 
 void bmx_mgta_scintilla_stylesetback(SCI_HANDLE sci, int col) {
@@ -251,7 +251,7 @@ BBString * bmx_mgta_scintilla_gettextrange(SCI_HANDLE sci, int startPos, int end
 	
 	range.lpstrText = malloc(endPos - startPos + 1);
 	
-	int len = scintilla_send_message(sci, SCI_GETTEXTRANGE, 0, &range);
+	int len = scintilla_send_message(sci, SCI_GETTEXTRANGE, 0, (LPARAM)(&range));
 	
 	BBString * s = bbStringFromUTF8String(range.lpstrText);
 	free(range.lpstrText);
@@ -291,7 +291,7 @@ void bmx_mgta_scintilla_settargetend(SCI_HANDLE sci, int pos) {
 }
 
 void bmx_mgta_scintilla_replacetarget(SCI_HANDLE sci, const char * text) {
-	scintilla_send_message(sci, SCI_REPLACETARGET, -1, text);
+	scintilla_send_message(sci, SCI_REPLACETARGET, -1, (LPARAM)text);
 }
 
 void bmx_mgta_scintilla_cut(SCI_HANDLE sci) {
@@ -312,7 +312,7 @@ int bmx_mgta_scintilla_linefromposition(SCI_HANDLE sci, int pos) {
 
 void bmx_mgta_scintilla_appendtext(SCI_HANDLE sci, BBString * text) {
 	char * s = bbStringToUTF8String(text);
-	scintilla_send_message(sci, SCI_APPENDTEXT, strlen(s), s);
+	scintilla_send_message(sci, SCI_APPENDTEXT, strlen(s), (LPARAM)s);
 	bbMemFree(s);
 }
 
@@ -404,17 +404,17 @@ void bmx_mgta_scintilla_sethighlightlanguage(SCI_HANDLE sci, BBString * lang) {
 	char * t = (lang != &bbEmptyString) ? bbStringToUTF8String(lang) : 0;
 
 	if (t) {
-		scintilla_send_message(sci, SCI_SETLEXERLANGUAGE, 0, t);
+		scintilla_send_message(sci, SCI_SETLEXERLANGUAGE, 0, (LPARAM)t);
 		bbMemFree(t);
 	} else {
 		scintilla_send_message(sci, SCI_SETLEXER, SCLEX_NULL, 0);
 	}
 }
 
-bmx_mgta_scintilla_sethighlightkeywords(SCI_HANDLE sci, int index, BBString * keywords) {
+void bmx_mgta_scintilla_sethighlightkeywords(SCI_HANDLE sci, int index, BBString * keywords) {
 	char * t = (keywords != &bbEmptyString) ? bbStringToUTF8String(keywords) : 0;
 	
-	scintilla_send_message(sci, SCI_SETKEYWORDS, index, t != NULL ? t : "");
+	scintilla_send_message(sci, SCI_SETKEYWORDS, index, (LPARAM)(t != NULL ? t : ""));
 
 	if (t) bbMemFree(t);
 }
