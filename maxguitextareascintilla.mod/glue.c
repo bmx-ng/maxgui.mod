@@ -446,6 +446,9 @@ void bmx_mgta_scintilla_sethighlightstyle(SCI_HANDLE sci, int style, int flags, 
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_HEXNUMBER, color);
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_BINNUMBER, color);
 						break;
+					case 5:
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_ERROR, color);
+						break;
 				}
 				break;
 			case SCLEX_CPP:

@@ -417,9 +417,15 @@ void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int i
 			}
 		} else if (sc.state == SCE_B_MULTILINE_STRING) {
 			if (sc.Match("\"\"\"")) {
-				sc.Forward();
-				sc.Forward();
-				sc.ForwardSetState(SCE_B_DEFAULT);
+				if (sc.atLineStart) {
+					sc.Forward();
+					sc.Forward();
+					sc.ForwardSetState(SCE_B_DEFAULT);
+				//the """ needs to be at the begin of a (new) line
+				}else{
+					sc.ChangeState(SCE_B_ERROR);
+					sc.SetState(SCE_B_DEFAULT);
+				}
 			}
 		} else if (sc.state == SCE_B_COMMENT || sc.state == SCE_B_PREPROCESSOR) {
 			if (sc.atLineEnd) {
@@ -446,7 +452,17 @@ void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int i
 			} else if (sc.Match('"')) {
 				//multi- or single-line ?
 				if (sc.Match("\"\"\"")) {
-					sc.SetState(SCE_B_MULTILINE_STRING);
+					//multi-line string needs a new line after opening """
+					int	c = styler.SafeGetCharAt(sc.currentPos + 3);
+					int	cNext = styler.SafeGetCharAt(sc.currentPos + 4);
+					bool atEOL = (c == '\r' && cNext != '\n') || (c == '\n');
+
+					if(atEOL) {
+						sc.SetState(SCE_B_MULTILINE_STRING);
+					} else {
+						sc.ChangeState(SCE_B_ERROR);
+						sc.SetState(SCE_B_ERROR);
+					}
 					sc.Forward();
 					sc.Forward();
 				} else {
