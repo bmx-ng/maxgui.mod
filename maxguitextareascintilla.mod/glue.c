@@ -436,6 +436,7 @@ void bmx_mgta_scintilla_sethighlightstyle(SCI_HANDLE sci, int style, int flags, 
 						break;
 					case 2:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_STRING, color);
+						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_MULTILINE_STRING, color);
 						break;
 					case 3:
 						scintilla_send_message(sci, SCI_STYLESETFORE, SCE_B_KEYWORD, color);
