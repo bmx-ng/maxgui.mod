@@ -42,6 +42,8 @@ using namespace Scintilla;
 
 // for rem block
 #define SCE_B_COMMENTREM 19
+// for multi-line strings
+#define SCE_B_MULTILINE_STRING 23
 
 #define wxSCI_LEX_BLITZMAX 222
 
@@ -102,6 +104,7 @@ static int CheckBMFoldPoint(char const *token, int &level) {
 		!strcmp(token, "type") ||
 		!strcmp(token, "interface") ||
 		!strcmp(token, "struct") ||
+		!strcmp(token, "enum") ||
 		!strcmp(token, "method")) {
 		level |= SC_FOLDLEVELHEADERFLAG;
 		return 1;
@@ -114,6 +117,8 @@ static int CheckBMFoldPoint(char const *token, int &level) {
         !strcmp(token, "endinterface") ||
         !strcmp(token, "end struct") ||
         !strcmp(token, "endstruct") ||
+        !strcmp(token, "end enum") ||
+        !strcmp(token, "endenum") ||
 		!strcmp(token, "end method") ||
         	!strcmp(token, "endmethod")) {
 		return -1;
@@ -410,6 +415,12 @@ void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int i
 				sc.ChangeState(SCE_B_ERROR);
 				sc.SetState(SCE_B_DEFAULT);
 			}
+		} else if (sc.state == SCE_B_MULTILINE_STRING) {
+			if (sc.Match("\"\"\"")) {
+				sc.Forward();
+				sc.Forward();
+				sc.ForwardSetState(SCE_B_DEFAULT);
+			}
 		} else if (sc.state == SCE_B_COMMENT || sc.state == SCE_B_PREPROCESSOR) {
 			if (sc.atLineEnd) {
 				sc.SetState(SCE_B_DEFAULT);
@@ -433,7 +444,14 @@ void SCI_METHOD LexerMax::Lex(Sci_PositionU startPos, Sci_Position length, int i
 				else
 					sc.SetState(SCE_B_COMMENT);
 			} else if (sc.Match('"')) {
-				sc.SetState(SCE_B_STRING);
+				//multi- or single-line ?
+				if (sc.Match("\"\"\"")) {
+					sc.SetState(SCE_B_MULTILINE_STRING);
+					sc.Forward();
+					sc.Forward();
+				} else {
+					sc.SetState(SCE_B_STRING);
+				}
 			} else if (IsDigit(sc.ch)) {
 				sc.SetState(SCE_B_NUMBER);
 			} else if (sc.Match('$')) {
