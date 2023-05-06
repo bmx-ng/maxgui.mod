@@ -810,6 +810,16 @@ Type TGTKWindow Extends TGTKContainer
 			ignoreSizeEvent = True
 		End If
 		Super.SetShape(Max(x, 0), Max(y, 0), w, h)
+
+		'actually move/resize
+		'using the ignore* saves from backupping old position
+		'and sizes before calling "SetShape()"
+		If ignoreMoveEvent Then
+			gtk_window_move(handle, x, y)
+		End If
+		If ignoreSizeEvent Then
+			gtk_window_resize(handle, w, h)
+		End If
 	End Method
 
 	Rem
