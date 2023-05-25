@@ -24,7 +24,7 @@ Strict
 Import "-lgmodule-2.0"
 ?macos
 ?win32
-Import "-lImm32"
+Import "-limm32"
 ?
 
 Import "source.bmx"
