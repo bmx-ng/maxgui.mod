@@ -4833,7 +4833,7 @@ Type TWindowsTreeNode Extends TGadget
 		If _item = Byte Ptr(TVI_ROOT) Then
 			InvalidateRect _tree, Null, True
 		Else
-			Local Rect[] = [Int(_item),0,0,0]
+			Local Rect:Long[] = [Long(_item),0,0,0]
 			If SendMessageW(_tree, TVM_GETITEMRECT, False, LParam Byte Ptr Rect) Then
 				InvalidateRect _tree, Rect, True
 			EndIf
