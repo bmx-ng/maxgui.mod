@@ -131,6 +131,10 @@
 #define SCS_SETRECONVERTSTRING 0x00010000
 #endif
 
+#ifndef WM_MOUSEHWHEEL
+#define WM_MOUSEHWHEEL 0x020E
+#endif
+
 typedef UINT_PTR (WINAPI *SetCoalescableTimerSig)(HWND hwnd, UINT_PTR nIDEvent,
 	UINT uElapse, TIMERPROC lpTimerFunc, ULONG uToleranceDelay);
 
@@ -1351,6 +1355,10 @@ sptr_t ScintillaWin::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam
 				}
 			}
 			return 0;
+			
+		case WM_MOUSEHWHEEL:
+			HorizontalScrollMessage(((short)HIWORD(wParam) > 0)?SB_LINERIGHT:SB_LINELEFT);
+			return true;
 
 		case WM_TIMER:
 			if (wParam == idleTimerID && idler.state) {
