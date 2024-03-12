@@ -5028,6 +5028,10 @@ Type TGTKDefaultTextArea Extends TGTKTextArea
 	End Rem
 	Method SetFont:Int(font:TGuiFont)
 		Super.SetFont(font)
+		
+		If TGTKGuiFont(font)
+			gtk_widget_override_font(handle, TGTKGuiFont(font).fontDesc)
+		EndIf
 
 		' we need to reset the tabs, as it is lost when font is changed.
 		SetTabs(_tabsize)
