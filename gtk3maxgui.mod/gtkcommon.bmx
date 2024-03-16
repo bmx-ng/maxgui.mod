@@ -85,6 +85,7 @@ Extern
 	Function gtk_widget_destroy(handle:Byte Ptr)
 	Function gtk_widget_show(handle:Byte Ptr)
 	Function gtk_widget_hide(handle:Byte Ptr)
+	Function gtk_widget_override_font(handle:Byte Ptr, font_desc:Byte Ptr)
 ?bmxng
 	Function gtk_widget_get_preferred_size(handle:Byte Ptr, minSize:GtkRequisition Var, natSize:GtkRequisition Var)
 	Function gtk_widget_get_allocation(handle:Byte Ptr, allocation:GtkAllocation Var)
