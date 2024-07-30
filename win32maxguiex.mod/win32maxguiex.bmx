@@ -2544,7 +2544,7 @@ Type TWindowsMenu Extends TGadget
 		ElseIf keycode>=KEY_F1 And keycode<=KEY_F12
 			m$="F"+(keycode+1-KEY_F1)
 		ElseIf keycode>=KEY_NUM0 And keycode<=KEY_NUM9
-			m$="Num "+(keycode+1-KEY_NUM0)
+			m$="Num "+(keycode-KEY_NUM0)
 		Else
 			Select keycode
 				Case KEY_BACKSPACE;m = pre+"Backspace"+suf
