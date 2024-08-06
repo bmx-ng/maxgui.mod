@@ -3051,11 +3051,11 @@ void NSPopupMenu(nsgadget *gadget,nsgadget *menugadget){
 	event=[NSEvent 
 		mouseEventWithType:NSRightMouseUp 
 		location:[window convertScreenToBase:[NSEvent mouseLocation]]
-		modifierFlags:nil 
+		modifierFlags:(NSEventModifierFlags)nil 
 		timestamp:0 
 		windowNumber:[window windowNumber] 
      	context:nil
-		eventNumber:nil
+		eventNumber:(NSInteger)nil
 		clickCount:1 
 		pressure:0];
 	[NSMenu popUpContextMenu:[menuitem submenu] withEvent:event forView:view];		
