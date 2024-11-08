@@ -1,8 +1,8 @@
 ' createbutton.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Global window:TGadget = CreateWindow("MaxGUI Buttons",40,40,400,330,Null,WINDOW_TITLEBAR|WINDOW_CLIENTCOORDS)
 	CreateButton("Std. Button",10,10,120,30,window,BUTTON_PUSH)

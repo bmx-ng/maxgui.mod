@@ -1,8 +1,8 @@
 ' createtimer.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget
 Local label:TGadget

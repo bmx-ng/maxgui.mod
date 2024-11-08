@@ -1,8 +1,8 @@
 ' createprogbar.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget=CreateWindow("My Window",50,50,240,100,,WINDOW_TITLEBAR)
 
@@ -17,7 +17,7 @@ While WaitEvent()
 		Case EVENT_WINDOWCLOSE
 			End
 		Case EVENT_TIMERTICK
-			Local t=EventData()
+			Local t:Int=EventData()
 			If t=50 End
 			UpdateProgBar progbar,t/50.0
 	End Select

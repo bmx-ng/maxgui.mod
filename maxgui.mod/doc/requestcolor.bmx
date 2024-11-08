@@ -1,12 +1,12 @@
 ' requestcolor.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget
 Local panel:TGadget
-Local red,green,blue
+Local red:Int,green:Int,blue:Int
 
 window=CreateWindow("RequestColor",40,40,320,240)
 panel=CreatePanel(20,20,32,32,window,PANEL_ACTIVE|PANEL_SUNKEN)

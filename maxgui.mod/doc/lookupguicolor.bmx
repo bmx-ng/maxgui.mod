@@ -1,8 +1,8 @@
 ' lookupguicolor.bmx
-
-Strict
+SuperStrict
 
 Import MaxGUI.Drivers
+
 
 AppTitle = "LookupGuiColor() Example"
 

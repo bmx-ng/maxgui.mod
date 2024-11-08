@@ -1,10 +1,9 @@
 ' redrawgadget.bmx
-
 ' version 3 - fixed to be compatible with virtual resolutions
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict
 
 Type TApplet 
 
@@ -14,7 +13,7 @@ Type TApplet
 		AddHook EmitEventHook,eventhook,Self
 	End Method
 
-	Function eventhook:Object(id,data:Object,context:Object)
+	Function eventhook:Object(id:Int,data:Object,context:Object)
 		Local event:TEvent = TEvent(data)
 		Local app:TApplet = TApplet(context)
 		app.OnEvent( event )
@@ -65,8 +64,8 @@ Type TSpinningApplet Extends TApplet
 		
 		window = CreateWindow( name, 20, 20, 512, 512 )
 		
-		Local w = ClientWidth(window)
-		Local h = ClientHeight(window)
+		Local w:Int = ClientWidth(window)
+		Local h:Int = ClientHeight(window)
 		
 		canvas = CreateCanvas( 0, 0, w, h, window )
 		SetGadgetLayout( canvas, EDGE_ALIGNED, EDGE_ALIGNED, EDGE_ALIGNED, EDGE_ALIGNED )

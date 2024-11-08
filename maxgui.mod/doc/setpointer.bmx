@@ -1,8 +1,8 @@
 ' setpointer.bmx
+SuperStrict 
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget
 Local combo:TGadget

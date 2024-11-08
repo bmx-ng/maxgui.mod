@@ -1,8 +1,8 @@
 ' createslider.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget=CreateWindow("My Window",0,0,240,240,,WINDOW_TITLEBAR)
 
@@ -21,7 +21,7 @@ slider[2]=CreateSlider(30,30,100,24,window,SLIDER_HORIZONTAL|SLIDER_TRACKBAR)
 
 Local trackbar:TGadget[5]
 
-For Local i=0 To 4
+For Local i:Int=0 To 4
 	trackbar[i]=CreateSlider(30+i*20,50,16,60,window,SLIDER_VERTICAL|SLIDER_TRACKBAR)
 Next
 
