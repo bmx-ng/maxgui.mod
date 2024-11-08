@@ -1,16 +1,16 @@
 ' createcanvas.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
-Global GAME_WIDTH=320
-Global GAME_HEIGHT=240
+Global GAME_WIDTH:Int=320
+Global GAME_HEIGHT:Int=240
 
 ' create a centered window with client size GAME_WIDTH,GAME_HEIGHT
 
-Local wx=(ClientWidth(Desktop())-GAME_WIDTH)/2
-Local wy=(ClientHeight(Desktop())-GAME_HEIGHT)/2
+Local wx:Int=(ClientWidth(Desktop())-GAME_WIDTH)/2
+Local wy:Int=(ClientHeight(Desktop())-GAME_HEIGHT)/2
 
 Local window:TGadget=CreateWindow("My Canvas",wx,wy,GAME_WIDTH,GAME_HEIGHT,Null,WINDOW_TITLEBAR)'|WINDOW_CLIENTCOORDS)
 
@@ -31,7 +31,7 @@ While WaitEvent()
 			SetOrigin 160,120
 			SetLineWidth 5
 			Cls
-			Local t=MilliSecs()
+			Local t:Int=MilliSecs()
 			DrawLine 0,0,120*Cos(t),120*Sin(t)
 			DrawLine 0,0,80*Cos(t/60),80*Sin(t/60)
 			Flip

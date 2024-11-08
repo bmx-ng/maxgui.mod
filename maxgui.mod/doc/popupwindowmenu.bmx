@@ -1,6 +1,7 @@
-Strict
+SuperStrict
 
 Import MaxGui.Drivers
+
 
 Local menu:TGadget
 Local window:TGadget

@@ -1,8 +1,8 @@
 ' createlistbox.bmx
-
-Strict
+SuperStrict
 
 Import MaxGui.Drivers
+
 
 AppTitle = "ListBox Example"
 

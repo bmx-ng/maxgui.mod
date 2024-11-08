@@ -1,8 +1,8 @@
 ' createcombobox.bmx
-
-Strict
+SuperStrict
 
 Import MaxGui.Drivers
+
 
 AppTitle = "ComboBox Style Example"
 

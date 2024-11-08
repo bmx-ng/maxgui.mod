@@ -1,8 +1,8 @@
 ' setgadgetfilter.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget
 Global textarea:TGadget
@@ -19,7 +19,7 @@ SetGadgetFilter textarea,filter
 
 Print "KEY_TAB="+KEY_TAB
 
-Function filter(event:TEvent,context:Object)
+Function filter:Int(event:TEvent,context:Object)
 	Select event.id
 		Case EVENT_KEYDOWN
 			Print "filtering keydown:"+event.data+","+event.mods

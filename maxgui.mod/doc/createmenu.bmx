@@ -1,25 +1,25 @@
 ' createmenu.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget
 Local filemenu:TGadget
 Local editmenu:TGadget
 Local helpmenu:TGadget
 
-Const MENU_NEW=101
-Const MENU_OPEN=102
-Const MENU_SAVE=103
-Const MENU_CLOSE=104
-Const MENU_EXIT=105
+Const MENU_NEW:Int=101
+Const MENU_OPEN:Int=102
+Const MENU_SAVE:Int=103
+Const MENU_CLOSE:Int=104
+Const MENU_EXIT:Int=105
 
-Const MENU_CUT=106
-Const MENU_COPY=107
-Const MENU_PASTE=108
+Const MENU_CUT:Int=106
+Const MENU_COPY:Int=107
+Const MENU_PASTE:Int=108
 
-Const MENU_ABOUT=109
+Const MENU_ABOUT:Int=109
 
 window=CreateWindow("My Window",40,40,320,240)
 

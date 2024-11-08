@@ -1,8 +1,8 @@
 ' createtoolbar.bmx
-
-Strict
+SuperStrict
 
 Import MaxGui.Drivers
+
 
 AppTitle = "ToolBar Example"
 

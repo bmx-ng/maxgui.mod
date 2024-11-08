@@ -1,8 +1,8 @@
 ' createtreeview.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget=CreateWindow("My Window",50,50,240,240,Null,WINDOW_TITLEBAR|WINDOW_CLIENTCOORDS)
 Local treeview:TGadget=CreateTreeView(5,5,ClientWidth(window)-10,ClientHeight(window)-10,window)

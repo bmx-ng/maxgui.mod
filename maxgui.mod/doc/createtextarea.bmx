@@ -1,8 +1,8 @@
 ' createtextarea.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Global window:TGadget = CreateWindow( "My Window", 130, 20, 400, 400 )
 

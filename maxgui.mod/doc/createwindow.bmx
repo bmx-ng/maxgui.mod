@@ -1,8 +1,8 @@
 ' createwindow.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 AppTitle = "CreateWindow() Example"
 

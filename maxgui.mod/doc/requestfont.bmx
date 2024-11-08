@@ -1,8 +1,8 @@
 ' requestfont.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 AppTitle = "RequestFont() Example"
 

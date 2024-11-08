@@ -1,8 +1,8 @@
 ' createpanel.bmx
-
-Strict
+SuperStrict
 
 Import MaxGui.Drivers
+
 
 AppTitle = "Panel Example"
 

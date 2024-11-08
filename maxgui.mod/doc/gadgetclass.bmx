@@ -1,6 +1,7 @@
-Strict
+SuperStrict
 
 Import MaxGUI.Drivers
+
 
 AppTitle = "GadgetClass() Example"
 Global wndMain:TGadget = CreateWindow(AppTitle,100,100,220,200,Null,WINDOW_TITLEBAR|WINDOW_CLIENTCOORDS|WINDOW_STATUS)
@@ -34,4 +35,3 @@ Repeat
 	EndSelect
 	
 Forever
-	

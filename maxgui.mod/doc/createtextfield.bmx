@@ -1,8 +1,8 @@
 ' createtextfield.bmx
+SuperStrict
 
 Import MaxGui.Drivers
 
-Strict 
 
 Local window:TGadget
 Local textfield:TGadget

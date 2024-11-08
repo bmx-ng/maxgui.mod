@@ -1,8 +1,8 @@
 ' canvasbeginpaint.bmx
-
-Strict
+SuperStrict
 
 Import MaxGui.Drivers
+
 
 AppTitle = "Canvas Painter Example"
 
@@ -23,7 +23,7 @@ Repeat
 			End
 		Default
 			CanvasBeginPaint(canvas)
-			SetClsColor( 0, 255*Sin(MilliSecs()/5.0), 0 )
+			SetClsColor( 0, Int(255*Sin(MilliSecs()/5.0)), 0 )
 			Cls()
 			Flip()
 	EndSelect
