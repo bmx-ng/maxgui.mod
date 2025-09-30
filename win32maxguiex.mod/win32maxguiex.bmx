@@ -20,6 +20,7 @@ Import MaxGUI.MaxGUI
 Import brl.systemdefault
 Import brl.retro
 Import BRL.PtrMap
+Import BRL.IntMap
 Import "tom.bmx"
 Import "common.bmx"
 
