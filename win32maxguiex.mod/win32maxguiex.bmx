@@ -19,6 +19,7 @@ ModuleInfo "CC_OPTS: -include ~qwindows.h~q -include ~qcommctrl.h~q"
 Import MaxGUI.MaxGUI
 Import brl.systemdefault
 Import brl.retro
+Import BRL.PtrMap
 Import "tom.bmx"
 Import "common.bmx"
 
