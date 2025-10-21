@@ -70,8 +70,9 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 	Field noNavigate:Int
 	Field scrollWindow:Byte Ptr
 	Field box:Byte Ptr
-	' on Linux (at least Mint 21.1 XFCE) it is required to disable 
-	' hardware acceleration to avoid errors:
+	' With certain webkit library versions (at least the one in Linux 
+	' Mint 21.1 XFCE) it is required to disable hardware acceleration 
+	' to avoid errors:
 	'   KMS: DRM_IOCTL_MODE_CREATE_DUMB failed
 	'   Failed to create GBM buffer of size ...
 	Global useHardwareAcceleration:Int = True
