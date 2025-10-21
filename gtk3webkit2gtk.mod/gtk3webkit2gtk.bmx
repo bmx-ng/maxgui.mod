@@ -39,6 +39,8 @@ Import MaxGUI.GTK3MaxGUI
 Import "-lwebkit2gtk-4.0"
 
 Extern
+	Function webkit_settings_new:Byte Ptr()
+	Function webkit_web_view_new_with_settings:Byte Ptr(settings:Byte Ptr)
 	Function webkit_web_view_new:Byte Ptr()
 	Function webkit_web_view_load_uri(handle:Byte Ptr, url:Byte Ptr)
 	Function webkit_web_view_get_load_status:Int(handle:Byte Ptr)
@@ -68,6 +70,13 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 	Field noNavigate:Int
 	Field scrollWindow:Byte Ptr
 	Field box:Byte Ptr
+	' on Linux (at least Mint 21.1 XFCE) it is required to disable 
+	' hardware acceleration to avoid errors:
+	'   KMS: DRM_IOCTL_MODE_CREATE_DUMB failed
+	'   Failed to create GBM buffer of size ...
+	Global useHardwareAcceleration:Int = True
+	' this is only used when doing WebGL stuff 
+	Global useAccelerated2DCanvas:Int = True
 
 	Function CreateHTMLView:TGTKWebKitGtk(x:Int, y:Int, w:Int, h:Int, label:String, group:TGadget, style:Int)
 		Local this:TGTKWebKitGtk = New TGTKWebKitGtk
@@ -78,8 +87,20 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 	End Function
 
 	Method initHTMLView(x:Int, y:Int, w:Int, h:Int, label:String, group:TGadget, style:Int)
+		If not useHardwareAcceleration or Not useAccelerated2DCanvas
+			Local settings:Byte Ptr = webkit_settings_new()
+			Const WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:Int = 2
+			If Not useHardwareAcceleration
+				g_object_set_int(settings, "hardware-acceleration-policy", WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER, Null)
+			EndIf
+			If Not useAccelerated2DCanvas
+				g_object_set_int(settings, "enable-accelerated-2d-canvas", False, Null)
+			EndIf
 
-		handle = webkit_web_view_new()
+			handle = webkit_web_view_new_with_settings(settings)
+		Else
+			handle = webkit_web_view_new()
+		EndIf
 
 		init(GTK_HTMLVIEW, x, y, w, h, style)
 
