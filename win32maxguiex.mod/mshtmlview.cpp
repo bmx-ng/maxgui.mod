@@ -802,7 +802,7 @@ STDMETHODIMP CMySite2::GetOptionKeyPath(
 
 STDMETHODIMP CMySite2::GetDropTarget( 
     /* [in] */ IDropTarget __RPC_FAR *pDropTarget,
-    /* [out] */ IDropTarget __RPC_FAR *__RPC_FAR *ppDropTarget) {return E_NOTIMPL;}
+    /* [out] */ IDropTarget __RPC_FAR *__RPC_FAR *ppDropTarget) {return S_FALSE;}
 
 STDMETHODIMP CMySite2::GetExternal( /* [out] */ IDispatch __RPC_FAR *__RPC_FAR *ppDispatch) {return -1;}
 
