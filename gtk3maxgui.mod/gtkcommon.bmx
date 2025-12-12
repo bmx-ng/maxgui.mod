@@ -29,7 +29,7 @@ Import BRL.System
 Import MaxGUI.MaxGUI
 Import BRL.LinkedList
 Import BRL.Map
-Import BRL.PtrMap
+Import Collections.PtrMap
 
 ?linux
 'Import "-L/usr/lib/x86_64-linux-gnu/"
