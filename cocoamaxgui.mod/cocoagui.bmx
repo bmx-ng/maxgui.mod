@@ -583,7 +583,7 @@ Type TNSGadget Extends TGadget
 		NSSetText Self,msg
 	End Method
 	
-	Method RunString:String(msg:String)
+	Method Run:String(msg:String)
 		If internalclass=GADGET_HTMLVIEW Return NSRun(Self,msg)
 	End Method
 
