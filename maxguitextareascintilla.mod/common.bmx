@@ -31,7 +31,7 @@ Import "source.bmx"
 
 Extern
 ?linux
-	Function g_signal_cbsci:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr, id:Int,notification:Byte Ptr,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "g_signal_connect_data"
+	Function g_signal_cbsci:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr,gadget:Object,dh:Byte Ptr,flag:Int) = "bmx_g_signal_connect_data"
 	Function scintilla_new:Byte Ptr()
 
 	Function bmx_mgta_scintilla_getsci:Byte Ptr(handle:Byte Ptr, id:Int)

@@ -40,11 +40,7 @@ Import MaxGUI.Win32MaxGUIEx
 'Import "-lunicows"
 ?MacOs
 Import Maxgui.CocoaMaxGui
-?LinuxX86
-'Import Maxgui.FLTKMaxGui
-' default to the GTK3 version of MaxGUI
-Import MaxGUI.GTK3MaxGUI
-?LinuxX64
+?Linux
 Import MaxGUI.GTK3MaxGUI
 ?raspberrypi
 Import MaxGUI.GTK3MaxGUI
