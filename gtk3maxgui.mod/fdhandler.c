@@ -23,6 +23,8 @@
 #include <glib.h>
 #include <stdio.h>
 
+extern void bbSystemFlushAsyncOps();
+
 typedef struct {
 	GSource source;
 	GPollFD fd;

@@ -133,8 +133,8 @@ Extern
 	
 	' gobject
 	Function g_object_unref(handle:Byte Ptr)
-	Function g_object_set_int(handle:Byte Ptr, property:Byte Ptr, value:Int, _null:Byte Ptr=Null) = "void g_object_set(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*) !"
-	Function g_object_set_double(handle:Byte Ptr, property:Byte Ptr, value:Double, _null:Byte Ptr=Null) = "void g_object_set(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*) !"
+	Function g_object_set_int(handle:Byte Ptr, property:String, value:Int)="bmx_g_object_set_int"
+	Function g_object_set_double(handle:Byte Ptr, property:String, value:Double)="bmx_g_object_set_double"
 	Function g_value_set_string(handle:Byte Ptr, str:Byte Ptr)
 	Function g_value_unset(handle:Byte Ptr)
 	Function g_value_init:Byte Ptr(handle:Byte Ptr, _type:Size_T)
@@ -231,17 +231,17 @@ Extern
 	Function gtk_container_remove(handle:Byte Ptr, widget:Byte Ptr)
 	
 	' signals
-	Function g_signal_cb2:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr, gadget:Object), gadget:Object, destroyhandler(data:Byte Ptr, user: Byte Ptr), flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb2_ret:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback:Int(widget:Byte Ptr, gadget:Object), gadget:Object, destroyhandler(data:Byte Ptr, user: Byte Ptr), flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb3:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr, event:Byte Ptr, gadget:Object), gadget:Object, destroyhandler(data:Byte Ptr, user: Byte Ptr), flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb3_ret:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback:Int(widget:Byte Ptr, event:Byte Ptr, gadget:Object), gadget:Object, destroyhandler(data:Byte Ptr, user: Byte Ptr), flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb3a_ret:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback:Int(widget:Byte Ptr, value:Int, gadget:Object), gadget:Object, destroyhandler(data:Byte Ptr, user: Byte Ptr), flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb4:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,url:Byte Ptr,stream:Byte Ptr,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb4a:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback:Int(widget:Byte Ptr,val1:Int,val2:Double,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb5:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,val1:Int,val2:Int,val3:Int,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
-	Function g_signal_cb8:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,context:Byte Ptr, val1:Int,val2:Int,data:Byte Ptr,val3:Int,val4:Int,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
+	Function g_signal_cb2:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb2_ret:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb3:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb3_ret:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb3a_ret:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb4:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb4a:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb5:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
+	Function g_signal_cb8:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
 	Function g_signal_handler_disconnect(gtkwidget:Byte Ptr, handlerid:Long)
-	Function g_signal_tabchange:Int(gtkwidget:Byte Ptr, name:Byte Ptr, callback(widget:Byte Ptr,a:Byte Ptr, index:Int,gadget:Object),gadget:Object,destroyhandler(data:Byte Ptr,user: Byte Ptr),flag:Int) = "int g_signal_connect_data(BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, BBBYTE*, int) !"
+	Function g_signal_tabchange:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object,dh:Byte Ptr,flag:Int) = "bmx_g_signal_connect_data"
 	
 	' accelerator groups
 	Function gtk_accel_group_new:Byte Ptr()
