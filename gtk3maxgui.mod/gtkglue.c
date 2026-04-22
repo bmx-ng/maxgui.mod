@@ -77,7 +77,7 @@ BBArray * bmx_gtk3_selection_data_get_uris(GtkSelectionData * data) {
 	gchar ** uris = gtk_selection_data_get_uris(data);
 	
 	if (uris == NULL) {
-		return &bbEmptyString;
+		return &bbEmptyArray;
 	}
 	
 	int count = 0;
@@ -94,4 +94,23 @@ BBArray * bmx_gtk3_selection_data_get_uris(GtkSelectionData * data) {
 	g_strfreev(uris);
 	
 	return p;
+}
+
+void bmx_g_object_set_int(void * handle, BBString * property, int value) {
+	char * p = bbStringToUTF8String(property);
+	g_object_set(handle, p, value, NULL);
+	bbMemFree(p);
+}
+
+void bmx_g_object_set_double(void * handle, BBString * property, double value) {
+	char * p = bbStringToUTF8String(property);
+	g_object_set(handle, p, value, NULL);
+	bbMemFree(p);
+}
+
+int bmx_g_signal_connect_data(void * widget, BBString * name, void * callback, void * gadget, void * destroyhandler, int flag) {
+	char * n = bbStringToUTF8String(name);
+	int result = g_signal_connect_data(widget, n, callback, gadget, destroyhandler, flag);
+	bbMemFree(n);
+	return result;
 }
