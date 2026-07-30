@@ -3798,7 +3798,15 @@ void NSAddItem(nsgadget *gadget,int index,BBString *data,BBString *tip,NSImage *
 			[item setToolTip:tiptext];
 			[item setTag:0];
 			[GlobalApp addToolbarItem:item];
-			[toolbar addToolbarItem:item];
+			// Under Rosetta translation (x86_64 on Apple M1), two calls in this
+			// block deadlock when the parent NSWindow is still finishing its
+			// initial show animation:
+			//   1. [toolbar addToolbarItem:] — a redundant custom registration call
+			//      with the same effect as GlobalApp's addToolbarItem above. Removed.
+			//   2. [toolbar insertItemWithItemIdentifier:atIndex:] — needs the
+			//      window to be settled. A short run-loop drain before the call
+			//      processes any pending window-order events and prevents the hang.
+			[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 			[toolbar insertItemWithItemIdentifier:text atIndex:index];		
 		}
 		break;
