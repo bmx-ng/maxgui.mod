@@ -670,7 +670,7 @@ Type TColorHSV Extends TColor
 	
 		Local rgb:TColorRGB = New TColorRGB
 	
-		If temph=>360.0 Or temph<0.0 Then temph = 0.0
+		If temph>=360.0 Or temph<0.0 Then temph = 0.0
 	
 		If temps = 0 Then
 			rgb.r = v
