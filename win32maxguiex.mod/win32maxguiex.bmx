@@ -274,7 +274,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		Return TWindowsGadget(GadgetMap.ValueForKey(hwnd))
 	EndFunction
 
-	Function ClassWndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam) "win32"
+	Function ClassWndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam) "win32"
 		Local owner:TWindowsGadget
 		Local res
 		Local nmhdrPtr:Byte Ptr
@@ -429,7 +429,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 	EndFunction
 
-	Function KeyboardProc:Byte Ptr( code, wp:WParam, lp:LParam) "win32" nodebug
+	Function KeyboardProc:LParam( code, wp:WParam, lp:LParam) "win32" nodebug
 		Local ev:TEvent, hwnd:Byte Ptr, tmpClassName:Short[16], mods:Int, key:Int = wp
 		If code>=0 Then
 			'Removed: http://www.blitzbasic.com/Community/posts.php?topic=72737
@@ -476,7 +476,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 	Global intButtonStates%[4]
 
-	Function MouseProc:Byte Ptr( code,wp:WParam,lp:LParam) "win32" nodebug
+	Function MouseProc:LParam( code,wp:WParam,lp:LParam) "win32" nodebug
 
 		If code>=0 And wp >= WM_MOUSEFIRST And wp <= WM_MOUSELAST Then 'Not needed as MouseProc only receives mouse messages!!!
 
@@ -531,8 +531,8 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 					'Sort and determine whether to emit the event
 					Select msg
 						Case WM_MOUSEMOVE
-							If (owner._oldcursorlp<>Byte Ptr(l)) Then
-								owner._oldcursorlp=Byte Ptr(l)
+							If owner._oldcursorlp <> l Then
+								owner._oldcursorlp = l
 								SystemEmitOSEvent hwnd,msg,w,l,owner
 							EndIf
 						Case WM_LBUTTONUP, WM_RBUTTONUP, WM_MBUTTONUP
@@ -1010,9 +1010,9 @@ Type TWindowsGadget Extends TGadget
 	'Important gadget fields that store OS control handles etc..
 
 	Field _class, _hwnd:Byte Ptr, _hwndclient:Byte Ptr, _tooltips:Byte Ptr
-	Field _proc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:Byte Ptr,lp:Byte Ptr) "win32"
+	Field _proc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam) "win32"
 	Field _hotkey:THotKey
-	Field _oldcursorlp:Byte Ptr	'Should track events
+	Field _oldcursorlp:LParam	'Should track events
 
 	Field _sensitive% = False	'Determines whether gadgets should generate events.
 						'Not to be confused with the sensitivity field of TGadget
@@ -1079,7 +1079,7 @@ Type TWindowsGadget Extends TGadget
 		If _hwndclient TWindowsGUIDriver.RegisterHwnd(_hwndclient,Self)
 		Local atom=GetClassLongW(hwnd,GCW_ATOM)
 		If atom<>TWindowsGUIDriver.ClassAtom And atom<>TWindowsGUIDriver.ClassAtom2 And Not _proc
-			_proc=Byte Ptr(SetWindowLongPtrW(hwnd,GWL_WNDPROC,TWindowsGUIDriver.ClassWndProc))
+			_proc=Byte Ptr(SetWindowLongPtrW(hwnd,GWL_WNDPROC,LParam(TWindowsGUIDriver.ClassWndProc)))
 		EndIf
 		If tips Then SetupToolTips()
 	EndMethod
@@ -1268,7 +1268,7 @@ Type TWindowsGadget Extends TGadget
 	Method OnNotify(wp:WParam,lp:LParam)
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_WINDOWPOSCHANGING
 				FlushBrushes()
@@ -1771,7 +1771,7 @@ Type TWindowsWindow Extends TWindowsGadget
 		EndIf
 	EndMethod
 
-	Function EnumChildProc(hwnd:Byte Ptr,lp:Byte Ptr) "win32"
+	Function EnumChildProc(hwnd:Byte Ptr,lp:LParam) "win32"
 		Local winfo:WINDOWINFO = New WINDOWINFO
 		'winfo.cbSize=SizeOf winfo
 		GetWindowInfo hwnd,winfo.infoPtr
@@ -1820,7 +1820,7 @@ Type TWindowsWindow Extends TWindowsGadget
 
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Local x,y,w,h
 		Local move,size
 		Local Rect[4]
@@ -2160,7 +2160,7 @@ Type TWindowsButton Extends TWindowsGadget
 		SendMessageW _hwnd,BM_SETCHECK,state,0
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_THEMECHANGED
 				If _hTheme Then
@@ -2848,7 +2848,7 @@ Type TWindowsListBox Extends TWindowsGadget
 		'ToolTips should be set on an item-by-item basis instead.
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_MAXGUILISTREFRESH
 				Local index
@@ -3123,7 +3123,7 @@ Type TWindowsTabber Extends TWindowsGadget
 		EndSelect
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_ERASEBKGND
 				Select hwnd
@@ -3291,7 +3291,7 @@ Type TWindowsToolbar Extends TWindowsGadget
 			ti.SetuFlags(TTF_SUBCLASS)
 			ti.Sethwnd(_hwnd)
 			ti.SetlpszText(tip.towstring())
-			ti.SetuId(Byte Ptr(index+1))
+			ti.SetuId(WParam(index+1))
 			SendMessageW _hwnd,TB_GETITEMRECT,WParam(index),LParam(ti.rect())
 			SendMessageW _tooltips,TTM_ADDTOOLW,0,LParam(ti.infoPtr)
 			MemFree ti.lpszText()
@@ -3309,7 +3309,7 @@ Type TWindowsToolbar Extends TWindowsGadget
 		Local ti:TOOLINFOW=New TOOLINFOW
 		'ti.cbSize=SizeOf(ti)
 		ti.Sethwnd(_hwnd)
-		ti.SetuId(Byte Ptr(index+1))
+		ti.SetuId(WParam(index+1))
 		Desensitize()
 		SendMessageW _tooltips,TTM_DELTOOLW,0,LParam(ti.infoPtr)
 		SendMessageW _hwnd,TB_DELETEBUTTON,WParam(index),0
@@ -3492,7 +3492,7 @@ Type TWindowsSlider Extends TWindowsGadget
 		Return 1
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_ERASEBKGND
 				Return 1
@@ -3643,7 +3643,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 	Method InsertListItem(index,Text$,tip$,icon,tag:Object)
 		Local it:COMBOBOXEXITEMW = New COMBOBOXEXITEMW
 		it.Setmask(CBEIF_TEXT)
-		it.SetiItem(Int Ptr(index))
+		it.SetiItem(LParam(index))
 		it.SetpszText(Text.toWString())
 		If icon>=0
 			it.Setmask(it.mask()|CBEIF_IMAGE|CBEIF_SELECTEDIMAGE)
@@ -3659,7 +3659,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 	Method SetListItem(index,Text$,tip$,icon,tag:Object)
 		Local it:COMBOBOXEXITEMW = New COMBOBOXEXITEMW
 		it.Setmask(CBEIF_TEXT)
-		it.SetiItem(Int Ptr(index))
+		it.SetiItem(LParam(index))
 		it.SetpszText(Text.toWString())
 		If _icons And icon>-1
 			it.Setmask(it.mask()|CBEIF_IMAGE|CBEIF_SELECTEDIMAGE)
@@ -3814,7 +3814,7 @@ Type TWindowsPanel Extends TWindowsGadget
 		Super.Free()
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 
 			Case WM_ERASEBKGND
@@ -4052,7 +4052,7 @@ Type TWindowsTextField Extends TWindowsGadget
 		EndIf
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Local event:TEvent
 		Select msg
 			Case WM_ERASEBKGND
@@ -4587,7 +4587,7 @@ End Rem
 		End Select
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 
 			Case WM_MOUSEWHEEL
@@ -4646,7 +4646,7 @@ Type TWindowsLabel Extends TWindowsGadget
 		If ((style & 7) <> LABEL_SEPARATOR) Then Return Super.SetText(Text)
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			Case WM_ERASEBKGND
 				Return 1
@@ -4998,7 +4998,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 		EndSelect
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			'If we are using Vista's common controls, then the treeview will be double-buffered and so
 			'we don't need to clear the background when redrawing (performance tweak).
@@ -5096,7 +5096,7 @@ Type TWindowsHTMLView Extends TWindowsGadget
 		msHtmlRun(mshtml,script)
 	EndMethod
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 		Select msg
 			'Reduces flicker on HTMLViews
 			Case WM_ERASEBKGND
