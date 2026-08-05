@@ -67,7 +67,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 		Return Self
 	End Method
 
-	Method WndProc:Byte Ptr(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
+	Method WndProc:LParam(hwnd:Byte Ptr,msg:UInt,wp:WParam,lp:LParam)
 			Local event:TEvent
 		Select msg
 			'Case WM_MOUSEWHEEL
