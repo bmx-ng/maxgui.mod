@@ -311,7 +311,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 						SetBkMode(Byte Ptr wp, TRANSPARENT)
 						If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
-						Return owner.CreateControlBrush( owner._hwnd, Byte Ptr wp )
+						Return LParam(owner.CreateControlBrush( owner._hwnd, Byte Ptr wp ))
 
 					Case TWindowsPanel(owner) <> Null
 
@@ -319,20 +319,20 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 							SetBkMode(Byte Ptr wp, TRANSPARENT)
 							If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
-							Return owner.CreateControlBrush( Byte Ptr lp, Byte Ptr wp )
+							Return LParam(owner.CreateControlBrush( Byte Ptr lp, Byte Ptr wp ))
 
 						EndIf
 
 					Case TWindowsTextField(owner) <> Null, TWindowsComboBox(owner) <> Null
 
 						If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
-						If owner.BgBrush() Then SetBkColor(Byte Ptr wp, owner.BgColor());Return owner.BgBrush()
+						If owner.BgBrush() Then SetBkColor(Byte Ptr wp, owner.BgColor());Return LParam(owner.BgBrush())
 
 					Case TWindowsButton(owner) <> Null, TWindowsSlider(owner) <> Null
 
 						SetBkMode(Byte Ptr wp, TRANSPARENT)
 						If owner.FgColor() > -1 Then SetTextColor_(Byte Ptr wp, owner.FgColor())
-						Return owner.CreateControlBrush( owner._hwnd, Byte Ptr wp )
+						Return LParam(owner.CreateControlBrush( owner._hwnd, Byte Ptr wp ))
 
 				EndSelect
 
@@ -1079,7 +1079,8 @@ Type TWindowsGadget Extends TGadget
 		If _hwndclient TWindowsGUIDriver.RegisterHwnd(_hwndclient,Self)
 		Local atom=GetClassLongW(hwnd,GCW_ATOM)
 		If atom<>TWindowsGUIDriver.ClassAtom And atom<>TWindowsGUIDriver.ClassAtom2 And Not _proc
-			_proc=Byte Ptr(SetWindowLongPtrW(hwnd,GWL_WNDPROC,LParam(TWindowsGUIDriver.ClassWndProc)))
+			Local cb:Byte Ptr = TWindowsGUIDriver.ClassWndProc
+			_proc=Byte Ptr(SetWindowLongPtrW(hwnd,GWL_WNDPROC,LParam(cb)))
 		EndIf
 		If tips Then SetupToolTips()
 	EndMethod
@@ -1219,7 +1220,7 @@ Type TWindowsGadget Extends TGadget
 		'tmpToolInfo.cbSize = SizeOf(tmpToolInfo)
 		tmpToolInfo.Sethwnd(GetParent_(_hwnd))
 		tmpToolInfo.Sethinst(GetModuleHandleW(Null))
-		tmpToolInfo.SetuID(_hwnd)
+		tmpToolInfo.SetuID(WParam(_hwnd))
 
 		If pTooltip Then
 			_wstrTooltip = pTooltip.Replace("~r","").Replace("~n","~r~n").ToWString()
@@ -4813,7 +4814,7 @@ Type TWindowsTreeNode Extends TGadget
 		Local tmpParentHadKids = SendMessageW(_tree, TVM_GETNEXTITEM, TVGN_CHILD, LParam(_parent._item))
 
 		it.Setitem_pszText(name.ToWString())
-		it.Setitem_lparam(Byte Ptr (HandleFromObject(Self))) ' FIXME
+		it.Setitem_lparam(LParam (HandleFromObject(Self))) ' FIXME
 
 		'Make sure that we store handle so we can release it later.
 		If _handle Then Release _handle
