@@ -359,10 +359,10 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 
 			Case WM_NOTIFY
 				'Gadget tooltips
-				nmhdrPtr=lp
+				nmhdrPtr=Byte Ptr(lp)
 				owner=GadgetFromHwnd(bmx_win32_NMHDR_hwndFrom(nmhdrPtr))
 				If owner Then
-					Select bmx_win32_NMHDR_code(nmhdrPtr)
+					Select Int(bmx_win32_NMHDR_code(nmhdrPtr))
 						Case TTN_GETDISPINFOW
 							If owner._wstrTooltip Then bmx_win32_NMTTDISPINFOW_SetlpszText(nmhdrPtr, owner._wstrTooltip)
 					EndSelect
@@ -481,7 +481,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 		If code>=0 And wp >= WM_MOUSEFIRST And wp <= WM_MOUSELAST Then 'Not needed as MouseProc only receives mouse messages!!!
 
 			Global mh:MOUSEHOOKSTRUCT = New MOUSEHOOKSTRUCT
-			mh.hookPtr = lp
+			mh.hookPtr = Byte Ptr(lp)
 			Local w:WParam, l:LParam, data
 			Local hwnd:Byte Ptr = mh.hwnd(), msg:UInt = wp, owner:TWindowsGadget
 			Local point:Int[] = [mh.x(), mh.y()]
@@ -583,7 +583,12 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 	EndFunction
 
 	Function GetThemeHandle:Byte Ptr(hwnd:Byte Ptr, pClass$ = "WINDOW")
-		If CheckCommonControlVersion() Then Return OpenThemeData(hwnd, pClass)
+		If CheckCommonControlVersion() Then
+			Local className:Short Ptr = pClass.ToWString()
+			Local theme:Byte Ptr = OpenThemeData(hwnd, className)
+			MemFree className
+			Return theme
+		End If
 	EndFunction
 
 	Function CloseThemeHandle(hTheme:Byte Ptr)
@@ -1550,16 +1555,14 @@ Type TWindowsDesktop Extends TWindowsGadget
 	EndMethod
 
 	Method ScaleFactor:Int()
-		If GetDpiForMonitor Then
-			Local hwnd:Byte Ptr = GetDesktopWindow()
-			Local monitor:Byte Ptr = MonitorFromWindow(hwnd, 0)
-			If monitor Then
-				Local xdpi:UInt
-				Local ydpi:UInt
-				Local res:Byte Ptr = GetDpiForMonitor(monitor, 0, xdpi, ydpi)
-				If xdpi > 96 Then
-					Return 2
-				End If
+		Local hwnd:Byte Ptr = GetDesktopWindow()
+		Local monitor:Byte Ptr = MonitorFromWindow(hwnd, 0)
+		If monitor Then
+			Local xdpi:UInt
+			Local ydpi:UInt
+			GetDpiForMonitor(monitor, 0, xdpi, ydpi)
+			If xdpi > 96 Then
+				Return 2
 			End If
 		End If
 		Return 1
@@ -2802,7 +2805,7 @@ Type TWindowsListBox Extends TWindowsGadget
 		Sensitize()
 		MemFree it.pszText()
 		
-		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,LVSCW_AUTOSIZE_USEHEADER
+		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,LParam(LVSCW_AUTOSIZE_USEHEADER)
 	EndMethod
 
 	Method SetListItem(index,Text$,tip$,icon,tag:Object)
@@ -2817,7 +2820,7 @@ Type TWindowsListBox Extends TWindowsGadget
 		Desensitize()
 		If ListItemState(index) & STATE_SELECTED Then _selected = -1
 		SendMessageW _hwnd,LVM_DELETEITEM,WParam(index),0
-		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,-2
+		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,LParam(-2)
 		If Not IsSingleSelect() Then SelectionChanged()
 		Sensitize()
 	EndMethod
@@ -2875,7 +2878,7 @@ Type TWindowsListBox Extends TWindowsGadget
 	EndMethod
 
 	Method OnNotify(wp:WParam,lp:LParam)
-		Local nmhdrPtr:Byte Ptr = lp
+		Local nmhdrPtr:Byte Ptr = Byte Ptr(lp)
 		Local index, code = bmx_win32_NMHDR_code(nmhdrPtr)
 		Select code
 
@@ -2936,7 +2939,7 @@ Type TWindowsListBox Extends TWindowsGadget
 	EndMethod
 
 	Method HasResized()
-		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,-2
+		SendMessageW _hwnd,LVM_SETCOLUMNWIDTH,0,LParam(-2)
 	EndMethod
 
 	Method UseExplorerTheme()
@@ -3056,8 +3059,8 @@ Type TWindowsTabber Extends TWindowsGadget
 	Method OnNotify(wp:WParam,lp:LParam)
 		Local nmhdrPtr:Byte Ptr	'hwnd,id,code
 		Local index
-		nmhdrPtr=lp
-		Select bmx_win32_NMHDR_code(nmhdrPtr)
+		nmhdrPtr=Byte Ptr(lp)
+		Select Int(bmx_win32_NMHDR_code(nmhdrPtr))
 
 			Case TTN_GETDISPINFOW
 
@@ -3569,14 +3572,14 @@ Type TWindowsComboBox Extends TWindowsGadget
 		hwnd=CreateWindowExW(xstyle,"ComboBoxEx32","",wstyle,0,0,0,180,parent,Byte Ptr(hotkey),GetModuleHandleW(Null),Null)
 
 		If (style & COMBOBOX_EDITABLE) Then
-			_editHwnd=SendMessageW(hwnd,CBEM_GETEDITCONTROL,0,0)
+			_editHwnd=Byte Ptr(SendMessageW(hwnd,CBEM_GETEDITCONTROL,0,0))
 			If _editHwnd Then
 				editstyle=GetWindowLongW(_editHwnd,GWL_STYLE)
 				SetWindowLongW _editHwnd,GWL_STYLE,editstyle|WS_TABSTOP
 			EndIf
 		EndIf
 
-		_comboHwnd=SendMessageW(hwnd,CBEM_GETCOMBOCONTROL,0,0)
+		_comboHwnd=Byte Ptr(SendMessageW(hwnd,CBEM_GETCOMBOCONTROL,0,0))
 		comboStyle=GetWindowLongW(_comboHwnd,GWL_STYLE)
 		SetWindowLongW _comboHwnd,GWL_STYLE,comboStyle|WS_TABSTOP
 
@@ -3621,7 +3624,7 @@ Type TWindowsComboBox Extends TWindowsGadget
 				Case ACTIVATE_PASTE
 					SendMessageW _editHwnd,WM_PASTE,0,0
 				Case ACTIVATE_FOCUS
-					SendMessageW _editHwnd,EM_SETSEL,0,-1
+					SendMessageW _editHwnd,EM_SETSEL,0,LParam(-1)
 			End Select
 		EndIf
 		Return Super.Activate(cmd)
@@ -3823,7 +3826,7 @@ Type TWindowsPanel Extends TWindowsGadget
 				If _type = PANELCANVAS Then Return 1
 				If _generatesPaintEvents Then Return 1
 
-				Local hdc:Byte Ptr=wp,hdcCanvas:Byte Ptr,hdcBitmap:Byte Ptr
+				Local hdc:Byte Ptr=Byte Ptr(wp),hdcCanvas:Byte Ptr,hdcBitmap:Byte Ptr
 				Local srcw,srch,x,y,xoffset,yoffset
 				Local clientRect[4], updateRect[4], clipRect[4], windowRect[4]
 
@@ -4037,7 +4040,7 @@ Type TWindowsTextField Extends TWindowsGadget
 			Case ACTIVATE_PASTE
 				SendMessageW _hwnd,WM_PASTE,0,0
 			Case ACTIVATE_FOCUS
-				SendMessageW _hwnd,EM_SETSEL,0,-1
+				SendMessageW _hwnd,EM_SETSEL,0,LParam(-1)
 		End Select
 		Return Super.Activate(cmd)
 	EndMethod
@@ -4527,8 +4530,8 @@ End Rem
 
 		Super.OnNotify(wp,lp)	'Tooltip
 
-		nmhdrPtr=lp
-		Select bmx_win32_NMHDR_code(nmhdrPtr)
+		nmhdrPtr=Byte Ptr(lp)
+		Select Int(bmx_win32_NMHDR_code(nmhdrPtr))
 '			Case EN_PROTECTED
 '				DebugStop
 			Case EN_SELCHANGE
@@ -4667,7 +4670,7 @@ Type TWindowsTreeNode Extends TGadget
 	Field	_item:Byte Ptr		'HTREEITEM
 	Field	_expanded
 	Field	_icon
-	Field _handle:Byte Ptr
+	Field _handle:Size_T
 	Field _tv:TVITEMW
 
 	Method Activate(cmd)
@@ -4694,7 +4697,7 @@ Type TWindowsTreeNode Extends TGadget
 
 	Method CreateRoot:TWindowsTreeNode(owner:TWindowsTreeView)
 		_tree=owner._hwnd
-		_item=TVI_ROOT
+		_item=Byte Ptr(TVI_ROOT)
 		Return Self
 	EndMethod
 
@@ -4786,8 +4789,8 @@ Type TWindowsTreeNode Extends TGadget
 	EndMethod
 
 	Method tviatindex:Byte Ptr(index)
-		If kids.IsEmpty() Then Return TVI_FIRST
-		If index<0 Or index>=kids.count() Return TVI_LAST
+		If kids.IsEmpty() Then Return Byte Ptr(TVI_FIRST)
+		If index<0 Or index>=kids.count() Return Byte Ptr(TVI_LAST)
 		Local child:TWindowsTreeNode
 		child=TWindowsTreeNode(kids.valueatindex(index))
 		Return child._item
@@ -4818,9 +4821,9 @@ Type TWindowsTreeNode Extends TGadget
 
 		'Make sure that we store handle so we can release it later.
 		If _handle Then Release _handle
-		_handle = it.item_lparam()
+		_handle = Size_T(it.item_lparam())
 
-		_item=SendMessageW(_tree,TVM_INSERTITEMW,0,LParam(it.structPtr))
+		_item=Byte Ptr(SendMessageW(_tree,TVM_INSERTITEMW,0,LParam(it.structPtr)))
 
 		MemFree it.item_pszText()
 
@@ -4918,8 +4921,8 @@ Type TWindowsTreeView Extends TWindowsGadget
 
 		Super.OnNotify(wp,lp)	'Tool-tips
 
-		nmhdrPtr=Byte Ptr lp
-		Select bmx_win32_NMHDR_code(nmhdrPtr)
+		nmhdrPtr=Byte Ptr(lp)
+		Select Int(bmx_win32_NMHDR_code(nmhdrPtr))
 
 			'MSLU glitch requires handling of ANSI equivalent
 			Case TVN_SELCHANGEDW, TVN_SELCHANGEDA
@@ -4983,7 +4986,7 @@ Type TWindowsTreeView Extends TWindowsGadget
 				hittest.Setx(pt[0]-Rect[0])
 				hittest.Sety(pt[1]-Rect[1])
 				If SendMessageW(_hwnd,TVM_HITTEST,0,LParam(hittest.infoPtr))
-					If hittest.flags()=TVI_ROOT
+					If Not hittest.hItem()
 						node=_root
 					Else
 						Local item:TVITEMW = New TVITEMW
