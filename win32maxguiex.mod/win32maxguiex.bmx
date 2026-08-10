@@ -2921,8 +2921,11 @@ Type TWindowsListBox Extends TWindowsGadget
 				index=bmx_win32_NMITEMACTIVATE_iItem(nmhdrPtr)
 				Local item:TGadgetItem
 				If index>=0 And index<items.length
+					Local point[2]
+					GetCursorPos_ point
+					ScreenToClient _hwnd, point
 					item=items[index]
-					PostGuiEvent EVENT_GADGETMENU,index,0,0,0,item.extra
+					PostGuiEvent EVENT_GADGETMENU,index,0,point[0],point[1],item.extra
 				EndIf
 			'Return true to tell the OS not to send individual LVN_DELETEITEM notifications for each and every item when clearing list.
 			Case LVN_DELETEALLITEMS
@@ -4062,12 +4065,12 @@ Type TWindowsTextField Extends TWindowsGadget
 			Case WM_ERASEBKGND
 				Return 1
 			Case WM_KEYDOWN
-				If eventfilter<>Null
+				If eventfilter<>TGadget.NullEventFilter
 					event=CreateEvent(EVENT_KEYDOWN,Self,Int(wp),keymods())
 					If Not eventfilter(event,context) Return True
 				EndIf
 			Case WM_CHAR
-				If eventfilter<>Null
+				If eventfilter<>TGadget.NullEventFilter
 					event=CreateEvent(EVENT_KEYCHAR,Self,Int(wp),keymods())
 					If Not eventfilter(event,context) Return True
 				EndIf
@@ -4576,14 +4579,14 @@ End Rem
 						EndIf
 
 						'Event Filter
-						If eventfilter<>Null
+						If eventfilter<>TGadget.NullEventFilter
 							event=CreateEvent(EVENT_KEYDOWN,Self,k,keymods())
 							Return Not eventfilter(event,context)
 						EndIf
 
 					Case WM_CHAR
 						If _readonly Return 1
-						If eventfilter<>Null
+						If eventfilter<>TGadget.NullEventFilter
 							event=CreateEvent(EVENT_KEYCHAR,Self,Int(bmx_win32_MSGFILTER_wParam(nmhdrPtr)),keymods())
 							Return Not eventfilter(event,context)
 						EndIf

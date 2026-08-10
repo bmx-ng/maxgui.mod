@@ -173,8 +173,6 @@ Const EVENT_GADGETDRAG% = $200A, EVENT_GADGETDROP% = $200B
 TEvent.RegisterId EVENT_GADGETDRAG, "GadgetDrag"
 TEvent.RegisterId EVENT_GADGETDROP, "GadgetDrop"
 
-' WARNING - struct nsgadget in brl.mod/cocoagui.mod/cocoa.macos.m must be modified if TGadget field count changes
-
 Type TGadget
 ' event propagation
 	Field	source:TGadget
@@ -193,6 +191,7 @@ Type TGadget
 ' filters
 	Field	eventfilter(event:TEvent,context:Object)
 	Field	context:Object
+	Global NullEventFilter(event:TEvent,context:Object)
 ' items
 	Field	items:TGadgetItem[]
 
