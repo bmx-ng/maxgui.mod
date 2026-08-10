@@ -73,7 +73,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 			'Case WM_MOUSEWHEEL
 			'	If (Long(wp)&MK_CONTROL) Then SendMessageW _hwnd, EM_SETZOOM, 0, 0
 			Case WM_KEYDOWN
-				If eventfilter<>Null
+				If eventfilter<>TGadget.NullEventFilter
 					event=CreateEvent(EVENT_KEYDOWN,Self,Int(wp),keymods())
 					If Not eventfilter(event,context) Return True
 				EndIf
@@ -86,7 +86,7 @@ Type TWindowsScintillaTextArea Extends TWindowsTextArea
 				If (mods & MODIFIER_CONTROL And Not (mods & MODIFIER_OPTION)) Then
 					Return 1
 				End If
-				If eventfilter<>Null
+				If eventfilter<>TGadget.NullEventFilter
 					event=CreateEvent(EVENT_KEYCHAR,Self,Int(wp),mods)
 					If Not eventfilter(event,context) Return True
 				EndIf

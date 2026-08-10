@@ -5,6 +5,7 @@ Import Pub.MacOs
 Import brl.systemdefault
 
 Import "-framework WebKit"
+Import "cocoa.peer.m"
 Import "cocoa.macos.m"
 
 Extern
@@ -22,80 +23,84 @@ Extern
 	
 	Function NSCharWidth:Int(font:Byte Ptr,charcode:Int)
 	' create
-	Function NSInitGadget(gadget:TNSGadget)
+	Function NSPeerCreate:Byte Ptr(internalclass:Int,style:Int,parentPeer:Byte Ptr)
+	Function NSPeerInitializeGadget(peer:Byte Ptr,Text:String,x:Int Ptr,y:Int Ptr,w:Int Ptr,h:Int Ptr,groupPeer:Byte Ptr)
+	Function NSPeerFreeGadget(peer:Byte Ptr)
+	Function NSPeerDestroy(peer:Byte Ptr)
+	Function NSPeerNativeHandle:Byte Ptr(peer:Byte Ptr)
+	Function NSPeerClientView:Byte Ptr(peer:Byte Ptr)
+	Function NSPeerIsValid:Int(peer:Byte Ptr)
 	' generic
 	Function NSActiveGadget:Byte Ptr()
-	Function NSFreeGadget(gadget:TNSGadget)
-	Function NSClientWidth:Int(gadget:TNSGadget)
-	Function NSClientHeight:Int(gadget:TNSGadget)
-	Function NSRethink(gadget:TNSGadget)
-	Function NSRedraw(gadget:TNSGadget)
-	Function NSActivate(gadget:TNSGadget,code:Int)
-	Function NSState:Int(gadget:TNSGadget)
-	Function NSShow(gadget:TNSGadget,state:Int)
-	Function NSEnable(gadget:TNSGadget,state:Int)
-	Function NSCheck(gadget:TNSGadget,state:Int)
-	Function NSSetNextView(gadget:TNSGadget,nextgadget:TNSGadget)
-	Function NSSetHotKey(gadget:TNSGadget,hotkey:Int,modifier:Int)
-	Function NSSetTooltip:Int(gadget:TNSGadget,tip:String)
-	Function NSGetTooltip:String(gadget:TNSGadget)
+	Function NSPeerClientWidth:Int(peer:Byte Ptr,fallbackWidth:Int)
+	Function NSPeerClientHeight:Int(peer:Byte Ptr,fallbackHeight:Int)
+	Function NSPeerRethink(peer:Byte Ptr,x:Int,y:Int,w:Int,h:Int)
+	Function NSPeerActivate(peer:Byte Ptr,code:Int)
+	Function NSPeerState:Int(peer:Byte Ptr)
+	Function NSPeerSetShown(peer:Byte Ptr,state:Int)
+	Function NSPeerSetEnabled(peer:Byte Ptr,state:Int)
+	Function NSPeerSetChecked(peer:Byte Ptr,state:Int)
+	Function NSPeerSetNextView(peer:Byte Ptr,nextPeer:Byte Ptr)
+	Function NSPeerSetHotKey(peer:Byte Ptr,hotkey:Int,modifier:Int)
+	Function NSPeerSetTooltip:Int(peer:Byte Ptr,tip:String)
+	Function NSPeerGetTooltip:String(peer:Byte Ptr)
 	Function NSSuperview:Byte Ptr(view:Byte Ptr)
 	' window
-	Function NSSetStatus(gadget:TNSGadget,Text:String,pos:Int)
-	Function NSSetMinimumSize(gadget:TNSGadget,width:Int,height:Int)
-	Function NSSetMaximumSize(gadget:TNSGadget,width:Int,height:Int)
-	Function NSPopupMenu(gadget:TNSGadget,menu:TNSGadget)
+	Function NSPeerSetStatus(peer:Byte Ptr,Text:String,pos:Int)
+	Function NSPeerSetMinimumSize(peer:Byte Ptr,width:Int,height:Int)
+	Function NSPeerSetMaximumSize(peer:Byte Ptr,width:Int,height:Int)
+	Function NSPeerPopupMenu(peer:Byte Ptr,menuPeer:Byte Ptr)
 	' font
 	Function NSRequestFont:Byte Ptr(font:Byte Ptr)
 	Function NSLoadFont:Byte Ptr(name:String,size:Double,flags:Int)
 	Function NSGetDefaultFont:Byte Ptr()
-	Function NSSetFont(gadget:TNSGadget,font:Byte Ptr)
+	Function NSPeerSetFont(peer:Byte Ptr,font:Byte Ptr,fontStyle:Int)
 	Function NSFontName:String(font:Byte Ptr)
 	Function NSFontStyle:Int(font:Byte Ptr)
 	Function NSFontSize:Double(font:Byte Ptr)
 	' items
-	Function NSClearItems(gadget:TNSGadget)
-	Function NSAddItem(gadget:TNSGadget,index:Int,Text:String,tip:String,image:Byte Ptr,extra:Object)
-	Function NSSetItem(gadget:TNSGadget,index:Int,Text:String,tip:String,image:Byte Ptr,extra:Object)
-	Function NSRemoveItem(gadget:TNSGadget,index:Int)
-	Function NSSelectItem(gadget:TNSGadget,index:Int,state:Int)
-	Function NSSelectedItem:Int(gadget:TNSGadget,index:Int)
-	Function NSSelectedNode:Byte Ptr(gadget:TNSGadget)
+	Function NSPeerClearItems(peer:Byte Ptr)
+	Function NSPeerAddItem(peer:Byte Ptr,index:Int,Text:String,tip:String,image:Byte Ptr,extra:Object)
+	Function NSPeerSetItem(peer:Byte Ptr,index:Int,Text:String,tip:String,image:Byte Ptr,extra:Object)
+	Function NSPeerRemoveItem(peer:Byte Ptr,index:Int)
+	Function NSPeerSelectItem(peer:Byte Ptr,index:Int,state:Int)
+	Function NSPeerSelectedItem:Int(peer:Byte Ptr,index:Int)
+	Function NSPeerSelectedNode:Byte Ptr(peer:Byte Ptr)
 	' text
-	Function NSSetText(gadget:TNSGadget,Text:String)
-	Function NSGetText:String(gadget:TNSGadget)
-	Function NSReplaceText(gadget:TNSGadget,pos:Int,length:Int,Text:String,units:Int)
-	Function NSAddText(gadget:TNSGadget,Text:String)
-	Function NSAreaText:String(gadget:TNSGadget,pos:Int,length:Int,units:Int)
-	Function NSAreaLen:Int(gadget:TNSGadget,units:Int)
-	Function NSLockText(gadget:TNSGadget)
-	Function NSUnlockText(gadget:TNSGadget)
-	Function NSSetTabs(gadget:TNSGadget,tabwidth:Int)
-	Function NSSetMargins(gadget:TNSGadget,leftmargin:Int)
-	Function NSSetColor(gadget:TNSGadget,r:Int,g:Int,b:Int)
-	Function NSRemoveColor(gadget:TNSGadget)
-	Function NSSetAlpha(gadget:TNSGadget,alpha:Float)
-	Function NSSetTextColor(gadget:TNSGadget,r:Int,g:Int,b:Int)
-	Function NSGetCursorPos:Int(gadget:TNSGadget,units:Int)
-	Function NSGetSelectionlength:Int(gadget:TNSGadget,units:Int)
-	Function NSSetStyle(gadget:TNSGadget,r:Int,g:Int,b:Int,flags:Int,pos:Int,length:Int,units:Int)	
-	Function NSSetSelection(gadget:TNSGadget,pos:Int,length:Int,units:Int)
-	Function NSCharAt:Int(gadget:TNSGadget,line:Int)
-	Function NSLineAt:Int(gadget:TNSGadget,index:Int)
-	Function NSCharX:Int(gadget:TGadget,char:Int)
-	Function NSCharY:Int(gadget:TGadget,char:Int)
+	Function NSPeerSetText(peer:Byte Ptr,Text:String)
+	Function NSPeerGetText:String(peer:Byte Ptr)
+	Function NSPeerReplaceText(peer:Byte Ptr,pos:Int,length:Int,Text:String,units:Int)
+	Function NSPeerAddText(peer:Byte Ptr,Text:String)
+	Function NSPeerAreaText:String(peer:Byte Ptr,pos:Int,length:Int,units:Int)
+	Function NSPeerAreaLen:Int(peer:Byte Ptr,units:Int)
+	Function NSPeerLockText(peer:Byte Ptr)
+	Function NSPeerUnlockText(peer:Byte Ptr)
+	Function NSPeerSetTabs(peer:Byte Ptr,tabwidth:Int)
+	Function NSPeerSetMargins(peer:Byte Ptr,leftmargin:Int)
+	Function NSPeerSetColor(peer:Byte Ptr,r:Int,g:Int,b:Int)
+	Function NSPeerRemoveColor(peer:Byte Ptr)
+	Function NSPeerSetAlpha(peer:Byte Ptr,alpha:Float)
+	Function NSPeerSetTextColor(peer:Byte Ptr,r:Int,g:Int,b:Int)
+	Function NSPeerGetCursorPos:Int(peer:Byte Ptr,units:Int)
+	Function NSPeerGetSelectionLength:Int(peer:Byte Ptr,units:Int)
+	Function NSPeerSetStyle(peer:Byte Ptr,r:Int,g:Int,b:Int,flags:Int,pos:Int,length:Int,units:Int)
+	Function NSPeerSetSelection(peer:Byte Ptr,pos:Int,length:Int,units:Int)
+	Function NSPeerCharAt:Int(peer:Byte Ptr,line:Int)
+	Function NSPeerLineAt:Int(peer:Byte Ptr,index:Int)
+	Function NSPeerCharX:Int(peer:Byte Ptr,char:Int)
+	Function NSPeerCharY:Int(peer:Byte Ptr,char:Int)
 	' prop
-	Function NSSetValue(gadget:TNSGadget,value:Float)
+	Function NSPeerSetValue(peer:Byte Ptr,value:Float)
 	' slider
-	Function NSSetSlider(gadget:TNSGadget,value:Double,small:Double,big:Double)
-	Function NSGetSlider:Double(gadget:TNSGadget)
+	Function NSPeerSetSlider(peer:Byte Ptr,value:Double,small:Double,big:Double)
+	Function NSPeerGetSlider:Double(peer:Byte Ptr)
 	' images for panels and nodes
 	Function NSPixmapImage:Byte Ptr(image:TPixmap)
-	Function NSSetImage(gadget:TNSGadget,nsimage:Byte Ptr,flags:Int)
-	Function NSSetIcon(gadget:TNSGadget,nsimage:Byte Ptr)
-	Function NSCountKids:Int(gadget:TNSGadget)
+	Function NSPeerSetImage(peer:Byte Ptr,nsimage:Byte Ptr,flags:Int)
+	Function NSPeerSetIcon(peer:Byte Ptr,nsimage:Byte Ptr)
+	Function NSPeerCountKids:Int(peer:Byte Ptr)
 	' html
-	Function NSRun:String(gadget:TNSGadget,script:String)
+	Function NSPeerRun:String(peer:Byte Ptr,script:String)
 	' misc
 	Function NSRelease(nsobject:Byte Ptr)
 	' system
@@ -223,10 +228,12 @@ Type TCocoaMaxGUIDriver Extends TMaxGUIDriver
 End Type
 
 Function GadgetFromHandle:TNSGadget( handle:Byte Ptr )
+	If Not handle Then Return Null
 	Return TNSGadget( GadgetMap.ValueForKey( TPtrWrapper.Create(handle) ) )
 End Function
 
-Function EmitCocoaOSEvent( event:Byte Ptr,handle:Byte Ptr,gadget:Object = Null )
+Function EmitCocoaOSEvent( event:Byte Ptr,handle:Byte Ptr,view:Byte Ptr,gadget:Object = Null )
+	' Keep stable peer identity separate from the NSView BRL uses for coordinates.
 	Local owner:TGadget = TGadget(gadget)
 	If Not owner Then owner = GadgetFromHandle( handle )
 	If owner Then
@@ -234,16 +241,16 @@ Function EmitCocoaOSEvent( event:Byte Ptr,handle:Byte Ptr,gadget:Object = Null )
 			owner = owner.source
 		Wend
 	EndIf
-	bbSystemEmitOSEvent event,handle,owner
+	bbSystemEmitOSEvent event,view,owner
 End Function
 
-Function EmitCocoaMouseEvent:Int( event:Byte Ptr, handle:Byte Ptr )
+Function EmitCocoaMouseEvent:Int( event:Byte Ptr, handle:Byte Ptr, view:Byte Ptr )
 	Local gadget:TNSGadget
 '	While handle
 		gadget = GadgetFromHandle( handle )
 		If gadget Then
 			If (gadget.sensitivity & SENSITIZE_MOUSE) Then
-				EmitCocoaOSEvent( event, handle, gadget )
+				EmitCocoaOSEvent( event, handle, view, gadget )
 				Return 1
 			EndIf
 			Return 0
@@ -252,19 +259,58 @@ Function EmitCocoaMouseEvent:Int( event:Byte Ptr, handle:Byte Ptr )
 '	Wend
 End Function
 
-Function EmitCocoaKeyEvent:Int( event:Byte Ptr, handle:Byte Ptr )
+Function EmitCocoaKeyEvent:Int( event:Byte Ptr, handle:Byte Ptr, view:Byte Ptr )
 	Local gadget:TNSGadget
 	While handle
 		gadget = GadgetFromHandle( handle )
 		If gadget Then
 			If (gadget.sensitivity & SENSITIZE_KEYS) Then
-				EmitCocoaOSEvent( event, handle, gadget )
+				EmitCocoaOSEvent( event, handle, view, gadget )
 				Return 1
 			EndIf
 			Return 0
 		EndIf
 		handle = NSSuperview(handle)
 	Wend
+End Function
+
+Function PostCocoaTreeEvent(id:Int, treeHandle:Byte Ptr, nodeHandle:Byte Ptr, mods:Int, x:Int, y:Int)
+	DispatchGuiEvents()
+	Local tree:TNSGadget = GadgetFromHandle(treeHandle)
+	Local node:TNSGadget = GadgetFromHandle(nodeHandle)
+	If Not tree Or tree.internalclass <> GADGET_TREEVIEW Then Return
+	If node And node.internalclass <> GADGET_NODE Then node = Null
+	PostGuiEvent id, tree, 0, mods, x, y, node
+End Function
+
+Function PostCocoaTreeDragEvent:Int(treeHandle:Byte Ptr, nodeHandle:Byte Ptr, button:Int, mods:Int, x:Int, y:Int)
+	If button < MOUSE_LEFT Or button > MOUSE_MIDDLE Then Return False
+	Local tree:TNSGadget = GadgetFromHandle(treeHandle)
+	Local node:TNSGadget = GadgetFromHandle(nodeHandle)
+	If Not tree Or tree.internalclass <> GADGET_TREEVIEW Then Return False
+	If Not (tree.style & TREEVIEW_DRAGNDROP) Then Return False
+	If Not node Or node.internalclass <> GADGET_NODE Then Return False
+	TGadget.dragGadget[button - 1] = node
+	PostGuiEvent EVENT_GADGETDRAG, tree, button, mods, x, y, node
+	Return True
+End Function
+
+Function PostCocoaGadgetDropEvent:Int(targetHandle:Byte Ptr, button:Int, mods:Int, x:Int, y:Int)
+	If button < MOUSE_LEFT Or button > MOUSE_MIDDLE Then Return False
+	Local target:TNSGadget = GadgetFromHandle(targetHandle)
+	If Not target Then Return False
+	Local dragged:TGadget = TGadget.dragGadget[button - 1]
+	If Not dragged Then Return False
+	TGadget.dragGadget[button - 1] = Null
+	PostGuiEvent EVENT_GADGETDROP, target, button, mods, x, y, dragged
+	Return True
+End Function
+
+Function CancelCocoaGadgetDrag:Int(button:Int)
+	If button < MOUSE_LEFT Or button > MOUSE_MIDDLE Then Return False
+	If Not TGadget.dragGadget[button - 1] Then Return False
+	TGadget.dragGadget[button - 1] = Null
+	Return True
 End Function
 
 ?Not Ptr64
@@ -282,12 +328,6 @@ Function PostCocoaGuiEvent( id:Int,handle:Byte Ptr,data:Long,mods:Int,x:Int,y:In
 		gadget = GadgetFromHandle(handle)
 		
 		If gadget Then
-			
-			Select gadget.internalclass
-				Case GADGET_TREEVIEW
-					extra=GadgetFromHandle(Byte Ptr(data))
-					data = 0
-			EndSelect
 			
 			Select id
 				Case EVENT_WINDOWSIZE
@@ -373,7 +413,7 @@ Function FilterKeyDown:Int( handle:Byte Ptr,key:Int,mods:Int )
 	If handle
 		source=GadgetFromHandle(handle)
 	EndIf
-	If source And source.eventfilter<>Null
+	If source And source.eventfilter<>TGadget.NullEventFilter
 		Local event:TEvent=CreateEvent(EVENT_KEYDOWN,source,key,mods)
 		Return source.eventfilter(event,source.context)
 	EndIf
@@ -390,7 +430,7 @@ Function FilterChar:Int( handle:Byte Ptr,key:Int,mods:Int )
 	If handle
 		source=GadgetFromHandle(handle)
 	EndIf
-	If source And source.eventfilter<>Null 'Return source.charfilter(char,mods,source.context)
+	If source And source.eventfilter<>TGadget.NullEventFilter 'Return source.charfilter(char,mods,source.context)
 		Local event:TEvent=CreateEvent(EVENT_KEYCHAR,source,key,mods)
 		Return source.eventfilter(event,source.context)
 	EndIf
@@ -401,8 +441,8 @@ Type TNSGadget Extends TGadget
 	
 	Field internalclass:Int, origclass:Int	'internalclass: Class the Cocoa driver uses to draw the gadget, origclass: Expected class to be returned by Class() method
 	Field handle:Byte Ptr
-	Field view:Byte Ptr, textcolor:Byte Ptr	'view: NSView handle, textcolor: NSColor handle for Objective-C code
-	Field intFontStyle:Int	'Copy of font.style used by cocoa.macos.m to handle underlining/strikethrough etc. that isn't included in NSFont
+	Field view:Byte Ptr
+	Field peer:Byte Ptr
 	Field pixmap:TPixmap
 	Field icons:TCocoaIconStrip
 	Field small:Int, big:Int
@@ -430,13 +470,23 @@ Type TNSGadget Extends TGadget
 			gadget.forceDisable = Not (TNSGadget(group).enabled And Not TNSGadget(group).forceDisable)
 		EndIf
 		
-		NSInitGadget gadget
+		If internalclass=GADGET_CANVAS Or (internalclass=GADGET_PANEL And (style&PANEL_ACTIVE)) Then
+			gadget.sensitivity:|SENSITIZE_MOUSE|SENSITIZE_KEYS
+		EndIf
+
+		Local groupPeer:Byte Ptr
+		If TNSGadget(group) Then groupPeer = TNSGadget(group).peer
+		gadget.peer = NSPeerCreate(internalclass,style,groupPeer)
+		GadgetMap.Insert TPtrWrapper.Create(gadget.peer),gadget
+		NSPeerInitializeGadget gadget.peer,Text,Varptr gadget.xpos,Varptr gadget.ypos,Varptr gadget.width,Varptr gadget.height,groupPeer
+		gadget.handle = NSPeerNativeHandle(gadget.peer)
+		gadget.view = NSPeerClientView(gadget.peer)
 
 		If internalclass<>GADGET_TOOLBAR 'toolbars retain name to key insertgadgetitem
 			gadget.name = Null
 		EndIf
 		
-		GadgetMap.Insert TPtrWrapper.Create(gadget.handle),gadget
+		If gadget.handle Then GadgetMap.Insert TPtrWrapper.Create(gadget.handle),gadget
 		If gadget.view And gadget.handle <> gadget.view Then
 			GadgetMap.Insert TPtrWrapper.Create(gadget.view),gadget
 		EndIf
@@ -495,8 +545,8 @@ Type TNSGadget Extends TGadget
 			If prev Exit
 		Next
 		If Not prev Return
-		NSSetNextView(prev,Self)
-		NSSetNextView(Self,First)
+		NSPeerSetNextView(prev.peer,peer)
+		NSPeerSetNextView(peer,First.peer)
 	End Method
 	
 	Method Delete()
@@ -508,59 +558,66 @@ Type TNSGadget Extends TGadget
 	Method Query:Byte Ptr(queryid:Int)
 		Select queryid
 			Case QUERY_NSVIEW
+				If peer And NSPeerIsValid(peer) Then Return NSPeerNativeHandle(peer)
 				Return handle
 			Case QUERY_NSVIEW_CLIENT
+				If peer And NSPeerIsValid(peer) Then Return NSPeerClientView(peer)
 				Return view
 		End Select				
 	End Method
 
 	Method Free:Int()
-		If handle Then
+		If handle Or peer Then
 			
 			If canvas Then canvas.close
 			
-			GadgetMap.Remove TPtrWrapper.Create(handle)
+			If handle Then GadgetMap.Remove TPtrWrapper.Create(handle)
+			If peer Then GadgetMap.Remove TPtrWrapper.Create(peer)
 			If view And handle <> view Then
 				GadgetMap.Remove TPtrWrapper.Create(view)
-				view = Null
 			EndIf
 				
 			If parent Then
 				parent.kids.Remove Self
 			End If
 			
-			NSFreeGadget Self
+			If peer Then
+				NSPeerFreeGadget peer
+				NSPeerDestroy peer
+				peer = Null
+			EndIf
 			font = Null
 			
 			handle = Null
+			view = Null
 			
 		EndIf
 	End Method
 
 	Method Rethink:Int()			'resize	- was recursive
-		NSRethink( Self )
+		NSPeerRethink peer,xpos,ypos,width,height
 	End Method
 		
 	Method ClientWidth:Int()
-		Return Max(NSClientWidth(Self),0)
+		Return Max(NSPeerClientWidth(peer,width),0)
 	End Method
 	
 	Method ClientHeight:Int()
-		Return Max(NSClientHeight(Self),0)
+		Return Max(NSPeerClientHeight(peer,height),0)
 	End Method
 	
 	Method Activate:Int(cmd:Int)
-		NSActivate( Self, cmd )
+		NSPeerActivate peer,cmd
 	End Method
 	
 	Method State:Int()
-		Local tmpState:Int = NSState(Self)&~STATE_DISABLED
+		Local tmpState:Int = NSPeerState(peer)&~STATE_DISABLED
 		If Not enabled Then tmpState:|STATE_DISABLED
 		Return tmpState
 	End Method
 	
 	Method SetShow:Int(bool:Int)
-		NSShow( Self, bool )
+		NSPeerSetShown peer,bool
 	End Method
 
 	Method SetText:Int(msg:String)
@@ -580,38 +637,37 @@ Type TNSGadget Extends TGadget
 		ElseIf internalclass=GADGET_MENUITEM
 			msg=msg.Replace("&", "")
 		EndIf
-		NSSetText Self,msg
+		NSPeerSetText peer,msg
 	End Method
 	
 	Method Run:String(msg:String)
-		If internalclass=GADGET_HTMLVIEW Return NSRun(Self,msg)
+		If internalclass=GADGET_HTMLVIEW Return NSPeerRun(peer,msg)
 	End Method
 
 	Method GetText:String()
-		Return NSGetText(Self)
+		Return NSPeerGetText(peer)
 	End Method
 
 	Method SetFont:Int(pFont:TGuiFont)
 		If Not TCocoaGuiFont(pFont) Then pFont = TCocoaMaxGUIDriver.CocoaGuiFont
 		font = TCocoaGuiFont(pFont)
-		intFontStyle = font.style
-		NSSetFont( Self, font.handle )
+		NSPeerSetFont peer,font.handle,font.style
 	End Method
 
 	Method SetColor:Int(r:Int,g:Int,b:Int)
-		NSSetColor Self,r,g,b
+		NSPeerSetColor peer,r,g,b
 	End Method
 
 	Method RemoveColor:Int()
-		NSRemoveColor Self
+		NSPeerRemoveColor peer
 	End Method
 
 	Method SetAlpha:Int(alpha:Float)
-		NSSetAlpha Self,alpha
+		NSPeerSetAlpha peer,alpha
 	End Method
 	
 	Method SetTextColor:Int(r:Int,g:Int,b:Int)
-		NSSetTextColor Self,r,g,b
+		NSPeerSetTextColor peer,r,g,b
 	End Method
 	
 	Method SetPixmap:Int(pixmap:TPixmap,flags:Int)
@@ -634,33 +690,33 @@ Type TNSGadget Extends TGadget
 			EndIf
 			nsimage=NSPixmapImage(pixmap)
 		EndIf
-		NSSetImage(Self,nsimage,flags)
+		NSPeerSetImage peer,nsimage,flags
 	End Method
 	
 	Method SetTooltip:Int(pTip:String)
 		Select internalclass
 			Case GADGET_WINDOW, GADGET_DESKTOP, GADGET_LISTBOX, GADGET_MENUITEM, GADGET_TOOLBAR, GADGET_TABBER, GADGET_NODE
-			Default;Return NSSetTooltip( Self, pTip )
+			Default;Return NSPeerSetTooltip(peer,pTip)
 		EndSelect
 	EndMethod
 	
 	Method GetTooltip:String()
 		Select internalclass
 			Case GADGET_WINDOW, GADGET_DESKTOP, GADGET_LISTBOX, GADGET_MENUITEM, GADGET_TOOLBAR, GADGET_TABBER, GADGET_NODE
-			Default;Return NSGetTooltip( Self )
+			Default;Return NSPeerGetTooltip(peer)
 		EndSelect
 	EndMethod
 	
 	Method ExcludeOthers()
 		For Local g:TNSGadget = EachIn parent.kids
 			If g<>Self And g.internalclass=GADGET_BUTTON And (g.style&7)=BUTTON_RADIO
-				NSCheck g,False
+				NSPeerSetChecked g.peer,False
 			EndIf
 		Next
 	End Method
 
 	Method SetSelected:Int(bool:Int)
-		NSCheck Self,bool
+		NSPeerSetChecked peer,bool
 		If internalclass=GADGET_BUTTON And (style&7)=BUTTON_RADIO And bool
 			ExcludeOthers
 		EndIf
@@ -670,10 +726,10 @@ Type TNSGadget Extends TGadget
 		Local old:Int = enabled And Not forceDisable
 		enabled = enable
 		If Class() = GADGET_WINDOW Then
-			NSEnable Self, enable
+			NSPeerSetEnabled peer,enable
 		Else
 			enable = enable And Not forceDisable
-			NSEnable Self, enable
+			NSPeerSetEnabled peer,enable
 			If (enable <> old) Then
 				For Local tmpGadget:TNSGadget = EachIn kids
 					tmpGadget.forceDisable = Not enable
@@ -684,7 +740,7 @@ Type TNSGadget Extends TGadget
 	End Method
 	
 	Method SetHotKey:Int(hotkey:Int,modifier:Int)
-		NSSetHotKey Self,hotkey,modifier
+		NSPeerSetHotKey peer,hotkey,modifier
 	End Method
 	
 ' window commands
@@ -701,9 +757,9 @@ Type TNSGadget Extends TGadget
 		m0=msg
 		t=m0.find("~t");If t<>-1 m1=m0[t+1..];m0=m0[..t];
 		t=m1.find("~t");If t<>-1 m2=m1[t+1..];m1=m1[..t];		
-		NSSetStatus Self,m0,0
-		NSSetStatus Self,m1,1
-		NSSetStatus Self,m2,2
+		NSPeerSetStatus peer,m0,0
+		NSPeerSetStatus peer,m1,1
+		NSPeerSetStatus peer,m2,2
 	End Method
 	
 	Method GetMenu:TGadget()
@@ -714,18 +770,18 @@ Type TNSGadget Extends TGadget
 	
 	Method PopupMenu:Int(menu:TGadget,extra:Object)
 		popupextra=extra
-		NSPopupMenu Self,TNSGadget(menu)
+		NSPeerPopupMenu peer,TNSGadget(menu).peer
 	End Method
 	
 	Method UpdateMenu:Int()
 	End Method
 	
 	Method SetMinimumSize:Int(w:Int,h:Int)
-		NSSetMinimumSize Self,w,h
+		NSPeerSetMinimumSize peer,w,h
 	End Method
 	
 	Method SetMaximumSizeL:Int(w:Int,h:Int)
-		NSSetMaximumSize Self,w,h
+		NSPeerSetMaximumSize peer,w,h
 	End Method
 
 	Method SetIconStrip:Int(iconstrip:TIconStrip)
@@ -735,7 +791,7 @@ Type TNSGadget Extends TGadget
 ' item handling commands
 
 	Method ClearListItems:Int()
-		NSClearItems Self
+		NSPeerClearItems peer
 	End Method
 
 	Method InsertListItem:Int(index:Int,item:String,tip:String,icon:Int,extra:Object)
@@ -744,7 +800,7 @@ Type TNSGadget Extends TGadget
 			item=name+":"+index
 		EndIf
 		If icons And icon>=0 image=icons.images[icon]
-		NSAddItem Self,index,item,tip,image,extra
+		NSPeerAddItem peer,index,item,tip,image,extra
 	End Method
 	
 	Method SetListItem:Int(index:Int,item:String,tip:String,icon:Int,extra:Object)
@@ -753,19 +809,19 @@ Type TNSGadget Extends TGadget
 			item=name+":"+index
 		EndIf
 		If icons And icon>=0 image=icons.images[icon]
-		NSSetItem Self,index,item,tip,image,extra
+		NSPeerSetItem peer,index,item,tip,image,extra
 	End Method
 	
 	Method RemoveListItem:Int(index:Int)
-		NSRemoveItem Self,index
+		NSPeerRemoveItem peer,index
 	End Method
 	
 	Method SetListItemState:Int(index:Int,state:Int)
-		NSSelectItem Self,index,state
+		NSPeerSelectItem peer,index,state
 	End Method
 	
 	Method ListItemState:Int(index:Int)
- 		Return NSSelectedItem(Self,index)
+		Return NSPeerSelectedItem(peer,index)
 	End Method
 	
 ' treeview commands	
@@ -783,9 +839,9 @@ Type TNSGadget Extends TGadget
 		Wend
 		If p
 			If icon>-1
-				NSSetIcon Self,p.icons.images[icon]		
+				NSPeerSetIcon peer,p.icons.images[icon]
 			Else
-				NSSetIcon Self,Null		
+				NSPeerSetIcon peer,Null
 			EndIf
 		EndIf				
 	End Method
@@ -798,17 +854,17 @@ Type TNSGadget Extends TGadget
 	End Method
 	
 	Method ModifyNode:Int(Text:String,icon:Int)
-		NSSetText Self,Text
+		NSPeerSetText peer,Text
 		SetIcon icon
 	End Method
 
 	Method SelectedNode:TGadget()
-		Local	index:Byte Ptr = NSSelectedNode(Self)
+		Local	index:Byte Ptr = NSPeerSelectedNode(peer)
 		If (index) Return GadgetFromHandle(index)
 	End Method
 
 	Method CountKids:Int()
-		Return NSCountKids(Self)
+		Return NSPeerCountKids(peer)
 	End Method
 
 ' textarea commands
@@ -817,88 +873,88 @@ Type TNSGadget Extends TGadget
 ?debug
 		If pos<0 Or pos+length>AreaLen(units) Throw "Illegal Range"
 ?	
-		NSReplaceText Self,pos,length,Text$,units
+		NSPeerReplaceText peer,pos,length,Text$,units
 	End Method
 
 	Method AddText:Int(Text:String)
-		NSAddText Self,Text
+		NSPeerAddText peer,Text
 	End Method
 
 	Method AreaText:String(pos:Int,length:Int,units:Int)
 ?debug
 		If pos<0 Or pos+length>AreaLen(units) Throw "Illegal Range"
 ?	
-		Return NSAreaText(Self,pos,length,units)
+		Return NSPeerAreaText(peer,pos,length,units)
 	End Method
 
 	Method AreaLen:Int(units:Int)
-		Return NSAreaLen(Self,units)
+		Return NSPeerAreaLen(peer,units)
 	End Method
 
 	Method LockText:Int()
-		NSLockText Self
+		NSPeerLockText peer
 	End Method
 
 	Method UnlockText:Int()
-		NSUnlockText Self
+		NSPeerUnlockText peer
 	End Method
 
 	Method SetTabs:Int(tabwidth:Int)
-		NSSetTabs Self,tabwidth
+		NSPeerSetTabs peer,tabwidth
 	End Method
 
 	Method SetMargins:Int(leftmargin:Int)
-		NSSetMargins Self,leftmargin
+		NSPeerSetMargins peer,leftmargin
 	End Method
 
 	Method GetCursorPos:Int(units:Int)
-		Return NSGetCursorPos(Self,units)
+		Return NSPeerGetCursorPos(peer,units)
 	End Method
 
 	Method GetSelectionLength:Int(units:Int)
-		Return NSGetSelectionLength(Self,units)
+		Return NSPeerGetSelectionLength(peer,units)
 	End Method
 
 	Method SetStyle:Int(r:Int,g:Int,b:Int,flags:Int,pos:Int,length:Int,units:Int) 	
 ?debug
 		If pos<0 Or pos+length>AreaLen(units) Throw "Illegal Range"
 ?	
-		If length NSSetStyle Self,r,g,b,flags,pos,length,units
+		If length NSPeerSetStyle peer,r,g,b,flags,pos,length,units
 	End Method
 
 	Method SetSelection:Int(pos:Int,length:Int,units:Int)
 ?debug
 		If pos<0 Or pos+length>AreaLen(units) Throw "Illegal Range"
 ?	
-		NSSetSelection Self,pos,length,units
+		NSPeerSetSelection peer,pos,length,units
 	End Method
 
 	Method CharAt:Int(line:Int)
 ?debug
 		If line<0 Or line>AreaLen(TEXTAREA_LINES) Throw "Parameter Out Of Range"
 ?	
-		Return NSCharAt(Self,line)
+		Return NSPeerCharAt(peer,line)
 	End Method
 
 	Method LineAt:Int(index:Int)
 ?debug
 		If index<0 Or index>AreaLen(TEXTAREA_CHARS) Throw "Parameter Out Of Range"
 ?	
-		Return NSLineAt(Self,index)
+		Return NSPeerLineAt(peer,index)
 	End Method
 	
 	Method CharX:Int(char:Int)
-		Return NSCharX(Self,char)
+		Return NSPeerCharX(peer,char)
 	EndMethod
 	
 	Method CharY:Int(char:Int)
-		Return NSCharY(Self,char)
+		Return NSPeerCharY(peer,char)
 	EndMethod
 	
 ' progbar
 	
 	Method SetValue:Int(value:Float)
-		NSSetValue Self,value
+		NSPeerSetValue peer,value
 	End Method
 
 ' slider / scrollbar
@@ -906,15 +962,15 @@ Type TNSGadget Extends TGadget
 	Method SetRange:Int(_small:Int,_big:Int)
 		small=_small
 		big=_big
-		NSSetSlider Self,GetProp(),small,big
+		NSPeerSetSlider peer,GetProp(),small,big
 	End Method
 	
 	Method SetProp:Int(pos:Int)
-		NSSetSlider Self,pos,small,big
+		NSPeerSetSlider peer,pos,small,big
 	End Method
 
 	Method GetProp:Int()
-		Local value:Double = NSGetSlider(Self)
+		Local value:Double = NSPeerGetSlider(peer)
 		If Not (style&(SLIDER_TRACKBAR|SLIDER_STEPPER))
 			value:*(big-small)
 			If value>big-small value=big-small
@@ -925,7 +981,9 @@ Type TNSGadget Extends TGadget
 ' canvas
 
 	Method AttachGraphics:TGraphics( flags:Long )
+		If Not GetGraphicsDriver() Then Return Null
 		canvas=brl.Graphics.AttachGraphics( Query(QUERY_NSVIEW_CLIENT),flags )
+		Return canvas
 	End Method
 	
 	Method CanvasGraphics:TGraphics()

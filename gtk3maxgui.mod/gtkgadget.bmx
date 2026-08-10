@@ -2163,7 +2163,7 @@ Type TGTKEditable Extends TGTKGadget
 		Local source:TGTKEditable = TGTKEditable(obj)
 
 		' only if we are using a filter...
-		If source And source.eventfilter <> Null Then
+		If source And source.eventfilter <> TGadget.NullEventFilter Then
 			Local _key:Int, _mods:Int
 			bmx_gtk3maxgui_gdkeventkey(gdkEvent, Varptr _key, Varptr _mods)
 			Local key:Int = TGTKKeyMap.mapBack(_key)
