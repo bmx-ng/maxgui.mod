@@ -74,14 +74,13 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 
 		gtk_widget_show(handle)
 
-		gtk_layout_put(TGTKContainer(parent).container, handle, x, y)
-		gtk_widget_set_size_request(handle, w, Max(h,0))
+		bmx_gtk3_maxgui_fixed_put(TGTKContainer(parent).container, handle, x, y, w, Max(h, 0))
 
 
-		addConnection("sci-notify", g_signal_cbsci(handle, "sci-notify", OnSciNotify, Self, Destroy, 0))
-		addConnection("button-press-event", g_signal_cb3(handle, "button-press-event", OnMouseDown, Self, Destroy, 0))
-		addConnection("button-release-event", g_signal_cb3(handle, "button-release-event", OnMouseUp, Self, Destroy, 0))
-		addConnection("key-press-event", g_signal_cb3(handle, "key-press-event", OnKeyDown, Self, Destroy, 0))
+		addConnection("sci-notify", g_signal_sci_notify(handle, "sci-notify", OnSciNotify, Self))
+		addConnection("button-press-event", g_signal_cb3_ret(handle, "button-press-event", OnMouseDown, Self))
+		addConnection("button-release-event", g_signal_cb3_ret(handle, "button-release-event", OnMouseUp, Self))
+		addConnection("key-press-event", g_signal_cb3_ret(handle, "key-press-event", OnKeyDown, Self))
 		
 		' set some default monospaced font
 		SetFont(LookupGuiFont(GUIFONT_MONOSPACED))
@@ -384,6 +383,13 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		End Select
 	End Method
 
+	Method Rethink:Int()
+		If handle Then
+			bmx_gtk3_maxgui_fixed_set_child_rect(TGTKContainer(parent).container, handle, ..
+				Max(xpos, 0), Max(ypos, 0), Max(width, 0), Max(height, 0))
+		End If
+	End Method
+
 	Method CharAt:Int(line:Int)
 		Return bmx_mgta_scintilla_positionfromline(sciPtr, line, False)
 	End Method
@@ -392,7 +398,7 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 		Return bmx_mgta_scintilla_linefromposition(sciPtr, index)
 	End Method
 
-	Function OnSciNotify(widget:Byte Ptr, id:Int, notificationPtr:Byte Ptr, obj:Object)
+	Function OnSciNotify:Int(widget:Byte Ptr, id:Int, notificationPtr:Byte Ptr, obj:Object)
 		Local ta:TGTKScintillaTextArea = TGTKScintillaTextArea(obj)
 
 		bmx_mgta_scintilla_notifcation_update(ta.notification, notificationPtr)
@@ -417,6 +423,8 @@ Type TGTKScintillaTextArea Extends TGTKTextArea
 					bmx_mgta_scintilla_setlinedigits(ta.sciPtr, Varptr ta.lineDigits, ta.showLineNumbers)
 				End If
 		End Select
+
+		Return False
 
 	End Function
 

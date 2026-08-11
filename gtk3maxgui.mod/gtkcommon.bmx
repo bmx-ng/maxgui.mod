@@ -1,15 +1,15 @@
-' Copyright (c) 2006-2020 Bruce A Henderson
-' 
+' Copyright (c) 2006-2026 Bruce A Henderson
+'
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
 ' in the Software without restriction, including without limitation the rights
 ' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ' copies of the Software, and to permit persons to whom the Software is
 ' furnished to do so, subject to the following conditions:
-' 
+'
 ' The above copyright notice and this permission notice shall be included in
 ' all copies or substantial portions of the Software.
-' 
+'
 ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -17,7 +17,7 @@
 ' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ' THE SOFTWARE.
-' 
+'
 SuperStrict
 
 
@@ -50,6 +50,11 @@ Import "gtkkeymap.bmx"
 Import "elist.bmx"
 
 Extern
+	' MaxGUI fixed-geometry container peer
+	Function bmx_gtk3_maxgui_fixed_new:Byte Ptr()
+	Function bmx_gtk3_maxgui_fixed_put(handle:Byte Ptr, child:Byte Ptr, x:Int, y:Int, width:Int, height:Int)
+	Function bmx_gtk3_maxgui_fixed_set_child_rect(handle:Byte Ptr, child:Byte Ptr, x:Int, y:Int, width:Int, height:Int)
+	Function bmx_gtk3_widget_apply_compact_style(handle:Byte Ptr, combo:Int)
 
 	' main loop and events
 	Function gtk_init(argc:Int Ptr, argv:Byte Ptr Ptr Ptr)
@@ -65,10 +70,10 @@ Extern
 	Function gdk_screen_get_display:Byte Ptr(screen:Byte Ptr)
 	Function gdk_screen_get_n_monitors:Int(screen:Byte Ptr)
 	Function gdk_screen_get_monitor_scale_factor:Int(screen:Byte Ptr, monitor:Int)
-	
+
 	' visuals
 	Function gdk_visual_get_depth:Int(handle:Byte Ptr)
-	
+
 	' gdkdisplay
 	Function gdk_display_get_default:Byte Ptr()
 
@@ -81,24 +86,21 @@ Extern
 	' gtkdialog
 	Function gtk_dialog_run:Int(handle:Byte Ptr)
 	Function gtk_dialog_add_button:Byte Ptr(handle:Byte Ptr, buttonText$z, responseId:Int)
-	
+
 	' gtkwidget
 	Function gtk_widget_destroy(handle:Byte Ptr)
 	Function gtk_widget_show(handle:Byte Ptr)
 	Function gtk_widget_hide(handle:Byte Ptr)
 	Function gtk_widget_override_font(handle:Byte Ptr, font_desc:Byte Ptr)
+	Function gtk_widget_set_opacity(handle:Byte Ptr, opacity:Double)
 ?bmxng
 	Function gtk_widget_get_preferred_size(handle:Byte Ptr, minSize:GtkRequisition Var, natSize:GtkRequisition Var)
 	Function gtk_widget_get_allocation(handle:Byte Ptr, allocation:GtkAllocation Var)
-	Function gtk_widget_override_color(handle:Byte Ptr, state:Int, color:GdkRGBA Var)
 	Function gtk_widget_size_allocate(handle:Byte Ptr, allocation:GtkAllocation Var)
-	Function gtk_widget_override_background_color(handle:Byte Ptr, state:Int, color:GdkRGBA Var)
 ?Not bmxng
 	Function gtk_widget_get_preferred_size(handle:Byte Ptr, minSize:Byte Ptr, natSize:Byte Ptr)
 	Function gtk_widget_get_allocation(handle:Byte Ptr, allocation:Byte Ptr)
-	Function gtk_widget_override_color(handle:Byte Ptr, state:Int, color:Byte Ptr)
 	Function gtk_widget_size_allocate(handle:Byte Ptr, allocation:Byte Ptr)
-	Function gtk_widget_override_background_color(handle:Byte Ptr, state:Int, color:Byte Ptr)
 ?
 	Function gtk_widget_grab_default(handle:Byte Ptr)
 	Function gtk_widget_set_size_request(handle:Byte Ptr, width:Int, height:Int)
@@ -109,19 +111,23 @@ Extern
 	Function gtk_widget_set_has_tooltip(handle:Byte Ptr, value:Int)
 	Function gtk_widget_grab_focus(handle:Byte Ptr)
 	Function gtk_widget_queue_draw(handle:Byte Ptr)
+	Function gtk_widget_queue_resize(handle:Byte Ptr)
 	Function gtk_widget_get_state_flags:Int(handle:Byte Ptr)
 	Function gtk_widget_get_visible:Int(handle:Byte Ptr)
 	Function gtk_widget_set_sensitive(handle:Byte Ptr, sensitive:Int)
+	Function gtk_widget_get_sensitive:Int(handle:Byte Ptr)
 	Function gtk_widget_is_sensitive:Int(handle:Byte Ptr)
+	Function gtk_widget_get_parent:Byte Ptr(handle:Byte Ptr)
+	Function gtk_drag_check_threshold:Int(widget:Byte Ptr, startX:Int, startY:Int, currentX:Int, currentY:Int)
 	Function gtk_widget_get_parent_window:Byte Ptr(handle:Byte Ptr)
 	Function gtk_widget_get_pango_context:Byte Ptr(handle:Byte Ptr)
 	Function gtk_widget_get_style_context:Byte Ptr(handle:Byte Ptr)
 	Function gtk_widget_get_window:Byte Ptr(handle:Byte Ptr)
 	Function gtk_widget_has_focus:Int(handle:Byte Ptr)
-	
+
 	' gtkfilechooserdialog
 	Function gtk_file_chooser_dialog_new:Byte Ptr(title:Byte Ptr, parent:Byte Ptr, action:Int, but1$z, opt1:Int, but2$z, opt2:Int, opt3:Byte Ptr)
-	
+
 	' gtkfilechooser
 	Function gtk_file_chooser_set_current_folder:Int(handle:Byte Ptr, filename:Byte Ptr)
 	Function gtk_file_chooser_set_filename:Int(handle:Byte Ptr, filename:Byte Ptr)
@@ -130,7 +136,7 @@ Extern
 
 	' glib
 	Function g_free(mem:Byte Ptr)
-	
+
 	' gobject
 	Function g_object_unref(handle:Byte Ptr)
 	Function g_object_set_int(handle:Byte Ptr, property:String, value:Int)="bmx_g_object_set_int"
@@ -143,12 +149,12 @@ Extern
 	Function g_object_ref:Byte Ptr(handle:Byte Ptr)
 	Function g_object_connect:Byte Ptr(gtkWidget:Byte Ptr, signalSpec:Byte Ptr, callback(widget:Byte Ptr, pspec:Byte Ptr, gadget:Object), gadget:Object, flag:Int)="g_object_connect"
 	Function g_object_set_data(handle:Byte Ptr, key:Byte Ptr, data:Object)
-		
+
 	' gtkfilefilter
 	Function gtk_file_filter_new:Byte Ptr()
 	Function gtk_file_filter_set_name(handle:Byte Ptr, name:Byte Ptr)
 	Function gtk_file_filter_add_pattern(handle:Byte Ptr, pattern:Byte Ptr)
-	
+
 	' pango
 	Function pango_font_description_free(handle:Byte Ptr)
 	Function pango_font_description_new:Byte Ptr()
@@ -164,16 +170,16 @@ Extern
 	Function pango_context_load_fontset:Byte Ptr(handle:Byte Ptr, desc:Byte Ptr, language:Byte Ptr)
 	Function pango_fontset_foreach(fontset:Byte Ptr, func:Int(_set:Byte Ptr, _font:Byte Ptr ,data:Object), data:Object)
 	Function pango_font_describe:Byte Ptr(font:Byte Ptr)
-	
+
 	' pango layout
 	Function pango_layout_new:Byte Ptr(context:Byte Ptr)
 	Function pango_layout_set_text(handle:Byte Ptr, Text:Byte Ptr, length:Int)
 	Function pango_layout_get_pixel_size(handle:Byte Ptr, width:Int Ptr, height:Int Ptr)
-	
+
 	' gdk pango
 	Function gdk_pango_context_get:Byte Ptr()
-	
-	
+
+
 	' gtkcanvas
 	Function gdk_x11_window_get_xid:Byte Ptr(handle:Byte Ptr)
 
@@ -188,7 +194,7 @@ Extern
 	Function gtk_window_set_geometry_hints(handle:Byte Ptr, widget:Byte Ptr, geometry:GdkGeometry Var, mask:Int)
 ?Not bmxng
 	Function gtk_window_set_geometry_hints(handle:Byte Ptr, widget:Byte Ptr, geometry:Byte Ptr, mask:Int)
-?	
+?
 	Function gtk_window_set_transient_for(handle:Byte Ptr, parent:Byte Ptr)
 	Function gtk_window_add_accel_group(handle:Byte Ptr, accelGroup:Byte Ptr)
 	Function gtk_window_get_position(handle:Byte Ptr, x:Int Ptr, y:Int Ptr)
@@ -202,7 +208,7 @@ Extern
 	Function gtk_window_maximize(handle:Byte Ptr)
 	Function gtk_window_iconify(handle:Byte Ptr)
 	Function gtk_window_get_focus:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkBox
 	Function gtk_box_new:Byte Ptr(orientation:Int, spacing:Int)
 	Function gtk_box_pack_start(handle:Byte Ptr, child:Byte Ptr, expand:Int, fill:Int, padding:Int)
@@ -210,13 +216,7 @@ Extern
 
 	' GtkMenuBar
 	Function gtk_menu_bar_new:Byte Ptr()
-	
-	' GtkLayout
-	Function gtk_layout_new:Byte Ptr(hadjustment:Byte Ptr, vadjustment:Byte Ptr)
-	Function gtk_layout_put(handle:Byte Ptr, child:Byte Ptr, x:Int, y:Int)
-	Function gtk_layout_move(handle:Byte Ptr, child:Byte Ptr, x:Int, y:Int)
-	Function gtk_layout_get_bin_window:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkLabel
 	Function gtk_label_new:Byte Ptr(str:Byte Ptr)
 	Function gtk_label_set_xalign(handle:Byte Ptr, xalign:Float)
@@ -224,35 +224,36 @@ Extern
 	Function gtk_label_set_text(handle:Byte Ptr, str:Byte Ptr)
 	Function gtk_label_get_text:Byte Ptr(handle:Byte Ptr)
 	Function gtk_label_set_text_with_mnemonic(handle:Byte Ptr, txt:Byte Ptr)
-	
+
 	' GtkContainer
 	Function gtk_container_add(handle:Byte Ptr, widget:Byte Ptr)
 	Function gtk_container_set_resize_mode(handle:Byte Ptr, _mode:Int)
 	Function gtk_container_remove(handle:Byte Ptr, widget:Byte Ptr)
-	
+
 	' signals
-	Function g_signal_cb2:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb2_ret:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb3:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb3_ret:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb3a_ret:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb4:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb4a:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb5:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_cb8:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object, dh:Byte Ptr, flag:Int) = "bmx_g_signal_connect_data"
-	Function g_signal_handler_disconnect(gtkwidget:Byte Ptr, handlerid:Long)
-	Function g_signal_tabchange:Int(gtkwidget:Byte Ptr, name:String, cb:Byte Ptr, gadget:Object,dh:Byte Ptr,flag:Int) = "bmx_g_signal_connect_data"
-	
+	Function g_signal_cb2:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb2"
+	Function g_signal_cb2_ret:ULongInt(gtkwidget:Byte Ptr, name:String, callback:Int(widget:Byte Ptr, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb2_ret"
+	Function g_signal_cb3:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, event:Byte Ptr, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb3"
+	Function g_signal_cb3_ret:ULongInt(gtkwidget:Byte Ptr, name:String, callback:Int(widget:Byte Ptr, event:Byte Ptr, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb3_ret"
+	Function g_signal_cb3a:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, value:Int, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb3a"
+	Function g_signal_cb4:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, arg1:Byte Ptr, arg2:Byte Ptr, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb4"
+	Function g_signal_cb4a:ULongInt(gtkwidget:Byte Ptr, name:String, callback:Int(widget:Byte Ptr, value1:Int, value2:Double, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb4a"
+	Function g_signal_cb5:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, value1:Int, value2:Int, value3:Int, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb5"
+	Function g_signal_cb8:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, context:Byte Ptr, x:Int, y:Int, data:Byte Ptr, info:Int, time:Int, gadget:Object), gadget:Object) = "bmx_g_signal_connect_cb8"
+	Function g_signal_handler_disconnect(gtkwidget:Byte Ptr, handlerid:ULongInt)
+	Function g_signal_tabchange:ULongInt(gtkwidget:Byte Ptr, name:String, callback(widget:Byte Ptr, page:Byte Ptr, index:Int, gadget:Object), gadget:Object) = "bmx_g_signal_connect_tabchange"
+	Function g_signal_sci_notify:ULongInt(gtkwidget:Byte Ptr, name:String, callback:Int(widget:Byte Ptr, id:Int, notification:Byte Ptr, gadget:Object), gadget:Object) = "bmx_g_signal_connect_sci_notify"
+
 	' accelerator groups
 	Function gtk_accel_group_new:Byte Ptr()
 	Function gtk_accelerator_parse(accel:Byte Ptr, key:Int Ptr, mods:Int Ptr)
-	
+
 	' GtkMenu
 	Function gtk_menu_popup(handle:Byte Ptr, parentMenuShell:Byte Ptr, parentMenuItem:Byte Ptr, func:Byte Ptr, data:Byte Ptr, button:Int, activateTime:Int)
-	
+
 	' GtkMisc
 	Function gtk_misc_set_alignment(handle:Byte Ptr, xalign:Float, yalign:Float)
-	
+
 	' image data
 	Function gdk_pixbuf_new_from_data:Byte Ptr(data:Byte Ptr, colorspace:Int, has_alpha:Int, bits_per_sample:Int, width:Int, height:Int, ..
                     rowstride:Int, destroy_fn:Byte Ptr, data_fn:Byte Ptr)
@@ -262,7 +263,7 @@ Extern
 	Function gdk_pixbuf_scale_simple:Byte Ptr(src:Byte Ptr, dw:Int, dh:Int, inter:Int)
 	Function gdk_pixbuf_new:Byte Ptr(colorspace:Int, alpha:Int, bps:Int, width:Int, height:Int)
 	Function gdk_pixbuf_copy:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkButton
 	Function gtk_button_set_label(handle:Byte Ptr, label:Byte Ptr)
 	Function gtk_button_set_use_underline(handle:Byte Ptr, useUnderline:Int)
@@ -270,90 +271,94 @@ Extern
 	Function gtk_button_new_with_label:Byte Ptr(label:Byte Ptr)
 	Function gtk_button_set_image(handle:Byte Ptr, image:Byte Ptr)
 	Function gtk_button_set_image_position(handle:Byte Ptr, pos:Int)
-	
+
 	' GtkBin
 	Function gtk_bin_get_child:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkToggleButton
 	Function gtk_toggle_button_get_active:Int(handle:Byte Ptr)
 	Function gtk_toggle_button_set_active(handle:Byte Ptr, active:Int)
+	Function gtk_toggle_button_get_inconsistent:Int(handle:Byte Ptr)
+	Function gtk_toggle_button_set_inconsistent(handle:Byte Ptr, setting:Int)
 	Function gtk_toggle_button_set_mode(handle:Byte Ptr, indicator:Int)
-	
+
 	' GtkRadioButton
 	Function gtk_radio_button_new_with_label:Byte Ptr(handle:Byte Ptr, label:Byte Ptr)
 	Function gtk_radio_button_get_group:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkCheckButton
 	Function gtk_check_button_new_with_label:Byte Ptr(label:Byte Ptr)
-	
+
 	' GtkEventBox
 	Function gtk_event_box_new:Byte Ptr()
 	Function gtk_event_box_set_visible_window(handle:Byte Ptr, visibleWindow:Int)
-	
+
 	' GtkSeparator
 	Function gtk_separator_new:Byte Ptr(orientation:Int)
-	
+
 	' GtkFrame
 	Function gtk_frame_new:Byte Ptr(label:Byte Ptr)
 	Function gtk_frame_set_shadow_type(handle:Byte Ptr, shadowType:Int)
 	Function gtk_frame_set_label(handle:Byte Ptr, label:Byte Ptr)
-	
+
 	' key values
 	Function gdk_keyval_to_unicode:Int(keyval:Int)
-	
+
 	' GtkEntry
 	Function gtk_entry_new:Byte Ptr()
 	Function gtk_entry_set_visibility(handle:Byte Ptr, visible:Int)
 	Function gtk_entry_get_text:Byte Ptr(handle:Byte Ptr)
 	Function gtk_entry_set_text(handle:Byte Ptr, txt:Byte Ptr)
-	
+
 	' GtkEditable
 	Function gtk_editable_cut_clipboard(handle:Byte Ptr)
 	Function gtk_editable_copy_clipboard(handle:Byte Ptr)
 	Function gtk_editable_paste_clipboard(handle:Byte Ptr)
-	
+
 	' GtkListStore
 	Function gtk_list_store_set_value(handle:Byte Ptr, iter:Byte Ptr, column:Int, value:Byte Ptr)
 	Function gtk_list_store_new:Byte Ptr(COLS:Int, type1:Size_T, type2:Size_T)
 	Function gtk_list_store_insert(handle:Byte Ptr, iter:Byte Ptr, position:Int)
 	Function gtk_list_store_clear(handle:Byte Ptr)
 	Function gtk_list_store_remove:Int(handle:Byte Ptr, iter:Byte Ptr)
-	
+
 	' GtkTreeStore
 	Function gtk_tree_store_set_value(handle:Byte Ptr, iter:Byte Ptr, column:Int, value:Byte Ptr)
 	Function gtk_tree_store_append(handle:Byte Ptr, iter:Byte Ptr, parent:Byte Ptr)
 	Function gtk_tree_store_insert(handle:Byte Ptr, iter:Byte Ptr, parent:Byte Ptr, position:Int)
 	Function gtk_tree_store_remove:Int(handle:Byte Ptr, iter:Byte Ptr)
 	Function gtk_tree_store_new:Byte Ptr(columns:Int, _type1:Size_T, _type2:Size_T)
-	
+
 	' GtkTreeView
 	Function gtk_tree_view_append_column:Int(handle:Byte Ptr, column:Byte Ptr)
 	Function gtk_tree_view_new:Byte Ptr()
 	Function gtk_tree_view_set_headers_visible(handle:Byte Ptr, visible:Int)
 	Function gtk_tree_view_get_selection:Byte Ptr(handle:Byte Ptr)
 	Function gtk_tree_view_set_model(handle:Byte Ptr, model:Byte Ptr)
+	Function gtk_tree_view_get_cursor(handle:Byte Ptr, path:Byte Ptr Ptr, focusColumn:Byte Ptr Ptr)
 	Function gtk_tree_view_get_path_at_pos:Int(handle:Byte Ptr, x:Int, y:Int, path:Byte Ptr Ptr, column:Byte Ptr Ptr, cellX:Int Ptr, celly:Int Ptr)
 	Function gtk_tree_view_expand_row:Int(handle:Byte Ptr, path:Byte Ptr, openAll:Int)
+	Function gtk_tree_view_expand_to_path(handle:Byte Ptr, path:Byte Ptr)
 	Function gtk_tree_view_collapse_row:Int(handle:Byte Ptr, path:Byte Ptr)
-	
+
 	' GtkTreeViewColumn
 	Function gtk_tree_view_column_new:Byte Ptr()
 	Function gtk_tree_view_column_pack_start(handle:Byte Ptr, cell:Byte Ptr, expand:Int)
 	Function gtk_tree_view_column_pack_end(handle:Byte Ptr, cell:Byte Ptr, expand:Int)
 	Function gtk_tree_view_column_add_attribute(handle:Byte Ptr, renderer:Byte Ptr, attr$z, column:Int)
-	
+
 	' GtkCellRendererPixbuf
 	Function gtk_cell_renderer_pixbuf_new:Byte Ptr()
 
 	' GtkCellRendererText
 	Function gtk_cell_renderer_text_new:Byte Ptr()
-	
+
 	' GtkCellLayout
 	Function gtk_cell_layout_clear(handle:Byte Ptr)
 	Function gtk_cell_layout_add_attribute(handle:Byte Ptr, cell:Byte Ptr, attr$z, column:Int)
 	Function gtk_cell_layout_pack_start(handle:Byte Ptr, cell:Byte Ptr, expand:Int)
 	Function gtk_cell_layout_pack_end(handle:Byte Ptr, cell:Byte Ptr, expand:Int)
-	
+
 	' GtkComboBox
 	Function gtk_combo_box_new_with_entry:Byte Ptr()
 	Function gtk_combo_box_new:Byte Ptr()
@@ -362,7 +367,7 @@ Extern
 	Function gtk_combo_box_get_active:Int(handle:Byte Ptr)
 	Function gtk_combo_box_set_active(handle:Byte Ptr, index:Int)
 	Function gtk_combo_box_get_active_iter:Int(handle:Byte Ptr, iter:Byte Ptr)
-	
+
 	' GtkTreeModel
 	Function gtk_tree_model_iter_nth_child:Int(handle:Byte Ptr, iter:Byte Ptr, parent:Byte Ptr, index:Int)
 	Function gtk_tree_model_get_value(handle:Byte Ptr, iter:Byte Ptr, column:Int, value:Byte Ptr)
@@ -372,11 +377,11 @@ Extern
 	Function gtk_tree_path_new_from_string:Byte Ptr(path$z)
 	Function gtk_tree_model_get_iter_from_string:Int(handle:Byte Ptr, iter:Byte Ptr, path$z)
 	Function gtk_tree_model_get_path:Byte Ptr(handle:Byte Ptr, iter:Byte Ptr)
-	
+
 	' GtkScrolledWindow
 	Function gtk_scrolled_window_new:Byte Ptr(hadjustment:Byte Ptr, vadjustment:Byte Ptr)
 	Function gtk_scrolled_window_set_policy(handle:Byte Ptr, hpolicy:Int, vpolicy:Int)
-	
+
 	' GtkTreeSelection
 	Function gtk_tree_selection_set_mode(handle:Byte Ptr, _type:Int)
 	Function gtk_tree_selection_select_iter(handle:Byte Ptr, iter:Byte Ptr)
@@ -384,7 +389,7 @@ Extern
 	Function gtk_tree_selection_iter_is_selected:Int(handle:Byte Ptr, iter:Byte Ptr)
 	Function gtk_tree_selection_get_selected:Int(handle:Byte Ptr, model:Byte Ptr Ptr, iter:Byte Ptr)
 	Function gtk_tree_selection_select_path(handle:Byte Ptr, path:Byte Ptr)
-	
+
 	' GtkRange
 	Function gtk_range_set_range(handle:Byte Ptr, _min:Double, _max:Double)
 	Function gtk_range_set_value(handle:Byte Ptr, value:Double)
@@ -392,89 +397,90 @@ Extern
 	Function gtk_range_set_round_digits(handle:Byte Ptr, roundDigits:Int)
 	Function gtk_range_set_increments(handle:Byte Ptr, _step:Double, _page:Double)
 	Function gtk_range_get_adjustment:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkScale
 	Function gtk_scale_new_with_range:Byte Ptr(orientation:Int, _min:Double, _max:Double, _step:Double)
 	Function gtk_scale_set_draw_value(handle:Byte Ptr, value:Int)
-	
+
 	' GtkScrollbar
 	Function gtk_scrollbar_new:Byte Ptr(orientation:Int, adjustment:Byte Ptr)
-	
+
 	' GtkAdjustment
 	Function gtk_adjustment_set_page_size(handle:Byte Ptr, pageSize:Double)
-	
+
 	' GtkSpinButton
 	Function gtk_spin_button_new_with_range:Byte Ptr(_min:Double, _max:Double, _step:Double)
 	Function gtk_spin_button_set_range(handle:Byte Ptr, _min:Double, _max:Double)
 	Function gtk_spin_button_set_increments(handle:Byte Ptr, _step:Double, _page:Double)
 	Function gtk_spin_button_set_value(handle:Byte Ptr, value:Double)
 	Function gtk_spin_button_get_value:Double(handle:Byte Ptr)
-	
+
 	' GtkProgressBar
 	Function gtk_progress_bar_new:Byte Ptr()
 	Function gtk_progress_bar_set_fraction(handle:Byte Ptr, fraction:Double)
 	Function gtk_progress_bar_get_fraction:Double(handle:Byte Ptr)
-	
+
 	' GtkToolbar
 	Function gtk_toolbar_new:Byte Ptr()
 	Function gtk_toolbar_set_style(handle:Byte Ptr, style:Int)
 	Function gtk_toolbar_insert(handle:Byte Ptr, item:Byte Ptr, pos:Int)
 	Function gtk_toolbar_get_item_index:Int(handle:Byte Ptr, item:Byte Ptr)
-	
+
 	' GtkToolButton
 	Function gtk_tool_button_set_label(handle:Byte Ptr, label:Byte Ptr)
 	Function gtk_tool_button_set_icon_widget(handle:Byte Ptr, icon:Byte Ptr)
 	Function gtk_tool_button_new:Byte Ptr(icon:Byte Ptr, label:Byte Ptr)
 	Function gtk_tool_button_set_icon_name(handle:Byte Ptr, name$z)
-	
+
 	' GtkToggleToolButton
 	Function gtk_toggle_tool_button_new:Byte Ptr()
 	Function gtk_toggle_tool_button_get_active:Int(handle:Byte Ptr)
 	Function gtk_toggle_tool_button_set_active(handle:Byte Ptr, active:Int)
-	
+
 	' GtkImage
 	Function gtk_image_new_from_pixbuf:Byte Ptr(pixbuf:Byte Ptr)
 	Function gtk_image_new:Byte Ptr()
 	Function gtk_image_set_from_pixbuf(handle:Byte Ptr, pixbuf:Byte Ptr)
 	Function gtk_image_clear(handle:Byte Ptr)
-	
+
 	' GtkSeparatorToolItem
 	Function gtk_separator_tool_item_new:Byte Ptr()
-	
+
 	' GtkToolItem
 	Function gtk_tool_item_set_tooltip_text(handle:Byte Ptr, txt:Byte Ptr)
-	
+
 	' GtkNotebook
 	Function gtk_notebook_new:Byte Ptr()
 	Function gtk_notebook_set_scrollable(handle:Byte Ptr, scrollable:Int)
+	Function gtk_notebook_set_show_border(handle:Byte Ptr, showBorder:Int)
 	Function gtk_notebook_get_nth_page:Byte Ptr(handle:Byte Ptr, page:Int)
 	Function gtk_notebook_insert_page:Int(handle:Byte Ptr, child:Byte Ptr, label:Byte Ptr, pos:Int)
 	Function gtk_notebook_get_tab_label:Byte Ptr(handle:Byte Ptr, child:Byte Ptr)
 	Function gtk_notebook_get_current_page:Int(handle:Byte Ptr)
 	Function gtk_notebook_remove_page(handle:Byte Ptr, page:Int)
 	Function gtk_notebook_set_current_page(handle:Byte Ptr, page:Int)
-	
+
 	' GdkWindow
 	Function gdk_window_get_device_position:Byte Ptr(handle:Byte Ptr, device:Byte Ptr, x:Int Var, y:Int Var, mask:Int Var)
 	Function gdk_window_set_cursor(handle:Byte Ptr, cursor:Byte Ptr)
-	
+
 	' GdkCairo
 	Function gdk_cairo_create:Byte Ptr(handle:Byte Ptr)
 	Function gdk_cairo_set_source_pixbuf(handle:Byte Ptr, pixbuf:Byte Ptr, x:Double, y:Double)
-	
+
 	' Cairo
 	Function cairo_paint(handle:Byte Ptr)
 	Function cairo_fill(handle:Byte Ptr)
 	Function cairo_destroy(handle:Byte Ptr)
-	
+
 	' atoms
 	Function gdk_atom_intern:Byte Ptr(name:Byte Ptr, onlyIfExists:Int)
-	
+
 	' GtkClipboard
 	Function gtk_clipboard_get:Byte Ptr(selection:Byte Ptr)
 	Function gtk_clipboard_set_text(handle:Byte Ptr, txt:Byte Ptr, length:Int)
 	Function gtk_clipboard_wait_for_text:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GtkTextBuffer
 	Function gtk_text_buffer_new:Byte Ptr(table:Byte Ptr)
 	Function gtk_text_buffer_get_tag_table:Byte Ptr(handle:Byte Ptr)
@@ -496,7 +502,7 @@ Extern
 	Function gtk_text_buffer_get_insert:Byte Ptr(handle:Byte Ptr)
 	Function gtk_text_buffer_remove_all_tags(handle:Byte Ptr, _start:Byte Ptr, _end:Byte Ptr)
 	Function gtk_text_buffer_apply_tag(handle:Byte Ptr, tag:Byte Ptr, _start:Byte Ptr, _end:Byte Ptr)
-	
+
 	' GtkTextView
 	Function gtk_text_view_new_with_buffer:Byte Ptr(handle:Byte Ptr)
 	Function gtk_text_view_set_wrap_mode(handle:Byte Ptr, wrapMode:Int)
@@ -505,38 +511,38 @@ Extern
 	Function gtk_text_view_scroll_mark_onscreen(handle:Byte Ptr, mark:Byte Ptr)
 	Function gtk_text_view_get_tabs:Byte Ptr(handle:Byte Ptr)
 	Function gtk_text_view_set_tabs(handle:Byte Ptr, tabs:Byte Ptr)
-		
+
 	' GtkTextIter
 	Function gtk_text_iter_get_line:Int(handle:Byte Ptr)
 	Function gtk_text_iter_get_offset:Int(handle:Byte Ptr)
 	Function gtk_text_iter_backward_char:Int(handle:Byte Ptr)
-	
+
 	' GtkTextTagTable
 	Function gtk_text_tag_table_lookup:Byte Ptr(handle:Byte Ptr, txt$z)
-	
+
 	' pango tab array
 	Function pango_tab_array_free(handle:Byte Ptr)
 	Function pango_tab_array_new_with_positions:Byte Ptr(size:Int, pixels:Int, align:Int, pos:Int)
-	
+
 	' GtkSeparatorMenuItem
 	Function gtk_separator_menu_item_new:Byte Ptr()
-	
+
 	' GtkMenuItem
 	Function gtk_menu_item_new_with_mnemonic:Byte Ptr(label:Byte Ptr)
 	Function gtk_menu_item_new_with_label:Byte Ptr(label:Byte Ptr)
 	Function gtk_menu_item_set_submenu(handle:Byte Ptr, submenu:Byte Ptr)
-	
+
 	' GtkMenu
 	Function gtk_menu_new:Byte Ptr()
-	
+
 	' GtkMenuShell
 	Function gtk_menu_shell_append(handle:Byte Ptr, child:Byte Ptr)
 	Function gtk_menu_shell_insert(handle:Byte Ptr, child:Byte Ptr, pos:Int)
-	
+
 	' settings
 	Function gtk_settings_set_string_property(settings:Byte Ptr, name:Byte Ptr, v_string:Byte Ptr, origin:Byte Ptr)
 	Function gtk_settings_get_default:Byte Ptr()
-	
+
 	' GtkCheckMenuItem
 	Function gtk_check_menu_item_get_active:Int(handle:Byte Ptr)
 	Function gtk_check_menu_item_new_with_mnemonic:Byte Ptr(label:Byte Ptr)
@@ -549,29 +555,20 @@ Extern
 	' GtkIconTheme
 	Function gtk_icon_theme_add_builtin_icon(name$z, size:Int, pixbuf:Byte Ptr)
 
-	' GtkColorSelection
-	Function gtk_color_selection_dialog_new:Byte Ptr(title:Byte Ptr)
-	Function gtk_color_selection_dialog_get_color_selection:Byte Ptr(handle:Byte Ptr)
-?bmxng
-	Function gtk_color_selection_set_current_rgba(handle:Byte Ptr, rgba:GdkRGBA Var)
-	Function gtk_color_selection_get_current_rgba(handle:Byte Ptr, rgba:GdkRGBA Var)
-?Not bmxng
-	Function gtk_color_selection_set_current_rgba(handle:Byte Ptr, rgba:Byte Ptr)
-	Function gtk_color_selection_get_current_rgba(handle:Byte Ptr, rgba:Byte Ptr)
-?
-	
+	' GtkColorChooserDialog
+	Function gtk_color_chooser_dialog_new:Byte Ptr(title:Byte Ptr, parent:Byte Ptr)
 	' GtkFontChooserDialog
 	Function gtk_font_chooser_dialog_new:Byte Ptr(title:Byte Ptr, parent:Byte Ptr)
 	Function gtk_font_chooser_set_font_desc(handle:Byte Ptr, desc:Byte Ptr)
 	Function gtk_font_chooser_get_font_desc:Byte Ptr(handle:Byte Ptr)
-	
+
 	' GdkMonitor
 	'Function gdk_display_get_primary_monitor:Byte Ptr(display:Byte Ptr)
-	
+
 	' drag n drop
 	Function gtk_drag_dest_set(handle:Byte Ptr, flags:Int, targets:Byte Ptr, numTargets:Int, actions:Int)
 	Function gtk_drag_dest_add_uri_targets(handle:Byte Ptr)
-	
+
 	' glue
 	Function bmx_gtk3_gtkdesktop_gethertz:Int()
 	Function bmx_gtk3_gvalue_new:Byte Ptr(_type:Int)
@@ -581,13 +578,14 @@ Extern
 	Function bmx_gtk3_stylecontext_get_fontdesc:Byte Ptr(handle:Byte Ptr)
 	Function bmx_gtk3_gtktextiter_new:Byte Ptr()
 	Function bmx_gtk3_gtktextiter_free(iter:Byte Ptr)
-?bmxng
-	Function bmx_gtk3_set_text_tag_style:Byte Ptr(handle:Byte Ptr, tag$z, _fg:GdkRGBA Var, _style:Int, _weight:Int, _under:Int, _strike:Int)
-	Function bmx_gtk3_set_text_bg_tag:Byte Ptr(handle:Byte Ptr, tag$z, _bg:GdkRGBA Var)
-?Not bmxng
-	Function bmx_gtk3_set_text_tag_style:Byte Ptr(handle:Byte Ptr, tag$z, _fg:Byte Ptr, _style:Int, _weight:Int, _under:Int, _strike:Int)
-	Function bmx_gtk3_set_text_bg_tag:Byte Ptr(handle:Byte Ptr, tag$z, _bg:Byte Ptr)
-?
+	Function bmx_gtk3_gtkallocation_get(allocation:Byte Ptr, width:Int Ptr, height:Int Ptr)
+	Function bmx_gtk3_widget_override_color(handle:Byte Ptr, state:Int, red:Double, green:Double, blue:Double, alpha:Double)
+	Function bmx_gtk3_widget_override_background_color(handle:Byte Ptr, state:Int, red:Double, green:Double, blue:Double, alpha:Double)
+	Function bmx_gtk3_widget_remove_background_color(handle:Byte Ptr, state:Int)
+	Function bmx_gtk3_color_chooser_set_rgba(handle:Byte Ptr, red:Double, green:Double, blue:Double, alpha:Double)
+	Function bmx_gtk3_color_chooser_get_rgb:Int(handle:Byte Ptr)
+	Function bmx_gtk3_set_text_tag_style:Byte Ptr(handle:Byte Ptr, tag$z, red:Double, green:Double, blue:Double, alpha:Double, _style:Int, _weight:Int, _under:Int, _strike:Int)
+	Function bmx_gtk3_set_text_bg_tag:Byte Ptr(handle:Byte Ptr, tag$z, red:Double, green:Double, blue:Double, alpha:Double)
 	' event types
 	Function bmx_gtk3maxgui_gdkeventbutton(event:Byte Ptr, x:Double Ptr, y:Double Ptr, button:Int Ptr)
 	Function bmx_gtk3maxgui_gdkeventmotion(event:Byte Ptr, x:Double Ptr, y:Double Ptr, state:Int Ptr)
@@ -597,7 +595,11 @@ Extern
 	Function bmx_gtk3maxgui_gdkeventwindowstate(event:Byte Ptr, state:Int Ptr)
 	Function bmx_gtk3maxgui_gdkeventmotiondevice:Byte Ptr(event:Byte Ptr)
 
-	Function bmx_gtk3_selection_data_get_uris:String[](data:Byte Ptr)
+	Function bmx_gtk3_selection_data_get_paths:String[](data:Byte Ptr)
+	Function bmx_gtk3_uri_to_filename:String(uri$z)
+	Function bmx_gtk3_event_target:Byte Ptr(event:Byte Ptr)
+	Function bmx_gtk3_event_coordinates:Int(event:Byte Ptr, target:Byte Ptr, x:Int Ptr, y:Int Ptr)
+	Function bmx_gtk3maxgui_gdkeventbuttonstate(event:Byte Ptr, x:Double Ptr, y:Double Ptr, button:Int Ptr, state:Int Ptr)
 End Extern
 
 ' gadget identifiers
@@ -667,6 +669,11 @@ Const GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER:Int = 3
 Const PANGO_STYLE_NORMAL:Int = 0
 Const PANGO_STYLE_OBLIQUE:Int = 1
 Const PANGO_STYLE_ITALIC:Int = 2
+
+Const PANGO_ELLIPSIZE_NONE:Int = 0
+Const PANGO_ELLIPSIZE_START:Int = 1
+Const PANGO_ELLIPSIZE_MIDDLE:Int = 2
+Const PANGO_ELLIPSIZE_END:Int = 3
 
 ' PangoWeight
 Const PANGO_WEIGHT_ULTRALIGHT:Int = 200
@@ -740,17 +747,17 @@ Const GDK_WINDOW_STATE_TILED:Int      = 1 Shl 8
 ' GdkColorspace
 Const GDK_COLORSPACE_RGB:Int = 0
 
-' GtkStateType
+' GtkStateFlags
 Const GTK_STATE_FLAG_NORMAL:Int = 0
-Const GTK_STATE_FLAG_ACTIVE:Int = 1
-Const GTK_STATE_FLAG_PRELIGHT:Int = 2
-Const GTK_STATE_FLAG_SELECTED:Int = 3
-Const GTK_STATE_FLAG_INSENSITIVE:Int = 4
-Const GTK_STATE_FLAG_INCONSISTENT:Int = 5
-Const GTK_STATE_FLAG_FOCUSED:Int = 6
-Const GTK_STATE_FLAG_BACKDROP:Int = 7
-Const GTK_STATE_FLAG_DIR_LTR:Int = 8
-Const GTK_STATE_FLAG_DIR_RTL:Int = 9
+Const GTK_STATE_FLAG_ACTIVE:Int = 1 Shl 0
+Const GTK_STATE_FLAG_PRELIGHT:Int = 1 Shl 1
+Const GTK_STATE_FLAG_SELECTED:Int = 1 Shl 2
+Const GTK_STATE_FLAG_INSENSITIVE:Int = 1 Shl 3
+Const GTK_STATE_FLAG_INCONSISTENT:Int = 1 Shl 4
+Const GTK_STATE_FLAG_FOCUSED:Int = 1 Shl 5
+Const GTK_STATE_FLAG_BACKDROP:Int = 1 Shl 6
+Const GTK_STATE_FLAG_DIR_LTR:Int = 1 Shl 7
+Const GTK_STATE_FLAG_DIR_RTL:Int = 1 Shl 8
 
 ' GtkAccelFlags
 Const GTK_ACCEL_VISIBLE:Int = 1 ' display in GtkAccelLabel?
@@ -947,17 +954,14 @@ Global gtkWindows:TList = New TList
 ' I know... cup of cocoa anyone?
 Global GadgetMap:TPtrMap=New TPtrMap
 
-' creates an Object out of an "int"
-Type TGTKInteger
-	Field value:Int
-	Function Set:TGTKInteger(value:Int)
-		Local this:TGTKInteger = New TGTKInteger
+' Stores a platform-sized GLib signal handler identifier.
+Type TGTKSignalId
+	Field value:ULongInt
+	Function Set:TGTKSignalId(value:ULongInt)
+		Local this:TGTKSignalId = New TGTKSignalId
 		this.value = value
 		Return this
 	End Function
-	Method Compare:Int(o:Object)
-		Return value-TGTKInteger(o).value
-	End Method
 End Type
 
 Type TGTKGuiFont Extends TGuiFont
@@ -983,7 +987,7 @@ Type TGTKGuiFont Extends TGuiFont
 			context = Null
 		End If
 	EndMethod
-	
+
 	Method CharWidth:Int(char:Int)
 		If Not fontDesc Then
 			getPangoDescriptionFromGuiFont(Self)
@@ -1008,8 +1012,8 @@ Type TGTKGuiFont Extends TGuiFont
 		End If
 
 		Return 0
-	EndMethod 
-		
+	EndMethod
+
 EndType
 
 Rem
@@ -1019,30 +1023,30 @@ Function getPangoDescriptionFromGuiFont(font:TGtkGuiFont)
 	If font = Null Then
 		Return
 	End If
-	
+
 	If Not font.fontDesc Then
 
 		Local fontdesc:Byte Ptr = pango_font_description_new()
 		Local s:Byte Ptr = font.name.toUTF8String()
-			
+
 		pango_font_description_set_family(fontdesc, s)
-	
+
 		If font.style & FONT_BOLD Then
 			pango_font_description_set_weight(fontdesc, PANGO_WEIGHT_BOLD)
 		Else
 			pango_font_description_set_weight(fontdesc, PANGO_WEIGHT_NORMAL)
 		End If
-	
+
 		If font.style & FONT_ITALIC Then
 			pango_font_description_set_style(fontdesc, PANGO_STYLE_ITALIC)
 		End If
-	
+
 		pango_font_description_set_absolute_size(fontdesc, font.size * 1024)
-	
+
 		MemFree(s)
-		
+
 		font.fontDesc = fontDesc
-		
+
 	End If
 
 End Function
@@ -1079,15 +1083,12 @@ Function getGuiFontFromPangoDescription:TGuiFont(fontdesc:Byte Ptr)
 	font.size = pango_font_description_get_size(fontdesc) / 1024
 
 	font.fontDesc = fontdesc
-	
+
 	Return font
 End Function
 
 ?bmxng
 Struct GdkGeometry
-?Not bmxng
-Type GdkGeometry
-?
 	Field minWidth:Int
 	Field minHeight:Int
 	Field maxWidth:Int
@@ -1099,9 +1100,20 @@ Type GdkGeometry
 	Field minAspect:Double
 	Field maxAspect:Double
 	Field winGravity:Int
-?bmxng
 End Struct
 ?Not bmxng
+Type GdkGeometry
+	Field minWidth:Int
+	Field minHeight:Int
+	Field maxWidth:Int
+	Field maxHeight:Int
+	Field baseWidth:Int
+	Field baseHeight:Int
+	Field widthInc:Int
+	Field heightInc:Int
+	Field minAspect:Double
+	Field maxAspect:Double
+	Field winGravity:Int
 End Type
 ?
 
@@ -1149,54 +1161,22 @@ Type GtkAllocation
 End Type
 ?
 
-?bmxng
-Struct GdkRGBA
-	Field red:Double
-	Field green:Double
-	Field blue:Double
-	Field alpha:Double
-	
-	Method New(red:Double, green:Double, blue:Double, alpha:Double = 1.0)
-		Self.red = red
-		Self.green = green
-		Self.blue = blue
-		Self.alpha = alpha
-	End Method
-	
-End Struct
-?Not bmxng
-Type GdkRGBA
-	Field red:Double
-	Field green:Double
-	Field blue:Double
-	Field alpha:Double
-
-	Method Create:GdkRGBA(red:Double, green:Double, blue:Double, alpha:Double = 1.0)
-		Self.red = red
-		Self.green = green
-		Self.blue = blue
-		Self.alpha = alpha
-		Return Self
-	End Method
-End Type
-?
-
 Global _gtkKeysDown:Int[] = New Int[255]
 
 ' returns True if key is already believed to be DOWN/Pressed
 Function gtk3SetKeyDown:Int(key:Int)
 	Assert key < 255, "gtkSetKeyDown key is out of range - " + key
-	
+
 	If _gtkKeysDown[key] Then
 		Return True
 	End If
-	
+
 	_gtkKeysDown[key] = 1
 	Return False
 End Function
 
 Function gtk3SetKeyUp(key:Int)
 	Assert key < 255, "gtkSetKeyUp key is out of range - " + key
-	
+
 	_gtkKeysDown[key] = 0
 End Function

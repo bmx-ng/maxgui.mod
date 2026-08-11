@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2006-2020 Bruce A Henderson
+ Copyright (c) 2006-2026 Bruce A Henderson
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,20 @@
 void bmx_gtk3maxgui_gdkeventbutton(GdkEventButton * event, double * x, double * y, int * button) {
 	*x = event->x;
 	*y = event->y;
-	*button = event->button;
+	*button = (int)event->button;
+}
+
+void bmx_gtk3maxgui_gdkeventbuttonstate(GdkEventButton * event, double * x, double * y, int * button, int * state) {
+	*x = event->x;
+	*y = event->y;
+	*button = (int)event->button;
+	*state = (int)event->state;
 }
 
 void bmx_gtk3maxgui_gdkeventmotion(GdkEventMotion * event, double * x, double * y, int * state) {
 	*x = event->x;
 	*y = event->y;
-	*state = event->state;
+	*state = (int)event->state;
 }
 
 void bmx_gtk3maxgui_gdkeventscroll(GdkEventScroll * event, double * x, double * y, int * direction) {
@@ -42,8 +49,8 @@ void bmx_gtk3maxgui_gdkeventscroll(GdkEventScroll * event, double * x, double * 
 }
 
 void bmx_gtk3maxgui_gdkeventkey(GdkEventKey * event, int * keyval, int * state) {
-	*keyval = event->keyval;
-	*state = event->state;
+	*keyval = (int)event->keyval;
+	*state = (int)event->state;
 }
 
 void bmx_gtk3maxgui_gdkeventconfigure(GdkEventConfigure * event, int * x, int * y, int * w, int * h) {
