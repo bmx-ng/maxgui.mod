@@ -3844,9 +3844,13 @@ Type TGTKToolbar Extends TGTKGadget
 	End Rem
 	Method InsertListItem:Int(index:Int, text:String, tip:String, icon:Int, extra:Object)
 		Local image:Byte Ptr
+		Local stripSeparator:Int = False
 
 		If icons And icon >= 0 And icon < icons.images.length Then
 			image = icons.images[icon]
+			' A fully transparent icon-strip cell is the established MaxGUI
+			' toolbar separator representation used by existing applications.
+			If Not image Then stripSeparator = True
 		End If
 
 		toolitems = toolitems[..toolitems.length+1]
@@ -3854,7 +3858,7 @@ Type TGTKToolbar Extends TGTKGadget
 			toolitems[i + 1] = toolitems[i]
 		Next
 
-		If icon <> GADGETICON_SEPARATOR Then
+		If icon <> GADGETICON_SEPARATOR And Not stripSeparator Then
 			Local textPtr:Byte Ptr = text.ToUTF8String()
 			If items[index].flags & GADGETITEM_TOGGLE Then
 				toolitems[index] = gtk_toggle_tool_button_new()
@@ -3872,15 +3876,22 @@ Type TGTKToolbar Extends TGTKGadget
 			End If
 			MemFree(textPtr)
 
-			' Add a tooltip
-			SetToolTipIndex(index, tip)
 		Else
 			' no image? Then this is a separator!
 			toolitems[index] = gtk_separator_tool_item_new()
 		End If
+		' MaxGUI toolbars are ordered icon strips. Do not let one item make every
+		' button consume the widest homogeneous requisition, and do not treat any
+		' normal item or separator as an expanding spring.
+		gtk_tool_item_set_homogeneous(toolitems[index], False)
+		gtk_tool_item_set_expand(toolitems[index], False)
 		gtk_widget_show(toolitems[index])
 
 		gtk_toolbar_insert(handle, toolitems[index], index)
+		' GtkToolItem installs its tooltip machinery when it joins a toolbar.
+		' Apply portable tooltip text after insertion so older GTK 3 releases do
+		' not silently discard the value set on an unparented tool item.
+		If icon <> GADGETICON_SEPARATOR And Not stripSeparator Then SetToolTipIndex(index, tip)
 	End Method
 
 	Function OnToolItemToggled(widget:Byte Ptr, obj:Object)
@@ -3919,10 +3930,10 @@ Type TGTKToolbar Extends TGTKGadget
 		' Add a tooltip
 		If tip And tip.length > 0 Then
 			Local tipPtr:Byte Ptr = tip.ToUTF8String()
-			gtk_tool_item_set_tooltip_text(toolitems[index], tipPtr)
+			gtk_widget_set_tooltip_text(toolitems[index], tipPtr)
 			MemFree(tipPtr)
 		Else
-			gtk_tool_item_set_tooltip_text(toolitems[index], Null)
+			gtk_widget_set_tooltip_text(toolitems[index], Null)
 		End If
 	End Method
 
@@ -4019,11 +4030,19 @@ Type TGTKTabber Extends TGTKContainer
 		Local allocation:GtkAllocation = New GtkAllocation
 ?
 		gtk_widget_get_allocation(notebook, allocation)
-		If allocation.width > 1 And allocation.height > 1 Then
+		?bmxng
+		Local minimum:GtkRequisition
+		Local natural:GtkRequisition
+		?Not bmxng
+		Local minimum:GtkRequisition = New GtkRequisition
+		Local natural:GtkRequisition = New GtkRequisition
+		?
+		gtk_widget_get_preferred_size(notebook, minimum, natural)
+		If allocation.width >= minimum.width And allocation.height >= minimum.height And allocation.width > 1 And allocation.height > 1 Then
 			' GtkNotebook can retain the 1x1 construction allocation of a tab
 			' inserted after the notebook is already visible. Reallocating the
-			' notebook at its existing bounds makes GTK lay out the new header
-			' synchronously without disturbing the portable client container.
+			' notebook at its existing usable bounds makes GTK lay out the new
+			' header synchronously without forcing it below its theme extents.
 			gtk_widget_size_allocate(notebook, allocation)
 		End If
 		gtk_widget_queue_draw(notebook)

@@ -447,7 +447,8 @@ Extern
 	Function gtk_separator_tool_item_new:Byte Ptr()
 
 	' GtkToolItem
-	Function gtk_tool_item_set_tooltip_text(handle:Byte Ptr, txt:Byte Ptr)
+	Function gtk_tool_item_set_expand(handle:Byte Ptr, expand:Int)
+	Function gtk_tool_item_set_homogeneous(handle:Byte Ptr, homogeneous:Int)
 
 	' GtkNotebook
 	Function gtk_notebook_new:Byte Ptr()
