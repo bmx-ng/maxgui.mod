@@ -57,12 +57,16 @@ G_DEFINE_TYPE(BmxMaxGUIFixed, bmx_maxgui_fixed, GTK_TYPE_LAYOUT)
 
 static void bmx_maxgui_fixed_allocate_child(GtkWidget *child, const BmxMaxGUIRect *rect) {
 	GtkAllocation allocation;
+	/* A temporarily collapsed portable rectangle is not a valid allocation for
+	 * a decorated GTK widget. GtkFrame and GtkNotebook can have borders larger
+	 * than 1px, and older GTK 3 releases assert when their inner box becomes
+	 * negative. Let GTK retain its safe natural allocation until MaxGUI supplies
+	 * a usable rectangle; the next fixed-container pass applies it exactly. */
+	if (rect->width <= 0 || rect->height <= 0) return;
 	allocation.x = rect->x;
 	allocation.y = rect->y;
-	/* GTK allocations must be positive even when a portable gadget is
-	 * temporarily collapsed to zero during a layout pass. */
-	allocation.width = MAX(rect->width, 1);
-	allocation.height = MAX(rect->height, 1);
+	allocation.width = rect->width;
+	allocation.height = rect->height;
 	gtk_widget_size_allocate(child, &allocation);
 }
 
@@ -143,6 +147,7 @@ GtkWidget * bmx_gtk3_maxgui_fixed_new(void) {
 static void bmx_gtk3_maxgui_fixed_store_rect(BmxMaxGUIFixed *fixed, GtkWidget *child,
 		int x, int y, int width, int height) {
 	BmxMaxGUIRect *rect = (BmxMaxGUIRect *)g_hash_table_lookup(fixed->rects, child);
+	GtkRequisition minimum;
 	if (!rect) {
 		rect = (BmxMaxGUIRect *)calloc(1, sizeof(BmxMaxGUIRect));
 		g_hash_table_insert(fixed->rects, child, rect);
@@ -151,7 +156,16 @@ static void bmx_gtk3_maxgui_fixed_store_rect(BmxMaxGUIFixed *fixed, GtkWidget *c
 	rect->y = y;
 	rect->width = MAX(width, 0);
 	rect->height = MAX(height, 0);
-	gtk_widget_set_size_request(child, rect->width, rect->height);
+	if (rect->width > 0 && rect->height > 0) {
+		gtk_widget_set_size_request(child, rect->width, rect->height);
+	} else {
+		/* GtkLayout otherwise assigns an empty child 1x1 even when a frame needs
+		 * two or more pixels for its theme extents. Restore native requisition,
+		 * measure it, then retain a small but theme-safe transient request. */
+		gtk_widget_set_size_request(child, -1, -1);
+		gtk_widget_get_preferred_size(child, &minimum, NULL);
+		gtk_widget_set_size_request(child, MAX(minimum.width, 2), MAX(minimum.height, 2));
+	}
 }
 
 void bmx_gtk3_maxgui_fixed_put(GtkWidget *widget, GtkWidget *child,
@@ -506,7 +520,7 @@ static void bmx_gtk_signal_closure_destroy(gpointer data, GClosure *gclosure) {
 
 static gulong bmx_gtk_signal_connect(BBBYTE *widget, BBSTRING name, GCallback callback, BMXGtkSignalClosure *closure) {
 	BBBYTE *signalName = bbStringToUTF8String(name);
-	gulong result = g_signal_connect_data(widget, (const char *)signalName, callback, closure, bmx_gtk_signal_closure_destroy, G_CONNECT_DEFAULT);
+	gulong result = g_signal_connect_data(widget, (const char *)signalName, callback, closure, bmx_gtk_signal_closure_destroy, (GConnectFlags)0);
 	bbMemFree(signalName);
 	if (!result) {
 		bmx_gtk_signal_closure_destroy(closure, NULL);
