@@ -1,4 +1,4 @@
-' Copyright (c) 2006-2020 Bruce A Henderson
+' Copyright (c) 2006-2026 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,7 @@ Type TGTK3GuiSystemDriver Extends TGTK3SystemDriver
 	
 End Type
 
-?bmxng
-Type TGTK3SystemDriver Extends TSystemDriver Implements IWrappedSystemDriver
-?Not bmxng
-Type TGTK3SystemDriver Extends TSystemDriver
-?
+Type TGTK3SystemDriverBase Extends TSystemDriver
 	Field NativeDriver:TSystemDriver
 	
 	Field _desktop:TGTKDesktop
@@ -98,10 +94,6 @@ Type TGTK3SystemDriver Extends TSystemDriver
 		NativeDriver.Wait()
 	End Method
 	
-	Method Emit( osevent:Byte Ptr,source:Object )
-		Throw "oops"
-	End Method
-
 	Method IsFullScreen:Int()
 		Return False
 	End Method	
@@ -390,6 +382,14 @@ Type TGTK3SystemDriver Extends TSystemDriver
 
 End Type
 
+?bmxng
+Type TGTK3SystemDriver Extends TGTK3SystemDriverBase Implements IWrappedSystemDriver
+End Type
+?Not bmxng
+Type TGTK3SystemDriver Extends TGTK3SystemDriverBase
+End Type
+?
+
 
 Type TGTK3GUIDriver Extends TMaxGUIDriver
 
@@ -476,6 +476,7 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 			
 			Local f:TGuiFont = getGuiFontFromPangoDescription(font)
 			TGtkGuiFont(f).fontDesc = Null
+			pango_font_description_free(font)
 
 			gtk_widget_destroy(widget)
 
@@ -561,13 +562,18 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 			Case GADGET_LABEL
 				gtkclass = GTK_LABEL
 			Case GADGET_SLIDER
-				If style & SLIDER_STEPPER Then
-					gtkclass = GTK_STEPPER
-				Else If style & SLIDER_TRACKBAR Then
-					gtkclass = GTK_TRACKBAR
-				Else
-					gtkclass = GTK_SCROLLBAR
-				End If
+				' The slider kind occupies bits 2 and 3. SLIDER_DIAL combines
+				' those bits, so testing the stepper bit alone misclassifies a
+				' dial as GtkSpinButton. GTK has no native circular slider; use
+				' GtkScale as the semantically equivalent range control.
+				Select style & (SLIDER_TRACKBAR | SLIDER_STEPPER)
+					Case SLIDER_STEPPER
+						gtkclass = GTK_STEPPER
+					Case SLIDER_TRACKBAR, SLIDER_DIAL
+						gtkclass = GTK_TRACKBAR
+					Default
+						gtkclass = GTK_SCROLLBAR
+				End Select
 			Case GADGET_PROGBAR
 				gtkclass = GTK_PROGRESSBAR
 			Case GADGET_MENUITEM
@@ -608,21 +614,13 @@ Type TGTK3GUIDriver Extends TMaxGUIDriver
 	Method RequestColor:Int(r:Int, g:Int, b:Int)
 		Local argb:Int = Null
 
-		Local color:GdkRGBA = New GdkRGBA
-		color.red = r / 255.0
-		color.green = g / 255.0
-		color.blue = b / 255.0
-
-		Local req:Byte Ptr = gtk_color_selection_dialog_new("Select color")
-		Local colsel:Byte Ptr = gtk_color_selection_dialog_get_color_selection(req)
-		gtk_color_selection_set_current_rgba(colsel, color)
+		Local req:Byte Ptr = gtk_color_chooser_dialog_new("Select color", Null)
+		bmx_gtk3_color_chooser_set_rgba(req, r / 255.0, g / 255.0, b / 255.0, 1.0)
 
 		Local res:Int = gtk_dialog_run(req)
 
 		If res = GTK_RESPONSE_OK Then
-			gtk_color_selection_get_current_rgba(colsel, color)
-
-			argb = $ff000000 | (color.red * 255) Shl 16 | (color.green * 255) Shl 8  | (color.blue * 255) 
+			argb = $ff000000 | bmx_gtk3_color_chooser_get_rgb(req)
 		End If
 
 		gtk_widget_destroy(req)

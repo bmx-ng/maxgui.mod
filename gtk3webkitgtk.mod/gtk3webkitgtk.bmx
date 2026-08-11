@@ -1,4 +1,4 @@
-' Copyright (c) 2014-2018 Bruce A Henderson
+' Copyright (c) 2014-2026 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ Module MaxGUI.GTK3WebKitGtk
 
 ModuleInfo "Version: 1.00"
 ModuleInfo "License: MIT"
-ModuleInfo "Copyright: 2014-2018 Bruce A Henderson"
+ModuleInfo "Copyright: 2014-2026 Bruce A Henderson"
 
 ModuleInfo "History: 1.00"
 ModuleInfo "History: Initial Release."
@@ -105,8 +105,7 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 		gtk_widget_show(box)
 		gtk_box_pack_start(box, scrollWindow, True, True, 0)
 
-		gtk_layout_put(TGTKContainer(group).container, box, x, y)
-		gtk_widget_set_size_request(box, w, Max(h,0))
+		bmx_gtk3_maxgui_fixed_put(TGTKContainer(group).container, box, x, y, w, Max(h, 0))
 
 		SetShow(True)
 
@@ -149,18 +148,19 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 	End Method
 
 	Function checkURL:String(url:String, forMax:Int=False)
-		Local	anchor$,a:Int
+		Local	anchor$,a:Int,lowerUrl:String
 		a=url.Find("#")
 		If a<>-1 Then
 			anchor=url[a..]
 			url=url[..a]
 		End If
-		If url[0..7]<>"http://" And url[0..7]<>"file://" Then
-			If FileType(url) Then
+		lowerUrl=url.ToLower()
+		If Not lowerUrl.StartsWith("http://") And Not lowerUrl.StartsWith("https://") And Not lowerUrl.StartsWith("file://") Then
+			If url.StartsWith("/") Or FileType(url) Then
 				url = "file://" + url
 			Else
 				If forMax Then
-					If url[0..6]<>"http::" Then
+					If Not lowerUrl.StartsWith("http::") Then
 						url="http::" + url
 					End If
 				Else
@@ -169,7 +169,7 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 			EndIf
 		EndIf
 		If forMax Then
-			If url[0..7] = "http://" Then
+			If url.ToLower().StartsWith("http://") Then
 				url = "http::" + url[7..]
 			End If
 		End If
@@ -196,8 +196,8 @@ Type TGTKWebKitGtk Extends TGTKHTMLView
 
 	Method Rethink:Int()
 		If handle Then
-			gtk_layout_move(TGTKContainer(parent).container, box, xpos, ypos)
-			gtk_widget_set_size_request(box, Max(width,0), Max(height,0))
+			bmx_gtk3_maxgui_fixed_set_child_rect(TGTKContainer(parent).container, box, ..
+				Max(xpos, 0), Max(ypos, 0), Max(width, 0), Max(height, 0))
 		End If
 	End Method
 

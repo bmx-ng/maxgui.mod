@@ -1,4 +1,4 @@
-' Copyright (c) 2006-2020 Bruce A Henderson
+' Copyright (c) 2006-2026 Bruce A Henderson
 ' 
 ' Permission is hereby granted, free of charge, to any person obtaining a copy
 ' of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,16 @@ bbdoc: GTK3 MaxGUI
 End Rem
 Module MaxGUI.GTK3MaxGUI
 
-ModuleInfo "Version: 2.01"
+ModuleInfo "Version: 2.02"
 ModuleInfo "License: MIT"
-ModuleInfo "Copyright: 2006-2020 Bruce A Henderson"
+ModuleInfo "Copyright: 2006-2026 Bruce A Henderson"
 
+ModuleInfo "History: 2.02"
+ModuleInfo "History: Complete refactor of GTK3 MaxGUI."
 ModuleInfo "History: 2.01"
 ModuleInfo "History: Updated for new NG system driver."
 ModuleInfo "History: Implemented some missing functionality."
+ModuleInfo "History: Normalized portable tree drag-and-drop events."
 
 ?Linux
 ' glib
