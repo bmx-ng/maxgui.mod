@@ -272,7 +272,7 @@ Prompts the user for a font and returns an object that can then be used with the
 See Also: #LoadGuiFont, #LookupGuiFont, #FontName, #FontSize and #FontStyle
 EndRem
 Function RequestFont:TGuiFont(font:TGuiFont=Null)
-	Return maxgui_driver.RequestFont(font:TGuiFont)
+	Return maxgui_driver.RequestFont(font)
 End Function
 
 Rem

@@ -474,7 +474,7 @@ Type TScrollPanel Extends TProxyGadget
 	Function eventHandler:Object(pID%, pData:Object, pContext:Object)
 	
 		Local tmpSuperPanel:TScrollPanel = TScrollPanel(pContext)
-		If tmpSuperPanel Then pData = tmpSuperPanel.eventHook(pID%, pData:Object, pContext:Object)
+		If tmpSuperPanel Then pData = tmpSuperPanel.eventHook(pID%, pData, pContext)
 		Return pData
 	
 	EndFunction
