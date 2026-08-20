@@ -105,7 +105,7 @@ to be visible.
 See Also: #LocalizationMode, #SetLocalizationLanguage, #LocalizationLanguage and #LocalizeGadget.
 EndRem
 Function SetLocalizationMode( Mode:Int = LOCALIZATION_ON )
-	_SetLocalizationMode(Mode:Int)
+	_SetLocalizationMode(Mode)
 EndFunction
 
 Global _SetLocalizationMode( Mode:Int ) = TMaxGUILocalizationEngine.SetMode

@@ -1023,7 +1023,7 @@ Type TCocoaIconStrip Extends TIconStrip
 		
 		If AlphaBitsPerPixel[ pixmap.format ]
 			For Local y:Int=0 Until pixmap.height
-				For x:Int=0 Until pixmap.width
+				For x=0 Until pixmap.width
 					Local argb:Int=pixmap.ReadPixel( x,y )
 					pixmap.WritePixel x,y,premult(argb)
 				Next

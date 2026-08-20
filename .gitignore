@@ -11,3 +11,7 @@ commands.html
 
 *.i
 *.a
+
+.generics/
+*.bmxbuild
+*.bmxbuild.stamp
