@@ -350,7 +350,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				If Not owner Then owner = GadgetFromHwnd(hwnd)
 
 				If owner Then
-					res=owner.OnCommand(msg,ULong(wp))
+					res=owner.OnCommand(Int(msg),ULong(wp))
 					If Not res And owner._proc And owner._hwnd = hwnd Return CallWindowProcW(owner._proc,hwnd,msg,wp,lp)
 					Return res
 				Else
@@ -560,7 +560,7 @@ Type TWindowsGUIDriver Extends TMaxGUIDriver
 				owner = owner.source
 			Wend
 		EndIf
-		bbSystemEmitOSEvent( hwnd, msg, wp, lp, owner )
+		bbSystemEmitOSEvent( hwnd, Int(msg), wp, lp, owner )
 		intEmitOSEvent:-1
 		Return 0
 	EndFunction
@@ -1948,7 +1948,7 @@ Type TWindowsWindow Extends TWindowsGadget
 				EndIf
 
 			Case WM_COMMAND
-				If wp>100 Then HandleMenuEvent(msg,ULong(wp))
+				If wp>100 Then HandleMenuEvent(Int(msg),ULong(wp))
 
 			Case WM_CLOSE
 				PostGuiEvent EVENT_WINDOWCLOSE
@@ -2500,7 +2500,7 @@ Type TWindowsMenu Extends TGadget
 	Method Free()
 		Close
 		_setparent Null
-		keymap.Remove(_key)
+		keymap.Remove(Int(_key))
 		If _iconBitmap Then DeleteObject(_iconBitmap)
 	EndMethod
 
