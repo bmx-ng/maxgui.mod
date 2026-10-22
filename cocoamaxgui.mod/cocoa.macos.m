@@ -430,6 +430,7 @@ void ScheduleEventDispatch(){
 	NSColor *textColor;
 	NSFont *font;
 	int suppressSelectionEvents;
+	int suppressExpansionEvents;
 }
 -(id)initWithFrame:(NSRect)rect;
 -(void)refresh;
@@ -1734,6 +1735,17 @@ int NSMaxGUIListDeferredLayoutPresentation(void *handle){
 // OutlineView
 
 @implementation OutlineView
+// Selected-row text colour depends on focus, so recolour visible rows when it changes.
+-(BOOL)becomeFirstResponder{
+	BOOL ok=[super becomeFirstResponder];
+	if (ok) [(NSObject*)[self dataSource] performSelector:@selector(updateVisibleRows) withObject:nil afterDelay:0.0];
+	return ok;
+}
+-(BOOL)resignFirstResponder{
+	BOOL ok=[super resignFirstResponder];
+	if (ok) [(NSObject*)[self dataSource] performSelector:@selector(updateVisibleRows) withObject:nil afterDelay:0.0];
+	return ok;
+}
 -(NSMenu*)menuForEvent:(NSEvent *)theEvent{
 	id node=nil;
 	NSPoint outlinePoint=[self convertPoint:[theEvent locationInWindow] fromView:nil];
@@ -1828,6 +1840,7 @@ int NSMaxGUIListDeferredLayoutPresentation(void *handle){
 	[outline setOutlineTableColumn:column];
 	font=[[NSFont systemFontOfSize:[NSFont systemFontSize]] retain];
 	suppressSelectionEvents=0;
+	suppressExpansionEvents=0;
 	[self setDocumentView:outline];
 	[outline sizeLastColumnToFit];
 	return self;
@@ -1879,7 +1892,8 @@ int NSMaxGUIListDeferredLayoutPresentation(void *handle){
 	[[rowView textField] setFont:font];
 	NSColor *color=textColor ? textColor : [NSColor controlTextColor];
 	if (![outline isEnabled]) color=[NSColor disabledControlTextColor];
-	else if ([outline isRowSelected:row]) color=[NSColor alternateSelectedControlTextColor];
+	// White text only on the active (accent) highlight; the inactive highlight is light grey.
+	else if ([outline isRowSelected:row] && [[outline window] isKeyWindow] && [[outline window] firstResponder]==outline) color=[NSColor alternateSelectedControlTextColor];
 	[[rowView textField] setTextColor:color];
 	[[rowView imageView] setImage:[node icon]];
 	[rowView setNeedsLayout:YES];
@@ -1917,18 +1931,21 @@ int NSMaxGUIListDeferredLayoutPresentation(void *handle){
 	[self updateVisibleRows];
 }
 -(void)expandNode:(id)node{
-	[outline setDelegate:nil];
+	// The delegate must stay attached: in a view-based outline it supplies the
+	// row views, so rows inserted while it is nil are left blank. Programmatic
+	// expansion is kept from re-posting GADGETOPEN with a counter instead.
+	suppressExpansionEvents++;
 	[outline expandItem:node];
+	suppressExpansionEvents--;
 	[outline tile];
-	[outline setDelegate:self];
 	[self updateVisibleRows];
 	[node queueWidthUpdate];
 }
 -(void)collapseNode:(id)node{
-	[outline setDelegate:nil];
+	suppressExpansionEvents++;
 	[outline collapseItem:node];
+	suppressExpansionEvents--;
 	[self reconcileCollapsedNode:node];
-	[outline setDelegate:self];
 	[rootNode queueWidthUpdate];
 }
 -(void)reconcileCollapsedNode:(id)node{
@@ -1942,6 +1959,7 @@ int NSMaxGUIListDeferredLayoutPresentation(void *handle){
 	id		node;
 	node=[[notification userInfo] objectForKey:@"NSObject"];
 	[node queueWidthUpdate];
+	if (suppressExpansionEvents) return;
 	maxgui_cocoamaxgui_cocoagui_PostCocoaTreeEvent( BBEVENT_GADGETOPEN,NSPeerForNativeHandle(self),node,0,0,0 );
 }
 -(void)outlineViewItemDidCollapse:(NSNotification *)notification{
@@ -1951,6 +1969,7 @@ int NSMaxGUIListDeferredLayoutPresentation(void *handle){
 	// cached row views on the next main-loop turn, after that transaction ends.
 	[self performSelector:@selector(reconcileCollapsedNode:) withObject:node afterDelay:0.0];
 	[rootNode queueWidthUpdate];
+	if (suppressExpansionEvents) return;
 	maxgui_cocoamaxgui_cocoagui_PostCocoaTreeEvent( BBEVENT_GADGETCLOSE,NSPeerForNativeHandle(self),node,0,0,0 );
 }
 -(void)outlineViewSelectionDidChange:(NSNotification *)notification{
